@@ -1,0 +1,15 @@
+*.exe
+*.o
+*.so
+archive/*
+video/*
+misc/*.obj
+test/*
+
+OUT
+BUFFER
+*.mp3
+*.mp4
+*.avi
+*.mpeg
+*.gif

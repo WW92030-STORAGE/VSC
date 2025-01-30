@@ -1,0 +1,109 @@
+#ifndef MATH_BASE_EXT
+#define MATH_BASE_EXT
+
+#include <cstdlib>
+#include <ctime>
+
+// Base math methods that only use numerical values
+
+// Defines
+
+#define M_PI 3.14159265358979323846
+
+// Is it zero?
+inline bool fzero(float f) {
+	float E = 0.000001;
+	return (-E < f && f < E);
+}
+
+// Are they equal?
+
+inline bool fequal(float f, float g) {
+    return fzero(f - g);
+}
+
+// Rounding
+
+inline float round(float f) {
+    return floorf(f + 0.5);
+}
+
+inline int iround(float f) {
+    return (int)(round(f));
+}
+
+// LERP
+
+inline float lerp(float f, float g, float t) {
+    return (1 - t) * f + t * g;
+}
+
+// Exponents
+
+inline float pow(float f, int g) {
+    if (fzero(f)) return 0;
+    if (g < 0) return 1.0 / pow(f, -g);
+    if (g == 0) return 1.0;
+
+    if (g & 1) return f * pow(f, g - 1);
+    float h = pow(f, g>>1);
+    return h * h;
+}
+
+// Min/max
+
+inline int min(int a, int b) {
+    return a < b ? a : b;
+}
+
+inline int max(int a, int b) {
+    return a > b ? a : b;
+}
+
+inline float clamp(float f, float l, float h) {
+    if (f < l) return l;
+    if (f > h) return h;
+    return f;
+}
+
+// Random number
+
+inline void randomseed() {
+    srand(time(0));
+}
+
+inline float random() {
+    return (float)(rand()) / (float(RAND_MAX));
+}
+
+// Calc shit
+inline float deriv(float (*f)(float), float x) {
+    const float d = 0.0001;
+    return (f(x + d) - f(x - d)) / (d + d);
+}
+
+inline float newton(float (*f)(float)) {
+    const float ITER = 256;
+    const int BOUND = 1024;
+    const float E = 0.0001;
+    
+    float x = 0;
+    float minim = f(0);
+    
+    for (int i = -BOUND; i < BOUND; i++) {
+        if (f(i) == NAN || f(i) == -NAN) continue;
+        if (fabs(f(i)) < fabs(minim)) {
+            minim = f(i);
+            x = i;
+        }
+    }
+    
+    for (int i = 0; i < ITER; i++) {
+        float dd = deriv(f, x);
+        if (fzero(dd)) dd += 0.00001;
+        x = x - f(x) / dd;
+    }
+    return x;
+}
+
+#endif
