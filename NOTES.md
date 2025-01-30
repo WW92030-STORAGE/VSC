@@ -81,28 +81,28 @@ Object.h
 - Objects are basically the entities in a scene. Primitives, triangles, models, and cameras are objects and inherit from the Object class.  
 - The only use of this centralization is so you can have arrays of objects.   
   
-Triangle.h   
-- Triangles form the basis of most if not all 3d modelling systems. A triangle is defined by three non-collinear points and represents a portion of a plane.   
+Triangle.h  
+- Triangles form the basis of most if not all 3d modelling systems. A triangle is defined by three non-collinear points and represents a portion of a plane.  
   
-Mesh.h   
+Mesh.h  
 - Meshes compose of vertices that form triangle faces.   
 - Entities are loaded from .obj files. In the future we will explore the nature of texturing and materials. 
   
-Scene.h   
+Scene.h  
 - The most basic form of a scene contains a camera and some objects. The camera is positioned at the origin and facing in the negative Z direction, so that camera space is lined up with Euclidean space. To move the camera, instead we can simply inverse transform the scene.  
 - The output is drawn onto the buffer, which represents the rasterization of pixels. In Act III we will explore more efficient rasterization methods.  
   
 DirectionalLight.h  
-- A simple directional light system to provide clarity to mesh faces. The color of teh pixel is hardcoded with lighting accounted for, this will not be the case in the future.   
+- A simple directional light system to provide clarity to mesh faces. The color of the pixel is hardcoded with lighting accounted for, this will not be the case in the future.  
   
 # INTERMISSION - FRAGMENTATION  
   
 Scene.h
-- Fragment class which represents fragments. For now when the buffer is outputted the color is retrieved. The original version of Scene.h is located in the archive.    
-- Fragments contain the clip space coordinates but also the original z coordinate of a point (here represented as the w coordinate after the frustum matrix), surface normal, and the color.   
+- Fragment class which represents fragments. For now when the buffer is outputted the color is retrieved. The original version of Scene.h is located in the archive.  
+- Fragments contain the clip space coordinates but also the original z coordinate of a point (here represented as the w coordinate after the frustum matrix), surface normal, and the color.  
   
 Triangle.h  
-- Added a new TriangleF class which now stores fragments. It is a generalization of Triangle3. When a Triangle3 is attempted to be drawn it is now projected into TriangleF structures which represent location in NDC    
+- Added a new TriangleF class which now stores fragments. It is a generalization of Triangle3. When a Triangle3 is attempted to be drawn it is now projected into TriangleF structures which represent location in NDC  
 
 # ACT III - RECONVENE
 

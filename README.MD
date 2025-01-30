@@ -31,3 +31,5 @@ After chapter 5 we make the actual renderer that has the basic rendering abiliti
 And then after that we go into the more juicy stuff such as texturing, clipping, visibility culling, and the like.  
   
 There is a document named `NOTES.md` that holds notes that might be useful.
+
+![Example!](VIDEO.gif?raw=true)
