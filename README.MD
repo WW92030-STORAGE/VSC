@@ -14,7 +14,9 @@ If you want a raytracer stay tuned for the sequel FINAL DESTINATION coming soon 
   
 # CREDITS  
   
-Everything in here is strictly based on the book Mathematics for 3D Game Programming and Computer Graphics (Third Edition) by Eric Lengyel. It will be dubbed as the "Skeleton Book" because of its cover. VSC Verified bears no intentional relationship to any other graphics engine out there. All files were written primarily by NormalExisting using the Skeleton Book as basis and inspiration.
+Everything in here is based on the book Mathematics for 3D Game Programming and Computer Graphics (Third Edition) by Eric Lengyel, as well as various other resources including CS354H (UT Austin Computer Graphics Honors) and other online resources on graphics. 
+
+Mathematics for 3d Game Programming will be dubbed as the "Skeleton Book" because of its cover. All files were written primarily by NormalExisting using the Skeleton Book (et al.) as basis and inspiration.
   
 # DEDICATIONS  
   
