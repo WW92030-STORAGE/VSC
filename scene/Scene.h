@@ -1,7 +1,7 @@
 #ifndef SCENE_EXT
 #define SCENE_EXT
 
-#include <iostream>
+// #include <iostream>
 #include <string>
 #include <cstdint>
 #include <fstream>
@@ -483,7 +483,7 @@ class Scene { // CENA!
 
 	inline void fillTriangle(Triangle3 s, uint32_t c, bool BACKFACECULL = true, bool LIGHT = true) {
 		if (BACKFACECULL && BackFaceCull(s)) {
-			std::cout << "CULLED\n";
+			// std::cout << "CULLED\n";
 			return;
 		}
 		if (LIGHT) c = colmul(c, -(s.N * light.dir));
