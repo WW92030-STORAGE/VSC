@@ -1,4 +1,4 @@
-# VSC VERIFIED (CREATED BY NORMALEXISTING)  
+# VSC
   
 "I might have to wait, I'll never give up. I guess it's half timing, and the other half is luck..." -Michael Buble  
   
