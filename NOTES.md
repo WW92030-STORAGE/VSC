@@ -103,13 +103,18 @@ Scene.h
   
 Triangle.h  
 - Added a new TriangleF class which now stores fragments. It is a generalization of Triangle3. When a Triangle3 is attempted to be drawn it is now projected into TriangleF structures which represent location in NDC  
-
+  
 # ACT III - RECONVENE
-
+  
 # 6. RAY TRACING
-
-Yes, there is some ray tracing involved. But it's a lot less involved than a true raytracer--while a true raytracer computes one or more illumination fragments per pixel, this rasterizer uses triangles to compute small numbers of illuminations and then interpolating between vertices and triangle faces.  
-
+  
+Yes, there is some ray tracing involved.  
+But it's a lot less involved than a true raytracer--while a true raytracer computes one or more illuminations per pixel, this rasterizer uses triangles to compute small numbers of illuminations and then interpolating between vertices and triangle faces.  
+  
+Primitives.h  
+- Method to calculate when a Plane intersects a ray (line) with origin and unit vector direction (NaN for null intersection)
+Triangle.h  
+- Method to calculate when a Triangle3 intersects a ray with origin and unit vector direction (NaN for null intersection).
 # 7 - LIGHT AND SHADOW
 
 # 8 - VISIBILITY

@@ -171,6 +171,15 @@ class Plane : public Object {
 		return fzero(distanceFrom(p));
 	}
 
+	inline float intersectionTime(Line& L) {
+		if (fzero(n * L.slope)) {
+			if (contains(L.point)) return 0;
+			return NAN;
+		}
+
+		return ( (p - L.point) * n) / (L.slope * n);
+	}
+
 	inline Vector3 intersection(Line& L) {
 		if (fzero(n * L.slope)) {
 			if (contains(L.point)) return L.point;
@@ -180,6 +189,8 @@ class Plane : public Object {
 		float T = -1 * (n * L.point + distanceFromOrigin()) / (n * L.slope);
 		return L.get(T);
 	}
+
+
 	
 	// 3 planes (gives one point of the intersection)
 	inline Vector3 intersection(Plane& A, Plane& B) {

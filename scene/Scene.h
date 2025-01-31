@@ -29,7 +29,9 @@ class Scene { // CENA!
 	int W, H;
 	int SIDE;
 
-	std::priority_queue<std::pair<TriangleF, std::pair<uint32_t, bool>>> triqueue;
+
+
+	std::queue<std::pair<TriangleF, std::pair<uint32_t, bool>>> triqueue;
 
 	Camera camera;
 
@@ -523,7 +525,7 @@ class Scene { // CENA!
 
 	inline void drawQueue() {
 		while (triqueue.size()) {
-			auto p = triqueue.top();
+			auto p = triqueue.front();
 			triqueue.pop();
 
 			if (p.second.second) fillTriangle(p.first, p.second.first);

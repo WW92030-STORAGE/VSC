@@ -8,6 +8,10 @@
 
 using namespace std;
 
+std::string MESHES = "../misc";
+std::string BUFFER_PATH = "BUFFER";
+std::string VIDEO_PATH = "video";
+
 // INTERLUDE AND INTERMISSION - RENDERING AND RASTERIZATION
 
 // TEST 0 - Yes these tests are named after DisneyXD characters.
@@ -99,14 +103,14 @@ inline void cubetest() {
 
 	outputFile << s.to_string() << "\n";
 
-	s.outputBuffer("BUFFER");
+	s.outputBuffer(BUFFER_PATH);
 
 	outputFile.close();
 }
 
 // TEST 1.1 OBJ
 inline void objtest() {
-	char* path = "misc/mcrproto.obj";
+	std::string path = MESHES + "/mcrproto.obj";
 	Mesh mesh = Mesh::fromOBJ(path);
 	Transform movemeback(Vector3(0, -2, -2), Rotation3(Vector3(0, 1, 0), M_PI * 1.25));
 
@@ -146,14 +150,14 @@ inline void objtest() {
 	std::cout << "Drawn\n";
 
 
-	s.outputBuffer("BUFFER");
+	s.outputBuffer(BUFFER_PATH);
 
 	std::cout << "Stored\n";
 }
 
 // TEST 2 OMINA
 inline void animtest() {
-	Mesh omina = Mesh::fromOBJ("misc/cube.obj");
+	Mesh omina = Mesh::fromOBJ(MESHES + "/cube.obj");
 
 	Transform center(Vector3(-1, -1, -1) * 0.5, Rotation3(Vector3(1, 2, 1), M_PI / 8));
 
@@ -187,14 +191,14 @@ inline void animtest() {
 		s.outputBuffer("video/frame" + std::to_string(i));
 	}	
 
-	std::ofstream len("video/LEN");
+	std::ofstream len(VIDEO_PATH + "/LEN");
 	len << LEN;
 	len.close();
 }
 
 // TEST 2.5 FILLED MESH ANIM
 inline void animtest2() {
-	Mesh omina = Mesh::fromOBJ("misc/mcrproto.obj");
+	Mesh omina = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
 
 	Transform offset(Vector3(0, -2, -3) * 0.5, Matrix3::eye());
 	Transform rotate(Vector3(), Rotation3(Vector3(1, 0, 0), M_PI / 4));
@@ -220,17 +224,17 @@ inline void animtest2() {
 		omina.Trans(smallrot);
 		omina.Trans(goback);
 
-		s.outputBuffer("video/frame" + std::to_string(i));
+		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
 	}	
 
-	std::ofstream len("video/LEN");
+	std::ofstream len(VIDEO_PATH + "/LEN");
 	len << LEN;
 	len.close();
 }
 
 // TEST 3 ANDAM
 inline void multipletest() {
-	Mesh andam = Mesh::fromOBJ("misc/cube.obj");
+	Mesh andam = Mesh::fromOBJ(MESHES + "/cube.obj");
 
 	float SSS = 0.25;
 
@@ -250,7 +254,7 @@ inline void multipletest() {
 
 	thing.Trans(offset2);
 
-	Mesh proto = Mesh::fromOBJ("misc/mcrproto.obj");
+	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
 	proto.ForceTrans(Transform(Vector3(-2, -2, -2), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
 	
 	int N = 1024;
@@ -273,13 +277,13 @@ inline void multipletest() {
 
 	// s.outputFrags("OUT");
 
-	s.outputBuffer("BUFFER");
+	s.outputBuffer(BUFFER_PATH);
 }
 
 // TEST 4 HALEY
 // This is the same as TEST 3 ANDAM except with the camera and directional light rotated.
 inline void camtest() {
-	Mesh haley = Mesh::fromOBJ("misc/cube.obj");
+	Mesh haley = Mesh::fromOBJ(MESHES + "/cube.obj");
 
 	float SSS = 0.25;
 
@@ -299,7 +303,7 @@ inline void camtest() {
 
 	thing.Trans(offset2);
 
-	Mesh proto = Mesh::fromOBJ("misc/mcrproto.obj");
+	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
 	proto.ForceTrans(Transform(Vector3(-2, -2, -2), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
 	
 	int N = 1024;
@@ -335,7 +339,7 @@ inline void camtest() {
 
 	// s.outputFrags("OUT");
 
-	s.outputBuffer("BUFFER");
+	s.outputBuffer(BUFFER_PATH);
 }
 
 

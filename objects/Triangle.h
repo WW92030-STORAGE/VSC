@@ -21,6 +21,7 @@ Triangles are formed of three points and represent the plane the three points go
 #include "../utils/math/Quaternion.h"
 
 #include "../utils/geometry/Fragment.h"
+#include "../utils/geometry/Primitives.h"
 
 class Triangle2 {
 	public:
@@ -117,6 +118,34 @@ class Triangle3 : public Object {
 		return (e1.cross(e2)).normalized();
 	}
 
+	// Is a point inside the infinite prism with cross section this triangle and direction the normal?
+	inline bool inside(Vector3 s) {
+		for (int i = 0; i < 3; i++) {
+			Vector3 e1 = p[(i + 1) % 3] - p[i];
+			Vector3 e2 = s - p[i];
+			Vector3 protrusion = e1.cross(e2);
+			if (protrusion * N < 0) return false;
+		}
+		return true;
+	}
+
+	inline float intersectionTime(Line& L) {
+		Plane PP(p[0], normal());
+		float f = PP.intersectionTime(L);
+		if (std::isnan(f)) return NAN;
+		Vector3 res = L.get(f);
+
+		if (!inside(res)) return NAN;
+		return f;
+	}
+
+	inline Vector3 intersection(Line& L) {
+		float f = intersectionTime(L);
+		if (std::isnan(f)) return NILVEC3;
+
+		return L.get(f);
+	}
+
 	inline void Trans(Transform t) override {
 		transform = t * transform;
 		Matrix4 trans = t.matrix();
@@ -164,7 +193,8 @@ class Triangle3 : public Object {
 	}
 };
 
-// Might go unused? idk
+// This is a triangle of FRAGMENTS. It is not the same as a Triangle3.
+// This triangle exists in the clip space, while Triangle3 exists in Euclidean space.
 class TriangleF {
 	public:
 	Fragment p[3];

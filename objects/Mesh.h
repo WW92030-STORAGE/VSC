@@ -138,7 +138,7 @@ class Mesh : public Object {
 		return Vector3(v[n - i]);
 	}
 
-	static Mesh fromOBJ(char* filename) {
+	static Mesh fromOBJ(std::string filename) {
 		std::ifstream fin(filename);
 
 		std::string line;
