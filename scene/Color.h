@@ -27,6 +27,14 @@ Vector4 rgba(uint32_t s) {
 	return Vector4(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
 }
 
+Vector3 rgb(uint32_t s) {
+	return vec3(rgba(s));
+}
+
+uint32_t rgb(Vector3 s) {
+	return rgba(fromPoint(s));
+}
+
 uint32_t rgb(int r, int g, int b) {
 	return (r<<24) + (g<<16) + (b<<8) + 255;
 }

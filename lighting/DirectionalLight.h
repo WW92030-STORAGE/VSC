@@ -10,14 +10,16 @@ class DirectionalLight : public Light {
 	Vector3 dir = Vector3(0, 0, -1);
 
 	DirectionalLight() {
-
+		TYPE = DIRECTIONAL;
 	}
 	
 	DirectionalLight(Vector3& v) {
+		TYPE = DIRECTIONAL;
 		if (!isZero(v)) dir = v.normalized();
 	}
 
 	DirectionalLight(Vector3& v, Vector3 i) {
+		TYPE = DIRECTIONAL;
 		intensity = Vector3(i);
 		if (!isZero(v)) dir = v.normalized();
 	}

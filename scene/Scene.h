@@ -1,7 +1,7 @@
 #ifndef SCENE_EXT
 #define SCENE_EXT
 
-// #include <iostream>
+#include <iostream>
 #include <string>
 #include <cstdint>
 #include <fstream>
@@ -20,6 +20,9 @@
 
 #include "Color.h"
 
+#include "../lighting/Light.h"
+#include "../lighting/PointLight.h"
+#include "../lighting/DirectionalLight.h"
 
 class Scene { // CENA!
 	public:
@@ -31,13 +34,15 @@ class Scene { // CENA!
 
 
 
-	std::queue<std::pair<TriangleF, std::pair<uint32_t, bool>>> triqueue;
+	std::queue<std::pair<Triangle3, std::pair<uint32_t, bool>>> triqueue;
 
 	Camera camera;
 
 	Fragment** buffer; // Coordinates are (x, y) where x goes right and y up. This is to align with the projection matrix.
 
-	DirectionalLight light;
+	Vector3 ambientLight = Vector3(0.1, 0.1, 0.1);
+
+	std::vector<Light> lights;
 
 	inline void initBuffer() {
 		SIDE = H > W ? H : W;
@@ -98,6 +103,53 @@ class Scene { // CENA!
 		if (buffer[x][y].ndc.w < F.ndc.w) return;
 		buffer[x][y] = Fragment(F);
 	}
+
+	// Handle the lighting: compute the illumination of a given point.
+	// Params: pRay = source ray direction (from the light source)
+	// position = position in EUCLIDEAN space
+	// baseColor = intended base color of point
+	// specular [0, 1] = rough to smooth
+	// LIT = debug
+
+	inline uint32_t illuminate(Vector3 pRay, Vector3 position, Vector3 normal, uint32_t baseColor, float specular = 0.9, bool LIT = true) {
+		Vector3 col = rgb(baseColor);
+		if (!LIT) return rgb(col);
+		
+		Vector3 I(ambientLight);
+
+		for (auto light : lights) {
+			if (light.TYPE == POINT) {
+				Light pl = light;
+				Vector3 disp = light.transform.origin - position;
+				float dist = disp.length();
+				if (fzero(dist)) I = I + light.intensity;
+				else {
+					dist = dist * pl.attenuation; 
+					float scale = ((disp.normalized() * normal.normalized()) * (1.0 / (dist)));
+					/*
+					std::cout << disp.normalized().to_string() << " " << normal.normalized().to_string() << " " << disp.normalized() * normal.normalized() << "\n";
+					std::cout << dist << "\n";
+					std::cout << scale << " " << light.intensity.to_string() << "\n";
+					std::cout << I.to_string() << "\n";
+					std::cout << (light.intensity * fmax(scale, 0)).to_string() << "\n";
+					*/
+					I = I + (light.intensity * clamp(scale, 0, 1));
+					// std::cout << I.to_string() << "\n";
+				}
+			}
+			if (I.x > 1) I.x = 1;
+			if (I.y > 1) I.y = 1;
+			if (I.z > 1) I.z = 1;
+		}
+
+		// std::cout << position.to_string() << " = " << I.to_string() << "\n";
+
+
+		Vector3 res(col.x * I.x, col.y * I.y, col.z * I.z);
+		return rgb(res);
+	}
+
+	// The rest of this class deals with drawing primitives such as triangles.
 
 	// Bresanham's method
 
@@ -338,7 +390,9 @@ class Scene { // CENA!
 				}
 			}
 
-			for (int xx = x1; xx <= x2; xx++) DrawTriFrag(s, xx, y1, c);
+			for (int xx = x1; xx <= x2 + 1; xx++) {
+				DrawTriFrag(s, xx, y1, c);
+			}
 		}
 	}
 
@@ -417,10 +471,19 @@ class Scene { // CENA!
 				}
 			}
 
-			for (int xx = x1; xx <= x2; xx++) DrawTriFrag(s, xx, y1, c);
+			for (int xx = x1; xx <= x2 + 1; xx++) {
+				DrawTriFrag(s, xx, y1, c);
+			}
 		}
 	}
 
+	inline void fillTopFlat(TriangleF s, float bx1, float bx2, float by, float tx, float ty, uint32_t c) {
+		fillTopFlat(s, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), iceil(by), iround(tx), ifloor(ty), c);
+	}
+
+	inline void fillBotFlat(TriangleF s, float bx1, float bx2, float by, float tx, float ty, uint32_t c) {
+		fillBotFlat(s, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), ifloor(by), iround(tx), iceil(ty), c);
+	}
 	inline void fillTriangleFast(TriangleF& t, uint32_t c) {
 		// drawTriangle(t, c);
 		TriangleF s(t);
@@ -428,8 +491,8 @@ class Scene { // CENA!
 		if (s.p[2].ndc.y < s.p[0].ndc.y) std::swap(s.p[2], s.p[0]);
 		if (s.p[2].ndc.y < s.p[1].ndc.y) std::swap(s.p[2], s.p[1]);
 
-		if (fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, iround(s.p[1].ndc.x), iround(s.p[2].ndc.x), iround(s.p[1].ndc.y), iround(s.p[0].ndc.x), iround(s.p[0].ndc.y), c);
-		else if (fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, iround(s.p[0].ndc.x), iround(s.p[1].ndc.x), iround(s.p[0].ndc.y), iround(s.p[2].ndc.x), iround(s.p[2].ndc.y), c);
+		if (fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, c);
+		else if (fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, c);
 	
 		else {
 			float divx = s.p[0].ndc.x + (s.p[2].ndc.x - s.p[0].ndc.x) * (s.p[1].ndc.y - s.p[0].ndc.y) / (s.p[2].ndc.y - s.p[0].ndc.y);
@@ -475,20 +538,23 @@ class Scene { // CENA!
 		return true;
 	}
 
-	inline void drawTriangle(Triangle3 s, uint32_t c, bool BACKFACECULL = false, bool LIGHT = false) {
+	inline void drawTriangle(Triangle3 s, uint32_t c, bool BACKFACECULL = false) {
 		if (BACKFACECULL && BackFaceCull(s)) return;
-		if (LIGHT) c = colmul(c, -(s.N * light.dir));
+		Vector3 cen = s.centroid();
+		c = illuminate(cen, cen, s.N, c);
 		auto p = project(s);
 		if (clip(p)) return;
 		drawTriangle(p, c);
 	}
 
-	inline void fillTriangle(Triangle3 s, uint32_t c, bool BACKFACECULL = true, bool LIGHT = true) {
+	inline void fillTriangle(Triangle3 s, uint32_t c, bool BACKFACECULL = true) {
 		if (BACKFACECULL && BackFaceCull(s)) {
 			// std::cout << "CULLED\n";
 			return;
 		}
-		if (LIGHT) c = colmul(c, -(s.N * light.dir));
+		Vector3 cen = s.centroid();
+		c = illuminate(cen, cen, s.N, c);
+
 		auto p = project(s);
 		if (clip(p)) return;
 		fillTriangle(p, c);
@@ -498,25 +564,24 @@ class Scene { // CENA!
 
 	// draw a MESH
 
-	inline void drawMesh(Mesh& m, uint32_t c, bool BACKFACECULL = false, bool LIGHT = false) {
+	inline void drawMesh(Mesh& m, uint32_t c, bool BACKFACECULL = false) {
 		for (int i = 0; i < m.size; i++) {
-			drawTriangle(m.tris[i], c, BACKFACECULL, LIGHT);
+			drawTriangle(m.tris[i], c, BACKFACECULL);
 		}
 	}
 
-	inline void fillMesh(Mesh& m, uint32_t c, bool BACKFACECULL = true, bool LIGHT = true) {
+	inline void fillMesh(Mesh& m, uint32_t c, bool BACKFACECULL = true) {
 		for (int i = 0; i < m.size; i++) {
 			// if (i % 64 == 0) std::cout << i << "/" << m.size << "...\n";
-			fillTriangle(m.tris[i], c, BACKFACECULL, LIGHT);
+			fillTriangle(m.tris[i], c, BACKFACECULL);
 		}
 	}
 
 	// Queue various meshes and triangles to be drawn
 
-	inline void QueueTriangle(Triangle3 s, uint32_t c, bool FILL = false, bool BACKFACECULL = true, bool LIGHT = true) {
+	inline void QueueTriangle(Triangle3 s, uint32_t c, bool FILL = false, bool BACKFACECULL = true) {
 		if (BACKFACECULL && BackFaceCull(s)) return;
-		if (LIGHT) c = colmul(c, -(s.N * light.dir));
-		triqueue.push({project(s), {c, FILL}});
+		triqueue.push({s, {c, FILL}});
 	}
 
 	inline void QueueMesh(Mesh& m, uint32_t c, bool FILL = true) {

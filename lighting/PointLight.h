@@ -1,5 +1,5 @@
-#ifndef DIR_LIGHT_EXT
-#define DIR_LIGHT_EXT
+#ifndef PT_LIGHT_EXT
+#define PT_LIGHT_EXT
 
 #include "../utils/math/UTIL.h"
 #include "../utils/math/Vectors.h"
@@ -7,17 +7,25 @@
 
 class PointLight : public Light {
 	public:
-	float attenuation = 0.5;
 
 	PointLight() {
-
+		attenuation = 1;
+		TYPE = POINT;
 	}
 
 	PointLight(Vector3 i) {
+		attenuation = 1;
+		TYPE = POINT;
 		intensity = Vector3(i);
 	}
 
+	PointLight(float a) {
+		attenuation = a;
+		TYPE = POINT;
+	}
+
 	PointLight(Vector3 i, float a) {
+		TYPE = POINT;
 		intensity = Vector3(i);
 		attenuation = a;
 	}

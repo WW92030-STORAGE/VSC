@@ -112,11 +112,19 @@ Yes, there is some ray tracing involved.
 But it's a lot less involved than a true raytracer--while a true raytracer computes one or more illuminations per pixel, this rasterizer uses triangles to compute small numbers of illuminations and then interpolating between vertices and triangle faces.  
   
 Primitives.h  
-- Method to calculate when a Plane intersects a ray (line) with origin and unit vector direction (NaN for null intersection)
+- Method to calculate when a Plane intersects a ray (line) with origin and unit vector direction (NaN for null intersection).  
 Triangle.h  
-- Method to calculate when a Triangle3 intersects a ray with origin and unit vector direction (NaN for null intersection).
+- Method to calculate when a Triangle3 intersects a ray with origin and unit vector direction (NaN for null intersection).  
+Shapes.h  
+- Added some hardcoded meshes for basic shapes.  
+  
 # 7 - LIGHT AND SHADOW
-
+  
+PointLight.h  
+- Point light class with an attenuation. Also modified the base Light class to enclose the intensity as a Vector3 (three channels).  
+Scene.h  
+- Added an illuminate method which does raycasting to compute the illumination of a point given the primary ray, position, base color, etc.  
+  
 # 8 - VISIBILITY
 
 # 9 - POLYGONS

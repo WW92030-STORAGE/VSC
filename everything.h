@@ -13,6 +13,7 @@
 // Geometry and objects
 
 #include "utils/geometry/Primitives.h"
+#include "utils/geometry/Shapes.h"
 #include "objects/Object.h"
 #include "objects/Triangle.h"
 #include "objects/Mesh.h"
@@ -24,6 +25,7 @@
 #include "camera/Camera.h"
 #include "lighting/Light.h"
 #include "lighting/DirectionalLight.h"
+#include "lighting/PointLight.h"
 
 // Scene
 

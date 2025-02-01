@@ -28,6 +28,14 @@ inline float round(float f) {
     return floorf(f + 0.5);
 }
 
+inline int ifloor(float f) {
+    return (int)(floorf(f));
+}
+
+inline int iceil(float f) {
+    return (int)(ceilf(f));
+}
+
 inline int iround(float f) {
     return (int)(round(f));
 }

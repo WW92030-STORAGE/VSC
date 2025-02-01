@@ -39,44 +39,12 @@ inline void basictest() {
 	s.fillTriangle(UUU, 0x808080FF);
 }
 
-// TEST 1 KULDE
+// TEST 1 KULDE (Updated to use Shapes.h for the cube)
 inline void cubetest() {
 	Vector3 OFFSET(21, -61, -30);
-	int X = 40; // cube side length
-
-	Vector3 FFF(0, 0, 0);
-	Vector3 TFF(X, 0, 0);
-	Vector3 FTF(0, X, 0);
-	Vector3 TTF(X, X, 0);
-	Vector3 FFT(0, 0, -X);
-	Vector3 TFT(X, 0, -X);
-	Vector3 FTT(0, X, -X);
-	Vector3 TTT(X, X, -X);
-
-	FFF = FFF + OFFSET;
-	TFF = TFF + OFFSET;
-	FTF = FTF + OFFSET;
-	TTF = TTF + OFFSET;
-	FFT = FFT + OFFSET;
-	TFT = TFT + OFFSET;
-	FTT = FTT + OFFSET;
-	TTT = TTT + OFFSET;
-
-	Triangle3* tris = new Triangle3[12] {Triangle3(FFF, TFF, FTF), 
-	Triangle3(TFF, TTF, FTF),
-	Triangle3(FFF, FTF, FFT),
-	Triangle3(FTF, FTT, FFT),
-	Triangle3(FFF, FFT, TFF),
-	Triangle3(FFT, TFT, TFF),
-	Triangle3(TTT, TFT, FTT),
-	Triangle3(FTT, TFT, FFT),
-	Triangle3(TTT, TTF, TFT),
-	Triangle3(TFT, TTF, TFF),
-	Triangle3(TTT, FTT, TTF),
-	Triangle3(TTF, FTT, FTF)
-	};
-
-	Mesh kulde(tris, 12);
+	
+	Mesh kulde = cube(40);
+	kulde.Trans(OFFSET);
 
 	Matrix3 rot1 = Rotation3(Vector3(0, 1, 0), M_PI / 4);
 
@@ -92,6 +60,10 @@ inline void cubetest() {
 	int N = 256;
 
 	Scene s(N, N);
+
+	PointLight PL(Vector3(1, 1, 1), 0.1);
+	PL.Trans(Transform(Vector3(-1, 1, 0)));
+	s.lights.push_back(PL);
 
 	s.clearBuffer();
 
@@ -281,7 +253,7 @@ inline void multipletest() {
 }
 
 // TEST 4 HALEY
-// This is the same as TEST 3 ANDAM except with the camera and directional light rotated.
+// This is the same as TEST 3 ANDAM except with the camera rotated.
 inline void camtest() {
 	Mesh haley = Mesh::fromOBJ(MESHES + "/cube.obj");
 
@@ -338,10 +310,60 @@ inline void camtest() {
 	s.outputBuffer(BUFFER_PATH);
 }
 
+// TEST 5 LAO SHI
+// This is similar to TEST 3 ANDAM except with a better light and usage of new shape methods to get premade meshes.
+inline void lighttest() {
+	Mesh lao = icosphere(1, 3);
+
+	float SSS = 1;
+
+	Transform offset(Vector3(0, -2, -4) * SSS, Rotation3(Vector3(1, 1, 1), M_PI / 8));
+	lao.Trans(offset);
+
+	Mesh shi(lao);
+
+	shi.Trans(Transform(Vector3(2, 2, -4)));
+
+	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
+	proto.ForceTrans(Transform(Vector3(-2, -2, -2), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
+	
+	int N = 1024;
+
+	Scene s(N, N);
+
+	PointLight PL(Vector3(1, 0, 0), 0.25);
+	PL.Trans(Transform(Vector3(-4, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight PL2(Vector3(0, 1, 1), 0.25);
+	PL2.Trans(Transform(Vector3(8, -4, -3)));
+	s.lights.push_back(PL2);
+
+	s.clearBuffer();
+
+	auto start = std::chrono::high_resolution_clock::now();
+
+	s.QueueMesh(lao, 0xFFFFFFFF, true);
+	s.QueueMesh(shi, 0xFFFFFFFF, true);
+	s.QueueMesh(proto, 0xFFFFFFFF);
+
+	std::cout << "THING\n";
+
+	s.drawQueue();
+
+	auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << double(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count()) / 1000000 << "ns\n";
+
+	// s.outputFrags("OUT");
+
+	s.outputBuffer(BUFFER_PATH);
+}
+
 
 int main() {
 
 	// basictest();
+
 	// cubetest();
 
 	// animtest();
@@ -352,6 +374,8 @@ int main() {
 
 	// multipletest();
 
-	camtest();
+	// camtest();
+
+	lighttest();
 	return 0;
 }
