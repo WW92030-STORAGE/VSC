@@ -14,6 +14,7 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 #include <vector>
 #include <utility>
 #include <cstdlib>
+#include <map>
 
 #include "Triangle.h"
 #include "Object.h"
@@ -25,14 +26,59 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 class Mesh : public Object {
 	public:
 	int size;
+	int nverts;
 
 	Triangle3* tris; // WARNING - This is an array of TRIANGLES
+	Vector3* verts; // Array of vertices
+	int** triindices; // The same array of triangles, except this time in terms of the indices in the verts array.
+
+	Vector3* vn; // Vertex normals. Initialized when we do setupvertsntris() but can also be manually set e.g. when looking thru a .obj file.
 	
+	// Initialize vertices and triangle index directory from triangles.
+	inline void setupvertsntris() {
+		std::map<Vector3, int> vm;
+		std::vector<Vector3> temp;
+		std::vector<Vector3> tn; // temp normals
+
+		triindices = new int*[size];
+		for (int i = 0; i < size; i++) {
+			int* ti = new int[3];
+			for (int s = 0; s < 3; s++) {
+				Vector3 pp(tris[i].p[s]); // current vertex
+				if (vm.find(pp) == vm.end()) {
+					vm.insert({Vector3(pp), temp.size()});
+					temp.push_back(Vector3(pp));
+					tn.push_back(Vector3());
+				}
+				// vm.at(pp) is the index of the vertex in the vertices array
+				ti[s] = vm.at(pp);
+				tn[vm.at(pp)] = tn[vm.at(pp)] + tris[i].N;
+			}
+			triindices[i] = ti;
+		}
+
+		nverts = temp.size();
+		verts = new Vector3[nverts];
+		vn = new Vector3[nverts];
+		for (int i = 0; i < nverts; i++) {
+			verts[i] = Vector3(temp[i]);
+			vn[i] = tn[i].normalized();
+		}
+
+	}
+
+	inline void resetup() {
+		delete[] triindices;
+		delete[] verts;
+		delete[] vn;
+		
+		setupvertsntris();
+	}
 
 	Mesh() { // Default cube
 
 		const int X = 2;
-		Vector3 OFFSET(-1, -1, -1);
+		Vector3 OFFSET = Vector3(-1, -1, 1) * X;
 		
 	Vector3 FFF(0, 0, 0);
 	Vector3 TFF(X, 0, 0);
@@ -67,24 +113,33 @@ class Mesh : public Object {
 	};
 
 	size = 12;
+
+	setupvertsntris();
+
 	}
 
 	Mesh(int sz) {
 		size = sz;
 		tris = new Triangle3[sz];
 		for (int i = 0; i < sz; i++) tris[i] = Triangle3();
+
+		setupvertsntris();
 	}
 
 	Mesh(Triangle3* tt, int sz) {
 		size = sz;
 		tris = new Triangle3[sz];
 		for (int i = 0; i < sz; i++) tris[i] = Triangle3(tt[i]);
+
+		setupvertsntris();
 	}
 
 	Mesh(const Mesh& other) {
 		size = other.size;
 		tris = new Triangle3[size];
 		for (int i = 0; i < size; i++) tris[i] = Triangle3(other.tris[i]);
+
+		setupvertsntris();
 	}
 
 	void Trans(Transform t) override {
@@ -95,7 +150,7 @@ class Mesh : public Object {
 			tris[i].N = tris[i].normal();
 		}
 
-		sortTrix();
+		resetup();
 	}
 
 	void ForceTrans(Transform t) override {
@@ -105,10 +160,8 @@ class Mesh : public Object {
 			tris[i].N = tris[i].normal();
 		}
 
-		sortTrix();
+		resetup();
 	}
-
-	// Sort the triangles by z order
 
 	static int comp (const void * a, const void * b) {
 		float x = (*(Triangle3*)a).centroid().z;
@@ -119,13 +172,20 @@ class Mesh : public Object {
 		return 0;
 	}
 
-	void sortTrix() {
-		
-		qsort(tris, size, sizeof(Triangle3), Mesh::comp);
+	// Get Vertex Normal For Vertex
+	inline Vector3 getVertexNormal(Vector3 v) {
+		for (int i = 0; i < nverts; i++) {
+			if (v == verts[i]) return Vector3(vn[i]);
+		}
+		return Vector3();
 	}
 
 	~Mesh() {
 		delete[] tris;
+		for (int i = 0; i < size; i++) delete[] triindices[i];
+		delete[] triindices;
+		delete[] verts;
+		delete[] vn;
 	}
 
 
@@ -195,9 +255,6 @@ class Mesh : public Object {
 		for (int i = 0; i < tris.size(); i++) triangles[i] = tris[i];
 
 		Mesh mesh(triangles, tris.size());
-
-		mesh.sortTrix();
-
 		return mesh;
 	}
 };

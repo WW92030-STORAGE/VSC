@@ -263,7 +263,7 @@ class Scene { // CENA!
 
 	// Backface cull
 	inline bool BackFaceCull(Triangle3 s) {
-		return (s.N * (s.p[0] - camera.transform.origin)) > 0;
+		return (s.N * (s.p[0] - camera.transform.origin)) >= 0;
 	}
 
 	// The updated version takes a Triangle3 and returns a triangle of fragments.
@@ -301,9 +301,27 @@ class Scene { // CENA!
 		drawTriangle(t, c);
 	}
 
-	inline void DrawTriFrag(TriangleF s, int x, int y, uint32_t c) {
+	inline void DrawTriFrag(TriangleF s, int x, int y) {
 		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[1].ndc.z);
 		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[1].ndc.w);
+
+		Vector3 b = s.bary(x, y);
+		// if (b.x > 1 || b.y > 1 || b.z > 1) return;
+		b.x = clamp(b.x, 0, 1);
+		b.y = clamp(b.y, 0, 1);
+		b.z = clamp(b.z, 0, 1);
+		if (!fzero(b.x + b.y + b.z)) {
+			float sum = b.x + b.y + b.z;
+			b.x /= sum;
+			b.y /= sum;
+			b.z /= sum;
+		}
+
+		// std::cout << s.to_string() << " " << x <<  " " << y << " = " << b.to_string() << "\n\n";
+
+		Vector3 theColor;
+		for (int i = 0; i < 3; i++) theColor = theColor + rgb(s.p[i].color) * b.get(i);
+		uint32_t c = rgb(theColor);
 		Fragment F(Vector4(x, y, zc, wc), Vector3(s.ON), c);
 
 		// std::cout << s.bary(x, y).to_string() << " " << F.ndc.z << " " << F.ndc.w << " = " << F.color << "\n";
@@ -315,7 +333,7 @@ class Scene { // CENA!
 
 	// Fill a triangle with a flat bottom: draw the lines (t, b1) and (t, b2) and scan along the way
 	// s is the ORIGINAL triangle we reference.
-	inline void fillBotFlat(TriangleF s, int bx1, int bx2, int by, int tx, int ty, uint32_t c) {
+	inline void fillBotFlat(TriangleF s, int bx1, int bx2, int by, int tx, int ty) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		int dx1 = tx - bx1;
 		int dx2 = tx - bx2;
@@ -342,7 +360,7 @@ class Scene { // CENA!
 				// Line is shallow
 				bool f = false;
 				if (abs(dx1) >= dy) {
-					DrawTriFrag(s, x1, y1, c);
+					DrawTriFrag(s, x1, y1);
 					if (D1 > 0) {
 						y1 = y1 + 1;
 						D1 += 2 * (dy - abs(dx1));
@@ -354,7 +372,7 @@ class Scene { // CENA!
 				}
 				// Line is steep
 				else {
-					DrawTriFrag(s, x1, y1, c);
+					DrawTriFrag(s, x1, y1);
 					if (D1 > 0) {
 						x1 += Rx1;
 						D1 += 2 * (abs(dx1) - dy);
@@ -368,7 +386,7 @@ class Scene { // CENA!
 			while (true) {
 				bool f = false;
 				if (abs(dx2) >= dy) {
-					DrawTriFrag(s, x2, y2, c);
+					DrawTriFrag(s, x2, y2);
 					if (D2 > 0) {
 						y2 = y2 + 1;
 						D2 += 2 * (dy - abs(dx2));
@@ -379,7 +397,7 @@ class Scene { // CENA!
 					if (f) break;
 				}
 				else {
-					DrawTriFrag(s, x2, y2, c);
+					DrawTriFrag(s, x2, y2);
 					if (D2 > 0) {
 						x2 += Rx2;
 						D2 += 2 * (abs(dx2) - dy);
@@ -391,12 +409,12 @@ class Scene { // CENA!
 			}
 
 			for (int xx = x1; xx <= x2 + 1; xx++) {
-				DrawTriFrag(s, xx, y1, c);
+				DrawTriFrag(s, xx, y1);
 			}
 		}
 	}
 
-	inline void fillTopFlat(TriangleF s, int bx1, int bx2, int by, int tx, int ty, uint32_t c) {
+	inline void fillTopFlat(TriangleF s, int bx1, int bx2, int by, int tx, int ty) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		int dx1 = bx1 - tx;
 		int dx2 = bx2 - tx;
@@ -423,7 +441,7 @@ class Scene { // CENA!
 				// Line is shallow
 				bool f = false;
 				if (abs(dx1) >= dy) {
-					DrawTriFrag(s, x1, y1, c);
+					DrawTriFrag(s, x1, y1);
 					if (D1 > 0) {
 						y1 = y1 + Ry;
 						D1 += 2 * (dy - abs(dx1));
@@ -435,7 +453,7 @@ class Scene { // CENA!
 				}
 				// Line is steep
 				else {
-					DrawTriFrag(s, x1, y1, c);
+					DrawTriFrag(s, x1, y1);
 					if (D1 > 0) {
 						x1 += Rx1;
 						D1 += 2 * (abs(dx1) - dy);
@@ -449,7 +467,7 @@ class Scene { // CENA!
 			while (true) {
 				bool f = false;
 				if (abs(dx2) >= dy) {
-					DrawTriFrag(s, x2, y2, c);
+					DrawTriFrag(s, x2, y2);
 					if (D2 > 0) {
 						y2 = y2 + Ry;
 						D2 += 2 * (dy - abs(dx2));
@@ -460,7 +478,7 @@ class Scene { // CENA!
 					if (f) break;
 				}
 				else {
-					DrawTriFrag(s, x2, y2, c);
+					DrawTriFrag(s, x2, y2);
 					if (D2 > 0) {
 						x2 += Rx2;
 						D2 += 2 * (abs(dx2) - dy);
@@ -472,38 +490,38 @@ class Scene { // CENA!
 			}
 
 			for (int xx = x1; xx <= x2 + 1; xx++) {
-				DrawTriFrag(s, xx, y1, c);
+				DrawTriFrag(s, xx, y1);
 			}
 		}
 	}
 
-	inline void fillTopFlat(TriangleF s, float bx1, float bx2, float by, float tx, float ty, uint32_t c) {
-		fillTopFlat(s, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), iceil(by), iround(tx), ifloor(ty), c);
+	inline void fillTopFlat(TriangleF s, float bx1, float bx2, float by, float tx, float ty) {
+		fillTopFlat(s, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), iceil(by), iround(tx), ifloor(ty));
 	}
 
-	inline void fillBotFlat(TriangleF s, float bx1, float bx2, float by, float tx, float ty, uint32_t c) {
-		fillBotFlat(s, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), ifloor(by), iround(tx), iceil(ty), c);
+	inline void fillBotFlat(TriangleF s, float bx1, float bx2, float by, float tx, float ty) {
+		fillBotFlat(s, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), ifloor(by), iround(tx), iceil(ty));
 	}
-	inline void fillTriangleFast(TriangleF& t, uint32_t c) {
-		// drawTriangle(t, c);
+	inline void fillTriangleFast(TriangleF& t) {
+		// drawTriangle(t);
 		TriangleF s(t);
 		if (s.p[1].ndc.y < s.p[0].ndc.y) std::swap(s.p[0], s.p[1]);
 		if (s.p[2].ndc.y < s.p[0].ndc.y) std::swap(s.p[2], s.p[0]);
 		if (s.p[2].ndc.y < s.p[1].ndc.y) std::swap(s.p[2], s.p[1]);
 
-		if (fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, c);
-		else if (fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, c);
+		if (fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y);
+		else if (fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y);
 	
 		else {
 			float divx = s.p[0].ndc.x + (s.p[2].ndc.x - s.p[0].ndc.x) * (s.p[1].ndc.y - s.p[0].ndc.y) / (s.p[2].ndc.y - s.p[0].ndc.y);
-			fillBotFlat(s, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, c);
-			fillTopFlat(s, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, c);
+			fillBotFlat(s, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y);
+			fillTopFlat(s, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y);
 		}
 	}
 
-	inline void fillTriangle(TriangleF s, uint32_t c, bool OPTIM = true) {
+	inline void fillTriangle(TriangleF s, bool OPTIM = true) {
 		if (OPTIM) {
-			fillTriangleFast(s, c);
+			fillTriangleFast(s);
 			return;
 		}
 
@@ -522,7 +540,7 @@ class Scene { // CENA!
 		for (int x = x0; x <= x1; x++) {
 			for (int y = y0; y <= y1; y++) {
 				if (!s.inside(Vector2(x, y))) continue;
-				DrawTriFrag(s, x, y, c);
+				DrawTriFrag(s, x, y);
 			}
 		}
 	}
@@ -538,24 +556,29 @@ class Scene { // CENA!
 		return true;
 	}
 
-	inline void drawTriangle(Triangle3 s, uint32_t c, bool BACKFACECULL = false) {
+	inline void drawTriangle(Triangle3 s, uint32_t c, Vector3* vn = nullptr, bool BACKFACECULL = false) {
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		Vector3 cen = s.centroid();
-		c = illuminate(cen, cen, s.N, c);
+		// c = illuminate(cen, cen, s.N, c);
 		auto p = project(s);
+		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = vn[i];
+		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, c);
 		if (clip(p)) return;
 		drawTriangle(p, c);
 	}
 
-	inline void fillTriangle(Triangle3 s, uint32_t c, bool BACKFACECULL = true) {
+	inline void fillTriangle(Triangle3 s, uint32_t c, Vector3* vn = nullptr, bool BACKFACECULL = true) {
 		if (BACKFACECULL && BackFaceCull(s)) {
 			// std::cout << "CULLED\n";
 			return;
 		}
 		Vector3 cen = s.centroid();
-		c = illuminate(cen, cen, s.N, c);
+		// c = illuminate(cen, cen, s.N, c);
 
 		auto p = project(s);
+		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = vn[i];
+		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, c);
+		
 		if (clip(p)) return;
 		fillTriangle(p, c);
 	}
@@ -564,20 +587,44 @@ class Scene { // CENA!
 
 	// draw a MESH
 
-	inline void drawMesh(Mesh& m, uint32_t c, bool BACKFACECULL = false) {
+	inline void drawMesh(Mesh& m, uint32_t c, bool SMOOTHSHADE = false, bool BACKFACECULL = false) {
 		for (int i = 0; i < m.size; i++) {
-			drawTriangle(m.tris[i], c, BACKFACECULL);
+			Vector3* vn = new Vector3[3];
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.tris[i].p[s]);
+			bool isna = false;
+			for (int s = 0; s < 3; s++) {
+				if (vn[s] == Vector3()) isna = true;
+			}
+			if (isna) std::cout << "NA\n";
+			drawTriangle(m.tris[i], c, isna ? nullptr : vn, BACKFACECULL);
+			delete[] vn;
 		}
 	}
 
-	inline void fillMesh(Mesh& m, uint32_t c, bool BACKFACECULL = true) {
+	inline void fillMesh(Mesh& m, uint32_t c, bool SMOOTHSHADE = false, bool BACKFACECULL = true) {
+		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
+		// std::cout << "\n" << m.nverts << "\n";
 		for (int i = 0; i < m.size; i++) {
 			// if (i % 64 == 0) std::cout << i << "/" << m.size << "...\n";
-			fillTriangle(m.tris[i], c, BACKFACECULL);
+			Vector3* vn = new Vector3[3];
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.tris[i].p[s]);
+			/*
+			std::cout << "\n";
+			for (int t = 0; t < 3; t++) std::cout << m.tris[i].p[t].to_string() << " / " << vn[t].to_string() << "\n";
+			std::cout << "\n" << m.tris[i].N.to_string() << "\n\n";
+			*/
+			
+			bool isna = false;
+			for (int s = 0; s < 3; s++) {
+				if (vn[s] == Vector3()) isna = true;
+			}
+			isna |= !SMOOTHSHADE;
+			fillTriangle(m.tris[i], c, isna ? nullptr : vn, BACKFACECULL);
+			delete[] vn;
 		}
 	}
 
-	// Queue various meshes and triangles to be drawn
+	// Queue various meshes and triangles to be drawn. WARNING - This will result in flat shading.
 
 	inline void QueueTriangle(Triangle3 s, uint32_t c, bool FILL = false, bool BACKFACECULL = true) {
 		if (BACKFACECULL && BackFaceCull(s)) return;

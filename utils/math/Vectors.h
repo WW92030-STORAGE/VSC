@@ -276,6 +276,12 @@ class Vector3 {
 		return !(fequal(x, other.x) && fequal(y, other.y) && fequal(z, other.z));
 	}
 
+	inline bool operator<(const Vector3& other) const {
+		if (!fequal(x, other.x)) return x < other.x;
+		if (!fequal(y, other.y)) return y < other.y;
+		return z < other.z;
+	}
+
 	// UTIL
 
 	inline std::string to_string() {

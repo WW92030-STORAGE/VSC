@@ -313,7 +313,7 @@ inline void camtest() {
 // TEST 5 LAO SHI
 // This is similar to TEST 3 ANDAM except with a better light and usage of new shape methods to get premade meshes.
 inline void lighttest() {
-	Mesh lao = icosphere(1, 3);
+	Mesh lao = icosphere(1, 2);
 
 	float SSS = 1;
 
@@ -331,21 +331,21 @@ inline void lighttest() {
 
 	Scene s(N, N);
 
-	PointLight PL(Vector3(1, 0, 0), 0.25);
+	PointLight PL(Vector3(1, 1, 1), 0.25);
 	PL.Trans(Transform(Vector3(-4, 2, 0)));
 	s.lights.push_back(PL);
 
 	PointLight PL2(Vector3(0, 1, 1), 0.25);
-	PL2.Trans(Transform(Vector3(8, -4, -3)));
+	PL2.Trans(Transform(Vector3(4, -4, 1)));
 	s.lights.push_back(PL2);
 
 	s.clearBuffer();
 
 	auto start = std::chrono::high_resolution_clock::now();
 
-	s.QueueMesh(lao, 0xFFFFFFFF, true);
-	s.QueueMesh(shi, 0xFFFFFFFF, true);
-	s.QueueMesh(proto, 0xFFFFFFFF);
+	s.fillMesh(lao, 0xFFFFFFFF, true);
+	s.fillMesh(shi, 0xFFFFFFFF, false);
+	// s.fillMesh(proto, 0xFFFFFFFF);
 
 	std::cout << "THING\n";
 
