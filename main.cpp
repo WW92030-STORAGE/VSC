@@ -82,7 +82,7 @@ inline void cubetest() {
 
 // TEST 1.1 OBJ
 inline void objtest() {
-	std::string path = MESHES + "/mcrproto.obj";
+	std::string path = MESHES + "/cube.obj";
 	Mesh mesh = Mesh::fromOBJ(path);
 	Transform movemeback(Vector3(0, -2, -2), Rotation3(Vector3(0, 1, 0), M_PI * 1.25));
 
@@ -104,6 +104,10 @@ inline void objtest() {
 	int N = 1024;
 
 	Scene s(N, N);
+
+	PointLight PL(Vector3(1, 1, 1), 0.25);
+	PL.Trans(Transform(Vector3(0, 2, 0)));
+	s.lights.push_back(PL);
 
 	std::cout << N << "\n";
 
@@ -345,7 +349,7 @@ inline void lighttest() {
 
 	s.fillMesh(lao, 0xFFFFFFFF, true);
 	s.fillMesh(shi, 0xFFFFFFFF, false);
-	// s.fillMesh(proto, 0xFFFFFFFF);
+	s.fillMesh(proto, 0xFFFFFFFF);
 
 	std::cout << "THING\n";
 

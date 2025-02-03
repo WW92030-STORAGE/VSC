@@ -6,7 +6,7 @@ VSC (VOUGA-SHREINER-CANTH) Verified is A 3D rendering engine that is intended to
 Inspired by DoomGeneric with its rather novel approach to separating the backend from the frontend.  
 Also self-inspired by my (NormalExisting's) other C++ backends mostly for games/clones such as The Witness and Chess.  
   
-Written in C++ with the intent of minimizing the usage of C++ heavy libraries such as vector (to reduce the compiled binary size).  
+Written in C++ with the intent of minimizing the usage of C++ heavy libraries (to reduce the compiled binary size).  
 Most data structures are defined in classes here, and mallocs are minimized. Most everything is stack allocated.  
   
 This is a rasterizer. It uses computational techniques to approximate the reality of lights, shadows, textures, and materials.  
@@ -25,6 +25,10 @@ Dave Shreiner (Author of the Official OpenGL Guide)
 Coela Canth (Creator of another rendering engine actually a raytracer)  
 
 VSC Verified is a community-made level created and completed ("verified") by player nSwish in the game Geometry Dash, intended to be a joke but also happens to be extremely challenging. It uses the song "Haven't Met You Yet" by Michael Buble as the background music, and requires several perfectly timed inputs to various rhythms presented by the song.  
+
+# HOW TO USE THIS
+
+Look in the `test` folder for some example runner code. Or you can modify `main.cpp` as the runner. The Makefile provided is a template that builds and runs `main.cpp` and then the `render.py` which renders the contents of the output buffer (The buffer to render is to be specified in `render.py`).
   
 # HOW TO RECREATE THIS  
   

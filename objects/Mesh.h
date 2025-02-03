@@ -7,7 +7,7 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 
 */
 
-// #include <iostream>
+#include <iostream>
 
 #include <string>
 #include <fstream>
@@ -22,6 +22,8 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 #include "../utils/math/Transform.h"
 
 #include "../utils/stringutils.h"
+#include "../utils/LinkedList.h"
+#include "../utils/Utils.h"
 
 class Mesh : public Object {
 	public:
@@ -198,12 +200,77 @@ class Mesh : public Object {
 		return Vector3(v[n - i]);
 	}
 
+	inline static std::vector<Triangle3> TriangulateConvex(std::vector<int> vertices, std::vector<Vector3> verts) {
+		std::vector<Triangle3> tris;
+		
+		Vector3 v0 = vindex(verts, vertices[0]);
+		for (int i = 1; i < vertices.size() - 1; i++) {
+			Vector3 v1 = vindex(verts, vertices[i]);
+			Vector3 v2 = vindex(verts, vertices[i + 1]);
+			tris.push_back(Triangle3(v0, v1, v2));
+		}
+
+		return tris;
+	}
+
+	// Algorithm: until there aRe N - 2 triangles: find 3 consecutive verticEs that are counterclockwise and contain no vertices in the interior.
+	// The three vertices form a triangle, and the middle vertex is clipped.
+	inline static std::vector<Triangle3> Triangulate(std::vector<int> vertices, std::vector<Vector3> verts) {
+
+		std::vector<Triangle3> tris;
+		int N = vertices.size();
+		if (N < 3) return tris;
+
+		if (N == 3) {
+			Vector3 s[3];
+			for (int i = 0; i < 3; i++) s[i] = vindex(verts, vertices[i]);
+			return std::vector<Triangle3>(1, Triangle3(s[0], s[1], s[2]));
+		}
+
+		std::vector<int> v(vertices);
+
+		for (int in = 0; in < N - 2; in++) {
+			int n = v.size();
+			int i = 0;
+			for (i = 0; i < n; i++) {
+				int a = vertices[i];
+				int b = vertices[(i + 1) % n];
+				int c = vertices[(i + 2) % n];
+				auto A = vindex(verts, a);
+				auto B = vindex(verts, b);
+				auto C = vindex(verts, c);
+				Triangle3 testtri(A, B, C);
+				bool ear = true;
+				for (int j = 3; j < n; j++) {
+					auto D = vindex(verts, vertices[(i + j) % n]);
+					if (testtri.inside(D)) {
+						ear = false;
+						break;
+					}
+				}
+				if (ear) break;
+			}
+				int a = vertices[i];
+				int b = vertices[(i + 1) % n];
+				int c = vertices[(i + 2) % n];
+				auto A = vindex(verts, a);
+				auto B = vindex(verts, b);
+				auto C = vindex(verts, c);
+			Triangle3 thetri(A, B, C);
+			tris.push_back(thetri);
+			vertices.erase(vertices.begin() + i);
+		}
+		return tris;
+	}
+
 	static Mesh fromOBJ(std::string filename) {
 		std::ifstream fin(filename);
 
 		std::string line;
 
 		std::vector<Vector3> verts;
+
+		std::vector<Vector3> vn;
 
 		std::vector<Triangle3> tris;
 		while (std::getline(fin, line)) {
@@ -233,18 +300,13 @@ class Mesh : public Object {
 				// positive index i represents verts[i - 1]
 				// negative index -i represents verts[V - i];
 
-				// Face vertices are in counterclockwise order, so we can simply go through them in order.
+				// Triangulate a polygon
 
-				Vector3 v0 = vindex(verts, vertices[0]);
-
-				for (int i = 1; i < vertices.size() - 1; i++) {
-					Vector3 v1 = vindex(verts, vertices[i]);
-					Vector3 v2 = vindex(verts, vertices[i + 1]);
-					tris.push_back(Triangle3(v0, v1, v2));
-				}
+				std::vector<Triangle3> triangulated = Triangulate(vertices, verts);
+				for (auto i : triangulated) tris.push_back(i);
 			}
-			if (sp[0] == "vn") { // TODO later
-
+			if (sp[0] == "vn") { // Vertex normals
+				vn.push_back(Vector3(std::stof(sp[1]), std::stof(sp[2]), std::stof(sp[3])));
 			}
 			if (sp[0] == "vt") { // TODO later
 
@@ -255,6 +317,10 @@ class Mesh : public Object {
 		for (int i = 0; i < tris.size(); i++) triangles[i] = tris[i];
 
 		Mesh mesh(triangles, tris.size());
+
+		// mesh.verts = fromvec<Vector3>(verts);
+		// mesh.vn = fromvec<Vector3>(vn);
+		// mesh.nverts = verts.size();
 		return mesh;
 	}
 };

@@ -1,7 +1,7 @@
 #ifndef SCENE_EXT
 #define SCENE_EXT
 
-#include <iostream>
+// #include <iostream>
 #include <string>
 #include <cstdint>
 #include <fstream>
@@ -595,7 +595,6 @@ class Scene { // CENA!
 			for (int s = 0; s < 3; s++) {
 				if (vn[s] == Vector3()) isna = true;
 			}
-			if (isna) std::cout << "NA\n";
 			drawTriangle(m.tris[i], c, isna ? nullptr : vn, BACKFACECULL);
 			delete[] vn;
 		}
