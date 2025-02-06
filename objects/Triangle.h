@@ -201,7 +201,7 @@ class TriangleF {
 	Vector3 N;
 	Vector3 ON;
 
-	float specular = 0;
+	BaseMaterial material;
 
 	TriangleF() {
 		for (int i = 0; i < 3; i++) p[i] = Fragment(Vector4(i == 0, i == 1, i == 2, 1), Vector3(), 0);
@@ -227,6 +227,8 @@ class TriangleF {
 		for (int i = 0; i < 3; i++) p[i] = Fragment(other.p[i]);
 		N = Vector3(other.N);
 		ON = Vector3(other.ON);
+
+		material = BaseMaterial(other.material);
 	}
 
 	// Orient this triangle so the vertices are in counterclockwise order and the normal has positive z.

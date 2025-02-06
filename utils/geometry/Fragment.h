@@ -4,6 +4,7 @@
 #include <string>
 
 #include "../math/Vectors.h"
+#include "../../scene/Material.h"
 
 class Fragment {
 	public:
@@ -14,7 +15,6 @@ class Fragment {
 	Fragment() {
 		ndc = Vector4(0, 0, FLT_MAX, FLT_MAX);
 		normal = Vector3(0, 0, 1);
-		color = 0;
 	}
 
 	Fragment(Vector4 V, Vector3 N, uint32_t C) {

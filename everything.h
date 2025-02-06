@@ -31,5 +31,6 @@
 
 #include "scene/Color.h"
 #include "scene/Scene.h"
+#include "scene/Material.h"
 
 #endif

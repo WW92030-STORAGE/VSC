@@ -124,7 +124,9 @@ PointLight.h
 - Point light class with an attenuation. Also modified the base Light class to enclose the intensity as a Vector3 (three channels).  
 Scene.h  
 - Added an illuminate method which does raycasting to compute the illumination of a point given the primary ray, position, base color, etc.  
-  
+Material.h
+- Collating of material parameters such as base color and specular
+
 # 8 - VISIBILITY
 
 # 9 - POLYGONS
