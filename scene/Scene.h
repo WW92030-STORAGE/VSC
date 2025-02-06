@@ -120,22 +120,30 @@ class Scene { // CENA!
 		for (auto light : lights) {
 			if (light.TYPE == POINT) {
 				Light pl = light;
-				Vector3 disp = light.transform.origin - position;
-				float dist = disp.length();
-				if (fzero(dist)) I = I + light.intensity;
-				else {
-					dist = dist * pl.attenuation; 
-					float scale = ((disp.normalized() * normal.normalized()) * (1.0 / (dist)));
-					/*
-					std::cout << disp.normalized().to_string() << " " << normal.normalized().to_string() << " " << disp.normalized() * normal.normalized() << "\n";
-					std::cout << dist << "\n";
-					std::cout << scale << " " << light.intensity.to_string() << "\n";
-					std::cout << I.to_string() << "\n";
-					std::cout << (light.intensity * fmax(scale, 0)).to_string() << "\n";
-					*/
-					I = I + (light.intensity * clamp(scale, 0, 1));
-					// std::cout << I.to_string() << "\n";
+				Vector3 L = pl.transform.origin - position;
+				Vector3 shadedIntensity(0, 0, 0);
+
+				// Diffuse term
+				float scale = normal.normalized() * L.normalized();
+				if (scale > 0) shadedIntensity = shadedIntensity + (pl.intensity * scale);
+
+				// Specular term
+
+				if (specular > 0) {
+
+				Vector3 reflected = normal * (2 * normal.dot(L)) - L;
+				float rv = reflected.normalized().dot((position * -1).normalized());
+				if (rv > 0) {
+					float spec = powf(rv, specular);
+					shadedIntensity = shadedIntensity + (pl.intensity * spec);
+					// std::cout << (pl.intensity * spec).to_string() << " " << specular << "\n";
 				}
+
+				}
+
+				shadedIntensity = shadedIntensity / fmax(pl.attenuation * L.length(), 1);
+				
+				I = I + shadedIntensity;
 			}
 			if (I.x > 1) I.x = 1;
 			if (I.y > 1) I.y = 1;
@@ -301,7 +309,7 @@ class Scene { // CENA!
 		drawTriangle(t, c);
 	}
 
-	inline void DrawTriFrag(TriangleF s, int x, int y) {
+	inline void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false) {
 		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[1].ndc.z);
 		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[1].ndc.w);
 
@@ -322,6 +330,20 @@ class Scene { // CENA!
 		Vector3 theColor;
 		for (int i = 0; i < 3; i++) theColor = theColor + rgb(s.p[i].color) * b.get(i);
 		uint32_t c = rgb(theColor);
+
+		if (PHONGSHADE) {
+			Vector3 point;
+			for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * b.get(ss));
+			point.z = 0;
+			for (int ss = 0; ss < 3; ss++) point.z += (1.0 / t.p[ss].z);
+			point.z = 1.0 / point.z;
+
+			Vector3 interpnormal;
+			for (int ss = 0; ss < 3; ss++) interpnormal = interpnormal + s.p[ss].normal * b.get(ss);
+			interpnormal = interpnormal.normalized();
+
+			c = illuminate(point, point, interpnormal, c, s.specular);
+		}
 		Fragment F(Vector4(x, y, zc, wc), Vector3(s.ON), c);
 
 		// std::cout << s.bary(x, y).to_string() << " " << F.ndc.z << " " << F.ndc.w << " = " << F.color << "\n";
@@ -333,7 +355,7 @@ class Scene { // CENA!
 
 	// Fill a triangle with a flat bottom: draw the lines (t, b1) and (t, b2) and scan along the way
 	// s is the ORIGINAL triangle we reference.
-	inline void fillBotFlat(TriangleF s, int bx1, int bx2, int by, int tx, int ty) {
+	inline void fillBotFlat(TriangleF s, Triangle3 t, int bx1, int bx2, int by, int tx, int ty, bool PHONGSHADE = false) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		int dx1 = tx - bx1;
 		int dx2 = tx - bx2;
@@ -360,7 +382,7 @@ class Scene { // CENA!
 				// Line is shallow
 				bool f = false;
 				if (abs(dx1) >= dy) {
-					DrawTriFrag(s, x1, y1);
+					DrawTriFrag(s, t, x1, y1, PHONGSHADE);
 					if (D1 > 0) {
 						y1 = y1 + 1;
 						D1 += 2 * (dy - abs(dx1));
@@ -372,7 +394,7 @@ class Scene { // CENA!
 				}
 				// Line is steep
 				else {
-					DrawTriFrag(s, x1, y1);
+					DrawTriFrag(s, t, x1, y1, PHONGSHADE);
 					if (D1 > 0) {
 						x1 += Rx1;
 						D1 += 2 * (abs(dx1) - dy);
@@ -386,7 +408,7 @@ class Scene { // CENA!
 			while (true) {
 				bool f = false;
 				if (abs(dx2) >= dy) {
-					DrawTriFrag(s, x2, y2);
+					DrawTriFrag(s, t, x2, y2, PHONGSHADE);
 					if (D2 > 0) {
 						y2 = y2 + 1;
 						D2 += 2 * (dy - abs(dx2));
@@ -397,7 +419,7 @@ class Scene { // CENA!
 					if (f) break;
 				}
 				else {
-					DrawTriFrag(s, x2, y2);
+					DrawTriFrag(s, t, x2, y2);
 					if (D2 > 0) {
 						x2 += Rx2;
 						D2 += 2 * (abs(dx2) - dy);
@@ -409,12 +431,12 @@ class Scene { // CENA!
 			}
 
 			for (int xx = x1; xx <= x2 + 1; xx++) {
-				DrawTriFrag(s, xx, y1);
+				DrawTriFrag(s, t, xx, y1, PHONGSHADE);
 			}
 		}
 	}
 
-	inline void fillTopFlat(TriangleF s, int bx1, int bx2, int by, int tx, int ty) {
+	inline void fillTopFlat(TriangleF s, Triangle3 t, int bx1, int bx2, int by, int tx, int ty, bool PHONGSHADE = false) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		int dx1 = bx1 - tx;
 		int dx2 = bx2 - tx;
@@ -441,7 +463,7 @@ class Scene { // CENA!
 				// Line is shallow
 				bool f = false;
 				if (abs(dx1) >= dy) {
-					DrawTriFrag(s, x1, y1);
+					DrawTriFrag(s, t, x1, y1, PHONGSHADE);
 					if (D1 > 0) {
 						y1 = y1 + Ry;
 						D1 += 2 * (dy - abs(dx1));
@@ -453,7 +475,7 @@ class Scene { // CENA!
 				}
 				// Line is steep
 				else {
-					DrawTriFrag(s, x1, y1);
+					DrawTriFrag(s, t, x1, y1, PHONGSHADE);
 					if (D1 > 0) {
 						x1 += Rx1;
 						D1 += 2 * (abs(dx1) - dy);
@@ -467,7 +489,7 @@ class Scene { // CENA!
 			while (true) {
 				bool f = false;
 				if (abs(dx2) >= dy) {
-					DrawTriFrag(s, x2, y2);
+					DrawTriFrag(s, t, x2, y2, PHONGSHADE);
 					if (D2 > 0) {
 						y2 = y2 + Ry;
 						D2 += 2 * (dy - abs(dx2));
@@ -478,7 +500,7 @@ class Scene { // CENA!
 					if (f) break;
 				}
 				else {
-					DrawTriFrag(s, x2, y2);
+					DrawTriFrag(s, t, x2, y2, PHONGSHADE);
 					if (D2 > 0) {
 						x2 += Rx2;
 						D2 += 2 * (abs(dx2) - dy);
@@ -490,38 +512,46 @@ class Scene { // CENA!
 			}
 
 			for (int xx = x1; xx <= x2 + 1; xx++) {
-				DrawTriFrag(s, xx, y1);
+				DrawTriFrag(s, t, xx, y1, PHONGSHADE);
 			}
 		}
 	}
 
-	inline void fillTopFlat(TriangleF s, float bx1, float bx2, float by, float tx, float ty) {
-		fillTopFlat(s, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), iceil(by), iround(tx), ifloor(ty));
+	inline void fillTopFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false) {
+		fillTopFlat(s, t, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), iceil(by), iround(tx), ifloor(ty), PHONGSHADE);
 	}
 
-	inline void fillBotFlat(TriangleF s, float bx1, float bx2, float by, float tx, float ty) {
-		fillBotFlat(s, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), ifloor(by), iround(tx), iceil(ty));
+	inline void fillBotFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false) {
+		fillBotFlat(s, t, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), ifloor(by), iround(tx), iceil(ty), PHONGSHADE);
 	}
-	inline void fillTriangleFast(TriangleF& t) {
+	inline void fillTriangleFast(TriangleF s, Triangle3 T, bool PHONGSHADE = false) {
 		// drawTriangle(t);
-		TriangleF s(t);
-		if (s.p[1].ndc.y < s.p[0].ndc.y) std::swap(s.p[0], s.p[1]);
-		if (s.p[2].ndc.y < s.p[0].ndc.y) std::swap(s.p[2], s.p[0]);
-		if (s.p[2].ndc.y < s.p[1].ndc.y) std::swap(s.p[2], s.p[1]);
+		if (s.p[1].ndc.y < s.p[0].ndc.y) {
+			std::swap(s.p[0], s.p[1]);
+			std::swap(T.p[0], T.p[1]);
+		}
+		if (s.p[2].ndc.y < s.p[0].ndc.y) {
+			std::swap(s.p[2], s.p[0]);
+			std::swap(T.p[2], T.p[0]);
+		}
+		if (s.p[2].ndc.y < s.p[1].ndc.y) {
+			std::swap(s.p[2], s.p[1]);
+			std::swap(T.p[2], T.p[1]);
+		}
 
-		if (fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y);
-		else if (fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y);
+		if (fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, T, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
+		else if (fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, T, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
 	
 		else {
 			float divx = s.p[0].ndc.x + (s.p[2].ndc.x - s.p[0].ndc.x) * (s.p[1].ndc.y - s.p[0].ndc.y) / (s.p[2].ndc.y - s.p[0].ndc.y);
-			fillBotFlat(s, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y);
-			fillTopFlat(s, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y);
+			fillBotFlat(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
+			fillTopFlat(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
 		}
 	}
 
-	inline void fillTriangle(TriangleF s, bool OPTIM = true) {
+	inline void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, bool OPTIM = true) {
 		if (OPTIM) {
-			fillTriangleFast(s);
+			fillTriangleFast(s, T, PHONGSHADE);
 			return;
 		}
 
@@ -540,7 +570,7 @@ class Scene { // CENA!
 		for (int x = x0; x <= x1; x++) {
 			for (int y = y0; y <= y1; y++) {
 				if (!s.inside(Vector2(x, y))) continue;
-				DrawTriFrag(s, x, y);
+				DrawTriFrag(s, T, x, y, PHONGSHADE);
 			}
 		}
 	}
@@ -556,18 +586,20 @@ class Scene { // CENA!
 		return true;
 	}
 
-	inline void drawTriangle(Triangle3 s, uint32_t c, Vector3* vn = nullptr, bool BACKFACECULL = false) {
+	inline void drawTriangle(Triangle3 s, uint32_t c, float specular = 0, Vector3* vn = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false) {
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		Vector3 cen = s.centroid();
 		// c = illuminate(cen, cen, s.N, c);
 		auto p = project(s);
+		p.specular = specular;
+		if (!vn) PHONGSHADE = false;
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = vn[i];
-		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, c);
+		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, c, specular);
 		if (clip(p)) return;
-		drawTriangle(p, c);
+		drawTriangle(p, PHONGSHADE);
 	}
 
-	inline void fillTriangle(Triangle3 s, uint32_t c, Vector3* vn = nullptr, bool BACKFACECULL = true) {
+	inline void fillTriangle(Triangle3 s, uint32_t c, float specular = 0, Vector3* vn = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false) {
 		if (BACKFACECULL && BackFaceCull(s)) {
 			// std::cout << "CULLED\n";
 			return;
@@ -576,18 +608,20 @@ class Scene { // CENA!
 		// c = illuminate(cen, cen, s.N, c);
 
 		auto p = project(s);
+		p.specular = specular;
+		if (!vn) PHONGSHADE = false;
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = vn[i];
-		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, c);
+		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, c, specular);
 		
 		if (clip(p)) return;
-		fillTriangle(p, c);
+		fillTriangle(p, s, PHONGSHADE);
 	}
 
 
 
 	// draw a MESH
 
-	inline void drawMesh(Mesh& m, uint32_t c, bool SMOOTHSHADE = false, bool BACKFACECULL = false) {
+	inline void drawMesh(Mesh& m, uint32_t c, float specular = 0, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool BACKFACECULL = false) {
 		for (int i = 0; i < m.size; i++) {
 			Vector3* vn = new Vector3[3];
 			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.tris[i].p[s]);
@@ -595,12 +629,13 @@ class Scene { // CENA!
 			for (int s = 0; s < 3; s++) {
 				if (vn[s] == Vector3()) isna = true;
 			}
-			drawTriangle(m.tris[i], c, isna ? nullptr : vn, BACKFACECULL);
+			isna |= SMOOTHSHADE;
+			drawTriangle(m.tris[i], c, specular, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE);
 			delete[] vn;
 		}
 	}
 
-	inline void fillMesh(Mesh& m, uint32_t c, bool SMOOTHSHADE = false, bool BACKFACECULL = true) {
+	inline void fillMesh(Mesh& m, uint32_t c, float specular = 0, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool BACKFACECULL = true) {
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
 		// std::cout << "\n" << m.nverts << "\n";
 		for (int i = 0; i < m.size; i++) {
@@ -618,7 +653,7 @@ class Scene { // CENA!
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= !SMOOTHSHADE;
-			fillTriangle(m.tris[i], c, isna ? nullptr : vn, BACKFACECULL);
+			fillTriangle(m.tris[i], c, specular, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE);
 			delete[] vn;
 		}
 	}

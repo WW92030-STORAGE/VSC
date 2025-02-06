@@ -317,7 +317,7 @@ inline void camtest() {
 // TEST 5 LAO SHI
 // This is similar to TEST 3 ANDAM except with a better light and usage of new shape methods to get premade meshes.
 inline void lighttest() {
-	Mesh lao = icosphere(1, 2);
+	Mesh lao = icosphere(1, 4);
 
 	float SSS = 1;
 
@@ -326,30 +326,86 @@ inline void lighttest() {
 
 	Mesh shi(lao);
 
-	shi.Trans(Transform(Vector3(2, 2, -4)));
+	shi.Trans(Transform(Vector3(2, 2, -1)));
 
-	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
-	proto.ForceTrans(Transform(Vector3(-2, -2, -2), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
+	// Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
+	Mesh proto = icosphere(1, 4);
+	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.5)));
 	
 	int N = 1024;
 
 	Scene s(N, N);
 
-	PointLight PL(Vector3(1, 1, 1), 0.25);
-	PL.Trans(Transform(Vector3(-4, 2, 0)));
-	s.lights.push_back(PL);
+	float A = 0.05;
 
-	PointLight PL2(Vector3(0, 1, 1), 0.25);
-	PL2.Trans(Transform(Vector3(4, -4, 1)));
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-4, 2, 2)));
+	// s.lights.push_back(PL);
+
+	PointLight PL2(Vector3(0, 1, 1), A);
+	PL2.Trans(Transform(Vector3(2, 1, 0)));
 	s.lights.push_back(PL2);
 
 	s.clearBuffer();
 
 	auto start = std::chrono::high_resolution_clock::now();
 
-	s.fillMesh(lao, 0xFFFFFFFF, true);
-	s.fillMesh(shi, 0xFFFFFFFF, false);
+	s.fillMesh(lao, 0xFFFFFFFF, 64, true, true);
+	s.fillMesh(shi, 0xFFFFFFFF, 0, true);
 	s.fillMesh(proto, 0xFFFFFFFF);
+
+	std::cout << "THING\n";
+
+	s.drawQueue();
+
+	auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << double(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count()) / 1000000 << "ns\n";
+
+	// s.outputFrags("OUT");
+
+	s.outputBuffer(BUFFER_PATH);
+}
+
+inline void phongtest() {
+	int SUB = 4;
+	Mesh lao = cube(1);
+
+	float SSS = 1;
+
+	Transform offset(Vector3(0, -2, -4) * SSS, Rotation3(Vector3(1, 1, 1), M_PI / 8));
+	lao.Trans(offset);
+
+	Mesh shi(lao);
+
+	shi.Trans(Transform(Vector3(2, 2, -1)));
+
+	// Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
+	Mesh proto = cube(1);
+	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.5)));
+	
+	int N = 1024;
+
+	Scene s(N, N);
+
+	float A = 0;
+
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-4, 2, 2)));
+	// s.lights.push_back(PL);
+
+	PointLight PL2(Vector3(1, 1, 1), A);
+	PL2.Trans(Transform(Vector3(2, 1, 0)));
+	s.lights.push_back(PL2);
+
+	s.clearBuffer();
+
+	auto start = std::chrono::high_resolution_clock::now();
+
+	int SPE = 2;
+
+	s.fillMesh(lao, 0xFF0000FF, SPE * SPE, true, true);
+	s.fillMesh(shi, 0x00FF00FF, SPE, true, true);
+	s.fillMesh(proto, 0x0000FFFF, 1, true, true);
 
 	std::cout << "THING\n";
 
@@ -380,6 +436,8 @@ int main() {
 
 	// camtest();
 
-	lighttest();
+	// lighttest();
+
+	phongtest();
 	return 0;
 }

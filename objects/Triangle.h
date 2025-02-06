@@ -201,6 +201,8 @@ class TriangleF {
 	Vector3 N;
 	Vector3 ON;
 
+	float specular = 0;
+
 	TriangleF() {
 		for (int i = 0; i < 3; i++) p[i] = Fragment(Vector4(i == 0, i == 1, i == 2, 1), Vector3(), 0);
 		N = Vector3(1, 1, 1).normalized();
