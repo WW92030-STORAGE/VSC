@@ -67,7 +67,6 @@ class Mesh : public Object {
 			verts[i] = Vector3(temp[i]);
 			vn[i] = tn[i].normalized();
 		}
-
 	}
 
 	inline void resetup() {

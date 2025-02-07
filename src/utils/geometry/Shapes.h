@@ -121,5 +121,8 @@ inline Mesh icosphere(int R = 1, int S = 1) {
 		res[i] = Triangle3(vertices[triangles[i][0]], vertices[triangles[i][2]], vertices[triangles[i][1]]);
 	}
 
-	return Mesh(res, NL);
+	Mesh ret(res, NL);
+
+	delete[] res;
+	return ret;
 }

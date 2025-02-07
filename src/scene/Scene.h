@@ -27,8 +27,8 @@
 
 class Scene { // CENA!
 	public:
-	std::vector<Object> objs;
-	int numObjs;
+	// std::vector<Object> objs;
+	// int numObjs;
 
 	int W, H;
 	int SIDE;
@@ -57,7 +57,7 @@ class Scene { // CENA!
 	// Sorry but you're only getting these 2 constructors. Do the rest of it yourself.
 	Scene() {
 		camera = Camera();
-		numObjs = 0;
+		// numObjs = 0;
 
 		W = 256;
 		H = 256;
@@ -67,7 +67,7 @@ class Scene { // CENA!
 
 	Scene(int w, int h) {
 		camera = Camera();
-		numObjs = 0;
+		// numObjs = 0;
 
 		W = w;
 		H = h;
