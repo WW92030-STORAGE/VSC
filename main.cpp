@@ -31,7 +31,7 @@ inline void phongtest() {
 	
 	int N = 1024;
 
-	Scene s(N, N);
+	Scene s(N / 2, N / 3);
 
 	float A = 0;
 

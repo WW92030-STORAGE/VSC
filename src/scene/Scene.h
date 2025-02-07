@@ -292,8 +292,8 @@ class Scene { // CENA!
 			Vector4 vv = camera.glFrustum(v);
 			res[i] = vv;
 
-			res[i].x = (res[i].x + 1) * 0.5 * SIDE;
-			res[i].y = (res[i].y + 1) * 0.5 * SIDE;
+			res[i].x = (res[i].x + 1) * 0.5 * SIDE - 0.5 * (SIDE - W);
+			res[i].y = (res[i].y + 1) * 0.5 * SIDE - 0.5 * (SIDE - H);
 		}
 
 		TriangleF tri;
@@ -728,8 +728,8 @@ class Scene { // CENA!
 		return res;
 	}
 
-	inline void outputFrags(std::string OUTPUT) {
-		std::ofstream output(OUTPUT);
+	inline void outputFrags(std::string OUTPUT__) {
+		std::ofstream output(OUTPUT__);
 		for (int y = H - 1; y >= 0; y--) {
 			for (int x = 0; x < W; x++) {
 				output << buffer[x][y].to_string() << ",";
@@ -740,8 +740,8 @@ class Scene { // CENA!
 		output.close();
 	}
 
-	inline void outputBuffer(std::string OUTPUT) {
-		std::ofstream output(OUTPUT);
+	inline void outputBuffer(std::string OUTPUT__) {
+		std::ofstream output(OUTPUT__);
 		output << "[" << std::to_string(W) << ", " << std::to_string(H) << "]\n";
 
 		for (int y = H - 1; y >= 0; y--) {
