@@ -16,20 +16,24 @@ inline void phongtest() {
 	int SUB = 4;
 	Mesh lao = icosphere(1, SUB);
 
+
 	float SSS = 1;
 
 	Transform offset(Vector3(0, -2, -4) * SSS, Rotation3(Vector3(1, 1, 1), M_PI / 8));
 	lao.Trans(offset);
 
 	Mesh shi(lao);
+	
 
 	shi.Trans(Transform(Vector3(2, 2, -1)));
+	
 
-	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
-	// Mesh proto = icosphere(1, SUB);
+	Mesh proto = icosphere(1, SUB);
+	proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
+	// proto = icosphere(1, SUB);
 	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
 	
-	int N = 64;
+	int N = 512;
 
 	Scene s(N, N / 2);
 
@@ -58,6 +62,8 @@ inline void phongtest() {
 	std::cout << "THING\n";
 
 	s.drawQueue();
+
+	std::cout << "CNT " << s.TRIANGLE_COUNT << "\n";
 
 	auto finish = std::chrono::high_resolution_clock::now();
     std::cout << double(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count()) / 1000000 << "ns\n";

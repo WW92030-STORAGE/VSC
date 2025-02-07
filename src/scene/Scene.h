@@ -33,6 +33,8 @@ class Scene { // CENA!
 	int W, H;
 	int SIDE;
 
+	uint64_t TRIANGLE_COUNT = 0;
+
 
 
 	std::queue<std::pair<Triangle3, std::pair<BaseMaterial, bool>>> triqueue;
@@ -314,8 +316,8 @@ class Scene { // CENA!
 	}
 
 	inline void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false) {
-		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[1].ndc.z);
-		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[1].ndc.w);
+		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
+		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
 
 		Vector3 b = s.bary(x, y);
 		// if (b.x > 1 || b.y > 1 || b.z > 1) return;
@@ -593,6 +595,7 @@ class Scene { // CENA!
 
 	// Right now this always draws triangles using the base color.
 	inline void drawTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false) {
+		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		Vector3 cen = s.centroid();
 		// c = illuminate(cen, cen, s.N, c);
@@ -606,6 +609,7 @@ class Scene { // CENA!
 	}
 
 	inline void fillTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false) {
+		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) {
 			// std::cout << "CULLED\n";
 			return;
@@ -630,13 +634,13 @@ class Scene { // CENA!
 	inline void drawMesh(Mesh& m, BaseMaterial material = BASEMAT_WHITE, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool BACKFACECULL = false) {
 		for (int i = 0; i < m.size; i++) {
 			Vector3* vn = new Vector3[3];
-			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.tris[i].p[s]);
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
 			bool isna = false;
 			for (int s = 0; s < 3; s++) {
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= SMOOTHSHADE;
-			drawTriangle(m.tris[i], material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE);
+			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE);
 			delete[] vn;
 		}
 	}
@@ -647,7 +651,7 @@ class Scene { // CENA!
 		for (int i = 0; i < m.size; i++) {
 			// if (i % 64 == 0) std::cout << i << "/" << m.size << "...\n";
 			Vector3* vn = new Vector3[3];
-			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.tris[i].p[s]);
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
 			/*
 			std::cout << "\n";
 			for (int t = 0; t < 3; t++) std::cout << m.tris[i].p[t].to_string() << " / " << vn[t].to_string() << "\n";
@@ -659,7 +663,7 @@ class Scene { // CENA!
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= !SMOOTHSHADE;
-			fillTriangle(m.tris[i], material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE);
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE);
 			delete[] vn;
 		}
 	}
@@ -672,7 +676,7 @@ class Scene { // CENA!
 	}
 
 	inline void QueueMesh(Mesh& m, BaseMaterial material, bool FILL = true) {
-		for (int i = 0; i < m.size; i++) QueueTriangle(m.tris[i], material, FILL);
+		for (int i = 0; i < m.size; i++) QueueTriangle(m.makeTriangle(i), material, FILL);
 	}
 
 	inline void drawQueue() {

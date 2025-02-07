@@ -7,7 +7,7 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 
 */
 
-// #include <iostream>
+#include <iostream>
 
 #include <sstream>
 #include <string>
@@ -31,50 +31,22 @@ class Mesh : public Object {
 	int size;
 	int nverts;
 
-	Triangle3* tris; // WARNING - This is an array of TRIANGLES
-	Vector3* verts; // Array of vertices
-	int** triindices; // The same array of triangles, except this time in terms of the indices in the verts array.
+	std::vector<Vector3> verts; // Array of vertices
+	std::vector<std::vector<int>> triindices; // Triangle indices in the vertex array;
 
-	Vector3* vn; // Vertex normals. Initialized when we do setupvertsntris() but can also be manually set e.g. when looking thru a .obj file.
+	std::vector<Vector3> vn; // Vertex normals. Initialized when we do setupvertsntris() but can also be manually set e.g. when looking thru a .obj file.
 	
-	// Initialize vertices and triangle index directory from triangles.
-	inline void setupvertsntris() {
-		std::map<Vector3, int> vm;
-		std::vector<Vector3> temp;
-		std::vector<Vector3> tn; // temp normals
+	// Initialize vertex normals
+	inline void setupvns() {
+		vn = std::vector<Vector3>(nverts);
+		for (int i = 0; i < nverts; i++) vn[i] = Vector3();
 
-		triindices = new int*[size];
 		for (int i = 0; i < size; i++) {
-			int* ti = new int[3];
-			for (int s = 0; s < 3; s++) {
-				Vector3 pp(tris[i].p[s]); // current vertex
-				if (vm.find(pp) == vm.end()) {
-					vm.insert({Vector3(pp), temp.size()});
-					temp.push_back(Vector3(pp));
-					tn.push_back(Vector3());
-				}
-				// vm.at(pp) is the index of the vertex in the vertices array
-				ti[s] = vm.at(pp);
-				tn[vm.at(pp)] = tn[vm.at(pp)] + tris[i].N;
-			}
-			triindices[i] = ti;
+			Triangle3 tri = makeTriangle(i);
+			for (int j = 0; j < 3; j++) vn[triindices[i][j]] = vn[triindices[i][j]] + tri.N;
 		}
 
-		nverts = temp.size();
-		verts = new Vector3[nverts];
-		vn = new Vector3[nverts];
-		for (int i = 0; i < nverts; i++) {
-			verts[i] = Vector3(temp[i]);
-			vn[i] = tn[i].normalized();
-		}
-	}
-
-	inline void resetup() {
-		delete[] triindices;
-		delete[] verts;
-		delete[] vn;
-		
-		setupvertsntris();
+		for (int i = 0; i < nverts; i++) vn[i] = vn[i].normalized();
 	}
 
 	Mesh() { // Default cube
@@ -100,7 +72,11 @@ class Mesh : public Object {
 	FTT = FTT + OFFSET;
 	TTT = TTT + OFFSET;
 
-	Triangle3* tris = new Triangle3[12] {Triangle3(FFF, TFF, FTF), 
+	verts = std::vector<Vector3>({FFF, TFF, FTF, TTF, FFT, TFT, FTT, TTT});
+
+	/*
+
+	tris = std::vector<Triangle3>({Triangle3(FFF, TFF, FTF), 
 	Triangle3(TFF, TTF, FTF),
 	Triangle3(FFF, FTF, FFT),
 	Triangle3(FTF, FTT, FFT),
@@ -112,57 +88,70 @@ class Mesh : public Object {
 	Triangle3(TFT, TTF, TFF),
 	Triangle3(TTT, FTT, TTF),
 	Triangle3(TTF, FTT, FTF)
-	};
+	});
+
+	*/
+
+	triindices = std::vector<std::vector<int>>({
+		{0, 1, 2}, {1, 3, 2}, {0, 2, 4}, {2, 6, 4}, {0, 4, 1}, {4, 5, 1},
+		{7, 5, 6}, {6, 5, 4}, {7, 3, 5}, {5, 3, 1}, {7, 6, 3}, {3, 6, 2}
+	});
 
 	size = 12;
 
-	setupvertsntris();
+	setupvns();
 
 	}
 
 	Mesh(int sz) {
 		size = sz;
-		tris = new Triangle3[sz];
-		for (int i = 0; i < sz; i++) tris[i] = Triangle3();
+		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
 
-		setupvertsntris();
+		setupvns();
 	}
 
 	Mesh(Triangle3* tt, int sz) {
 		size = sz;
-		tris = new Triangle3[sz];
-		for (int i = 0; i < sz; i++) tris[i] = Triangle3(tt[i]);
+		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3));
+		std::map<Vector3, int> indices;
+		for (int i = 0; i < sz; i++) {
+			for (int j = 0; j < 3; j++) {
+				Vector3 v = Vector3(tt[i].p[j]);
+				if (indices.find(v) == indices.end()) {
+					indices.insert({v, verts.size()});
+					verts.push_back(v);
+				}
+				triindices[i][j] = indices.at(v);
+			}
+		}
 
-		setupvertsntris();
+		nverts = verts.size();
+
+		setupvns();
 	}
 
 	Mesh(const Mesh& other) {
 		size = other.size;
-		tris = new Triangle3[size];
-		for (int i = 0; i < size; i++) tris[i] = Triangle3(other.tris[i]);
-
-		setupvertsntris();
+		nverts = other.nverts;
+		verts = std::vector<Vector3>(nverts);
+		triindices = std::vector<std::vector<int>>(size);
+		for (int i = 0; i < nverts; i++) verts[i] = Vector3(other.verts[i]);
+		for (int i = 0; i < size; i++) triindices[i] = std::vector<int>(other.triindices[i]);
+		setupvns();
 	}
 
 	void Trans(Transform t) override {
 		transform = t * transform;
 		Matrix4 trans = t.matrix();
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < 3; j++) tris[i].p[j] = vec3(trans * fromPoint(tris[i].p[j]));
-			tris[i].N = tris[i].normal();
-		}
-
-		resetup();
+		for (int i = 0; i < nverts; i++) verts[i] = vec3(trans * fromPoint(verts[i]));
+		setupvns();
 	}
 
 	void ForceTrans(Transform t) override {
 		Matrix4 trans = t.matrix();
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < 3; j++) tris[i].p[j] = vec3(trans * fromPoint(tris[i].p[j]));
-			tris[i].N = tris[i].normal();
-		}
+		for (int i = 0; i < nverts; i++) verts[i] = vec3(trans * fromPoint(verts[i]));
 
-		resetup();
+		setupvns();
 	}
 
 	static int comp (const void * a, const void * b) {
@@ -175,19 +164,17 @@ class Mesh : public Object {
 	}
 
 	// Get Vertex Normal For Vertex
-	inline Vector3 getVertexNormal(Vector3 v) {
-		for (int i = 0; i < nverts; i++) {
-			if (v == verts[i]) return Vector3(vn[i]);
-		}
-		return Vector3();
+	inline Vector3 getVertexNormal(int i) {
+		return vn[i];
 	}
 
 	~Mesh() {
-		delete[] tris;
-		for (int i = 0; i < size; i++) delete[] triindices[i];
-		delete[] triindices;
-		delete[] verts;
-		delete[] vn;
+	}
+
+	// Get the triangle at index i in triindices
+
+	inline Triangle3 makeTriangle(int i) {
+		return Triangle3(verts[triindices[i][0]], verts[triindices[i][1]], verts[triindices[i][2]]);
 	}
 
 
@@ -321,6 +308,8 @@ class Mesh : public Object {
 		// mesh.verts = fromvec<Vector3>(verts);
 		// mesh.vn = fromvec<Vector3>(vn);
 		// mesh.nverts = verts.size();
+
+		delete[] triangles;
 		return mesh;
 	}
 
@@ -382,6 +371,8 @@ class Mesh : public Object {
 		// mesh.verts = fromvec<Vector3>(verts);
 		// mesh.vn = fromvec<Vector3>(vn);
 		// mesh.nverts = verts.size();
+
+		delete[] triangles;
 		return mesh;
 	}
 };
