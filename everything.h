@@ -2,6 +2,6 @@
 #define INSERTUNFUNNYJOKEHERE
 
 // Header file to include all the headers.
-#include "src/everything.h"
+#include "src/VSC_everything.h"
 
 #endif

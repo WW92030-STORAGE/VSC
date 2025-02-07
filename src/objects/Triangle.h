@@ -289,8 +289,8 @@ class TriangleF {
 	// Interpolate on the vertices
 
 	inline float interp(int x, int y, float f0, float f1, float f2) {
-		Vector3 F(f0, f1, f2);
-		return bary(x, y) * F;
+		Vector3 F__F(f0, f1, f2);
+		return bary(x, y) * F__F;
 	}
 
 	// Comparison -- sort by centroid z position, so that the "largest" triangles have the lowest z.

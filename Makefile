@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -O3 -w
+CXXFLAGS = -O3 -w -std=c++11
 
 TARGET = main
 FILE = main.cpp

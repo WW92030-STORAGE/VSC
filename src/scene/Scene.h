@@ -349,10 +349,10 @@ class Scene { // CENA!
 			// std::cout << s.material.to_string() << "\n";
 			c = illuminate(point, point, interpnormal, s.material);
 		}
-		Fragment F(Vector4(x, y, zc, wc), Vector3(s.ON), c);
+		Fragment F__F(Vector4(x, y, zc, wc), Vector3(s.ON), c);
 
 		// std::cout << s.bary(x, y).to_string() << " " << F.ndc.z << " " << F.ndc.w << " = " << F.color << "\n";
-		drawFragment(F, x, y);
+		drawFragment(F__F, x, y);
 	}
 
 	// Originally a method using three cross products, now using a variation on Bresenham's method.
