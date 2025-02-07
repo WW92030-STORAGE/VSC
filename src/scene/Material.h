@@ -33,7 +33,7 @@ struct BaseMaterial {
 	}
 
 	bool operator==(BaseMaterial& other) {
-		return (baseColor == other.baseColor) && fequal(specular, other.specular);
+		return (baseColor == other.baseColor) && BASE::fequal(specular, other.specular);
 	}
 
 	inline std::string to_string() {

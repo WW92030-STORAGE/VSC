@@ -70,10 +70,10 @@ class Line {
 	// Intersections
 
 	inline bool intersect(Vector3& other) {
-		return fzero(squaredDistanceFrom(other));
+		return BASE::fzero(squaredDistanceFrom(other));
 	}
 	inline bool intersect(Line& other) {
-		return fzero(squaredDistanceFrom(other));
+		return BASE::fzero(squaredDistanceFrom(other));
 	}
 
 	// Utils
@@ -117,9 +117,9 @@ class Plane : public Object {
 	Plane(const Vector4& s) {
 		n = Vector3(s.x, s.y, s.z);
 
-		if (!fzero(s.x)) p = Vector3(-s.w / s.x, 0, 0);
-		else if (!fzero(s.y)) p = Vector3(0, -s.w / s.y, 0);
-		else if (!fzero(s.z)) p = Vector3(0, 0, -s.w / s.z);
+		if (!BASE::fzero(s.x)) p = Vector3(-s.w / s.x, 0, 0);
+		else if (!BASE::fzero(s.y)) p = Vector3(0, -s.w / s.y, 0);
+		else if (!BASE::fzero(s.z)) p = Vector3(0, 0, -s.w / s.z);
 		else {
 			p = Vector3();
 			n = Vector3(1, 0, 0);
@@ -131,9 +131,9 @@ class Plane : public Object {
 	Plane(float a, float b, float c, float d) {
 		n = Vector3(a, b, c);
 
-		if (!fzero(a)) p = Vector3(-d / a, 0, 0);
-		else if (!fzero(b)) p = Vector3(0, -d / b, 0);
-		else if (!fzero(c)) p = Vector3(0, 0, -d / c);
+		if (!BASE::fzero(a)) p = Vector3(-d / a, 0, 0);
+		else if (!BASE::fzero(b)) p = Vector3(0, -d / b, 0);
+		else if (!BASE::fzero(c)) p = Vector3(0, 0, -d / c);
 		else {
 			p = Vector3();
 			n = Vector3(1, 0, 0);
@@ -161,18 +161,18 @@ class Plane : public Object {
 	}
 
 	inline float distanceFrom(const Vector4& q) {
-		if (!fequal(q.w, 1)) return distanceFrom(vec3(q));
+		if (!BASE::fequal(q.w, 1)) return distanceFrom(vec3(q));
 		return standardForm() * q;
 	}
 
 	// Intersections
 
 	inline bool contains(const Vector3& p) {
-		return fzero(distanceFrom(p));
+		return BASE::fzero(distanceFrom(p));
 	}
 
 	inline float intersectionTime(Line& L) {
-		if (fzero(n * L.slope)) {
+		if (BASE::fzero(n * L.slope)) {
 			if (contains(L.point)) return 0;
 			return NAN;
 		}
@@ -181,7 +181,7 @@ class Plane : public Object {
 	}
 
 	inline Vector3 intersection(Line& L) {
-		if (fzero(n * L.slope)) {
+		if (BASE::fzero(n * L.slope)) {
 			if (contains(L.point)) return L.point;
 			return NILVEC3;
 		}
@@ -202,8 +202,8 @@ class Plane : public Object {
 
 	// 2 planes (gives one line of the intersection)
 	inline Line intersection(Plane& A) {
-		if (fzero(n * A.n)) { // Parallel planes
-			if (fzero(distanceFrom(A.p))) {
+		if (BASE::fzero(n * A.n)) { // Parallel planes
+			if (BASE::fzero(distanceFrom(A.p))) {
 				Vector3 test = proj(Vector3(1, 0, 0));
 				if (!isZero(test)) return Line(p, test);
 				test = proj(Vector3(0, 1, 0));
@@ -237,9 +237,9 @@ class Plane : public Object {
 	inline void reinit(Vector4 s) {
 		n = Vector3(s.x, s.y, s.z);
 
-		if (!fzero(s.x)) p = Vector3(-s.w / s.x, 0, 0);
-		else if (!fzero(s.y)) p = Vector3(0, -s.w / s.y, 0);
-		else if (!fzero(s.z)) p = Vector3(0, 0, -s.w / s.z);
+		if (!BASE::fzero(s.x)) p = Vector3(-s.w / s.x, 0, 0);
+		else if (!BASE::fzero(s.y)) p = Vector3(0, -s.w / s.y, 0);
+		else if (!BASE::fzero(s.z)) p = Vector3(0, 0, -s.w / s.z);
 		else {
 			p = Vector3();
 			n = Vector3(1, 0, 0);

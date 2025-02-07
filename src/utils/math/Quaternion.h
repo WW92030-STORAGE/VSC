@@ -74,7 +74,7 @@ class Quaternion {
 	}
 
 	inline Quaternion div(const float other) {
-		if (fzero(other)) return Quaternion(1, 0, 0, 0);
+		if (BASE::fzero(other)) return Quaternion(1, 0, 0, 0);
 		return Quaternion(w * other, v * other);
 	}
 
@@ -88,12 +88,12 @@ class Quaternion {
 
 	inline Quaternion normalized() {
 		float n = norm();
-		if (fzero(n)) return Quaternion(1, 0, 0, 0);
+		if (BASE::fzero(n)) return Quaternion(1, 0, 0, 0);
 		return Quaternion(w / n, v / n);
 	}
 
 	inline Quaternion inv() {
-		if (fzero(normsquared())) return Quaternion(*this);
+		if (BASE::fzero(normsquared())) return Quaternion(*this);
 		return conj() / normsquared();
 	}
 
@@ -170,7 +170,7 @@ inline Quaternion spherp(Quaternion a, Quaternion b, float t) {
 	float s = sqrtf(1 - c * c);
 	float theta = acosf(a.dot(b));
 
-	if (fzero(s)) return a;
+	if (BASE::fzero(s)) return a;
 
 	float A = sinf(theta * (1 - t)) / s;
 	float B = sinf(theta * t) / s;

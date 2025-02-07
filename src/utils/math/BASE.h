@@ -10,6 +10,8 @@
 
 #define M_PI 3.14159265358979323846
 
+namespace BASE {
+
 // Is it zero?
 inline bool fzero(float f) {
 	float E = 0.000001;
@@ -113,5 +115,7 @@ inline float newton(float (*f)(float)) {
     }
     return x;
 }
+
+};
 
 #endif

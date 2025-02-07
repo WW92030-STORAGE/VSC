@@ -129,7 +129,7 @@ class Camera : public Object {
 	// x = +/- (retval) and y = +/- (retval) are the borders of the near plane.
 	// similar triangles with the projection plane: 1/epsilon = (ret)/n --> ret = n/epsilon
 	inline float getNearPlaneBorders() {
-		if (fzero(epsilon)) return 0;
+		if (BASE::fzero(epsilon)) return 0;
 		return n / epsilon;
 	}
 
@@ -165,11 +165,11 @@ class Camera : public Object {
 
 	// Get the z value
 	inline float perserpz(Vector3 p, Vector3 q, float t) {
-		if (fequal(p.z, q.z)) return p.z;
-		if (fzero(p.z) || fzero(q.z)) return 0;
+		if (BASE::fequal(p.z, q.z)) return p.z;
+		if (BASE::fzero(p.z) || BASE::fzero(q.z)) return 0;
 		float zrep = (1 - t) / p.z + t / q.z;
 
-		if (fzero(zrep)) return 0;
+		if (BASE::fzero(zrep)) return 0;
 		float z = 1 / zrep;
 
 		return z;
@@ -177,11 +177,11 @@ class Camera : public Object {
 
 	// Returns the value of t in the projection plane corresponding to the given t value in the line.
 	inline float perserp(Vector3 p, Vector3 q, float t) {
-		if (fequal(p.z, q.z)) return t;
-		if (fzero(p.z) || fzero(q.z)) return 0;
+		if (BASE::fequal(p.z, q.z)) return t;
+		if (BASE::fzero(p.z) || BASE::fzero(q.z)) return 0;
 		float zrep = (1 - t) / p.z + t / q.z;
 
-		if (fzero(zrep)) return 0;
+		if (BASE::fzero(zrep)) return 0;
 		float z = 1 / zrep;
 
 		float tt = (z - p.z) / (q.z - p.z);
@@ -192,7 +192,7 @@ class Camera : public Object {
 	// In other words, finds the b3 value for the point p3 between p and q.
 
 	inline float verp(Vector3 p, Vector3 q, float b1, float b2, float t) {
-		if (fzero(p.z) || fzero(q.z)) return lerp(b1, b2, t);
+		if (BASE::fzero(p.z) || BASE::fzero(q.z)) return BASE::lerp(b1, b2, t);
 
 		float res = (1 - t) * b1 / p.z + t * b2 / q.z;
 		return perserpz(p, q, t) * res;
@@ -269,7 +269,7 @@ class Camera : public Object {
 
 	inline Vector4 glFrustum(Vector4 p) {
 		Vector4 res = Frustum() * transform.inv().matrix() * p;
-		if (fzero(res.w)) return res;
+		if (BASE::fzero(res.w)) return res;
 		float w = res.w;
 		res = res / res.w;
 		res.w = w;
@@ -278,7 +278,7 @@ class Camera : public Object {
 
 	inline Vector4 glFrustumNoBack(Vector4 p) {
 		Vector4 res = FrustumNoBack() * p;
-		if (fzero(res.w)) return res;
+		if (BASE::fzero(res.w)) return res;
 		float w = res.w;
 		res = res / w;
 		res.w = w;

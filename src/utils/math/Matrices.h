@@ -107,7 +107,7 @@ class Matrix2 {
 		Matrix2 A = Matrix2(*this);
 		// if (DEBUG) std::cout << "SOLVING " << A.to_string() << "x = " << b.to_string() << std::endl;
 		// check the first column
-		if (!fzero(A.xAxis.x) && !fzero(A.xAxis.y)); // top left is nonzero, bottom left is zero: do nothing
+		if (!BASE::fzero(A.xAxis.x) && !BASE::fzero(A.xAxis.y)); // top left is nonzero, bottom left is zero: do nothing
 		// if the top value is less in magnitude than the bottom value
 		else if (fabs(A.xAxis.x) < fabs(A.yAxis.y)) {
 			std::swap(A.xAxis.x, A.xAxis.y);
@@ -116,7 +116,7 @@ class Matrix2 {
 		}
 
 		// Take care of the bottom value by reducing it to zero. This guarantees the bottom left value is zero.
-		if (!fzero(A.xAxis.x)) {
+		if (!BASE::fzero(A.xAxis.x)) {
 			float coeff = A.xAxis.y / A.xAxis.x;
 			A.xAxis.y = 0;
 			A.yAxis.y -= A.yAxis.x * coeff;
@@ -126,7 +126,7 @@ class Matrix2 {
 
 		// if the [1][1] value is nonzero use it to reduce the [0][1]
 
-		if (!fzero(A.yAxis.y)) {
+		if (!BASE::fzero(A.yAxis.y)) {
 			float coeff = A.yAxis.x / A.yAxis.y;
 			A.yAxis.x = 0;
 			b.x -= b.y * coeff;
@@ -151,13 +151,13 @@ class Matrix2 {
 		}
 
 		// Row 1 is zero (y values in the vectors. This means the Y component of the solution is variable)
-		else if (fzero(A.xAxis.y) && fzero(A.yAxis.y)) {
-			if (fzero(b.y)) res = Vector2((b.x - A.yAxis.x) / A.xAxis.x, 1); // Multiple solutions
+		else if (BASE::fzero(A.xAxis.y) && BASE::fzero(A.yAxis.y)) {
+			if (BASE::fzero(b.y)) res = Vector2((b.x - A.yAxis.x) / A.xAxis.x, 1); // Multiple solutions
 			// A[0][0]x + A[0][1]y = B[0]
 		}
 		// Row 0 is zero (x axis in the vectors. This means the X component is variable)
-		else if (fzero(A.xAxis.x) && fzero(A.yAxis.x)) {
-			if (fzero(b.x)) res = Vector2(1, (b.y - A.xAxis.y) / A.yAxis.y); // Multiple solutions
+		else if (BASE::fzero(A.xAxis.x) && BASE::fzero(A.yAxis.x)) {
+			if (BASE::fzero(b.x)) res = Vector2(1, (b.y - A.xAxis.y) / A.yAxis.y); // Multiple solutions
 			// A[1][0]x + A[1][1]y = B[1]
 		}
 
@@ -355,7 +355,7 @@ class Matrix3 {
 		const int N = 3;
 		Matrix3 M(*this);
 		float d = det();
-		if (fzero(d)) return eye();
+		if (BASE::fzero(d)) return eye();
 		
 		// gaussian elimination to get the output matrix
 
@@ -372,7 +372,7 @@ class Matrix3 {
 					i = ii;
 				}
 			}
-			if (fzero(ss)) return eye();
+			if (BASE::fzero(ss)) return eye();
 			if (i != j) {
 				Vector3 temp = M.getRow(i);
 				M.setRow(i, M.getRow(j));
@@ -461,8 +461,8 @@ class Matrix3 {
 		for (int c = 0; c < N; c++) {
 			bool fff = true;
 			for (int r = N - 1; r >= 0; r--) {
-				if (!fzero(A.get(r, c))) {
-					if (c <= 0 || fzero(A.get(r, c - 1))) {
+				if (!BASE::fzero(A.get(r, c))) {
+					if (c <= 0 || BASE::fzero(A.get(r, c - 1))) {
 						fff = false;
 					}
 					break;
@@ -470,7 +470,7 @@ class Matrix3 {
 			}
 			frvr[c] = fff;
 			if (fff) {
-				if (fzero(b.get(c))) res.set(c, 1);
+				if (BASE::fzero(b.get(c))) res.set(c, 1);
 				else return NILVEC3;
 			}
 		}
@@ -733,7 +733,7 @@ class Matrix4 {
 		const int N = 4;
 		Matrix4 M(*this);
 		float d = det();
-		if (fzero(d)) return eye();
+		if (BASE::fzero(d)) return eye();
 		
 		// gaussian elimination to get the output matrix
 
@@ -750,7 +750,7 @@ class Matrix4 {
 					i = ii;
 				}
 			}
-			if (fzero(ss)) return eye(); // If no nonzero element exists in this range then it is not invertible.
+			if (BASE::fzero(ss)) return eye(); // If no nonzero element exists in this range then it is not invertible.
 			if (i != j) { // If i != j then swap rows i, j to place a nonzero element on the diagonal.
 				Vector4 temp = M.getRow(i);
 				M.setRow(i, M.getRow(j));
@@ -844,8 +844,8 @@ class Matrix4 {
 		for (int c = 0; c < N; c++) {
 			bool fff = true;
 			for (int r = N - 1; r >= 0; r--) {
-				if (!fzero(A.get(r, c))) {
-					if (c <= 0 || fzero(A.get(r, c - 1))) {
+				if (!BASE::fzero(A.get(r, c))) {
+					if (c <= 0 || BASE::fzero(A.get(r, c - 1))) {
 						fff = false;
 					}
 					break;
@@ -853,7 +853,7 @@ class Matrix4 {
 			}
 			frvr[c] = fff;
 			if (fff) {
-				if (fzero(b.get(c))) res.set(c, 1);
+				if (BASE::fzero(b.get(c))) res.set(c, 1);
 				else return NILVEC4;
 			}
 		}

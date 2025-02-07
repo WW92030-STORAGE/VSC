@@ -223,11 +223,11 @@ class Scene { // CENA!
 
 	inline void drawLine(int x0, int y0, int x1, int y1, uint32_t c)  {
 		if (x0 == x1) {
-			for (int y = min(y0, y1); y <= max(y0, y1); y++) drawPixel(x0, y, c);
+			for (int y = BASE::min(y0, y1); y <= BASE::max(y0, y1); y++) drawPixel(x0, y, c);
 			return;
 		}
 		else if (y0 == y1) {
-			for (int x = min(x0, x1); x <= max(x0, x1); x++) drawPixel(x, y0, c);
+			for (int x = BASE::min(x0, x1); x <= BASE::max(x0, x1); x++) drawPixel(x, y0, c);
 		}
 		if (abs(y1 - y0) < abs(x1 - x0)) {
         	if (x0 > x1) LineLow(x1, y1, x0, y0, c);
@@ -319,10 +319,10 @@ class Scene { // CENA!
 
 		Vector3 b = s.bary(x, y);
 		// if (b.x > 1 || b.y > 1 || b.z > 1) return;
-		b.x = clamp(b.x, 0, 1);
-		b.y = clamp(b.y, 0, 1);
-		b.z = clamp(b.z, 0, 1);
-		if (!fzero(b.x + b.y + b.z)) {
+		b.x = BASE::clamp(b.x, 0, 1);
+		b.y = BASE::clamp(b.y, 0, 1);
+		b.z = BASE::clamp(b.z, 0, 1);
+		if (!BASE::fzero(b.x + b.y + b.z)) {
 			float sum = b.x + b.y + b.z;
 			b.x /= sum;
 			b.y /= sum;
@@ -523,11 +523,11 @@ class Scene { // CENA!
 	}
 
 	inline void fillTopFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false) {
-		fillTopFlat(s, t, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), iceil(by), iround(tx), ifloor(ty), PHONGSHADE);
+		fillTopFlat(s, t, BASE::ifloor(fmin(bx1, bx2)), BASE::iceil(fmax(bx1, bx2)), BASE::iceil(by), BASE::iround(tx), BASE::ifloor(ty), PHONGSHADE);
 	}
 
 	inline void fillBotFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false) {
-		fillBotFlat(s, t, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), ifloor(by), iround(tx), iceil(ty), PHONGSHADE);
+		fillBotFlat(s, t, BASE::ifloor(fmin(bx1, bx2)), BASE::iceil(fmax(bx1, bx2)), BASE::ifloor(by), BASE::iround(tx), BASE::iceil(ty), PHONGSHADE);
 	}
 	inline void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false) {
 		// drawTriangle(t);
@@ -544,8 +544,8 @@ class Scene { // CENA!
 			std::swap(T.p[2], T.p[1]);
 		}
 
-		if (fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, T, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
-		else if (fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, T, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
+		if (BASE::fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, T, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
+		else if (BASE::fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, T, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
 	
 		else {
 			float divx = s.p[0].ndc.x + (s.p[2].ndc.x - s.p[0].ndc.x) * (s.p[1].ndc.y - s.p[0].ndc.y) / (s.p[2].ndc.y - s.p[0].ndc.y);

@@ -40,7 +40,7 @@ uint32_t rgb(int r, int g, int b) {
 }
 
 uint32_t colmul(uint32_t s, float f) {
-	Vector4 x = rgba(s) * clamp(f, 0, 1);
+	Vector4 x = rgba(s) * BASE::clamp(f, 0, 1);
 	// std::cout << rgba(s).to_string() << " " << f << " " << x.to_string() << "\n";
 	return rgba(x);
 }

@@ -57,7 +57,7 @@ class Vector2 {
 		return Vector2(x * other, y * other);
 	}
 	inline Vector2 div(float other) {
-		if (fzero(other)) return Vector2(0, 0);
+		if (BASE::fzero(other)) return Vector2(0, 0);
 		return Vector2(x / other, y / other);
 	}
 
@@ -79,13 +79,13 @@ class Vector2 {
 
 	inline Vector2 normalized() {
 		float len = length();
-		if (fzero(len)) return Vector2(1, 0);
+		if (BASE::fzero(len)) return Vector2(1, 0);
 		return Vector2(x / len, y / len);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal
 	inline float cosine(Vector2& other) {
-		if (fzero(length()) || fzero(other.length())) return 1;
+		if (BASE::fzero(length()) || BASE::fzero(other.length())) return 1;
 		return dot(other) / (length() * other.length());
 	}
 
@@ -94,7 +94,7 @@ class Vector2 {
 	}
 
 	inline Vector2 proj(Vector2& other) {
-		if (fzero(other.length())) return Vector2(0, 0);
+		if (BASE::fzero(other.length())) return Vector2(0, 0);
 		return Vector2(x, y) * (dot(other) / other.length());
 	}
 
@@ -128,10 +128,10 @@ class Vector2 {
 		return div(other);
 	} 
 	inline bool operator==(const Vector2& other) {
-		return fequal(x, other.x) && fequal(y, other.y);
+		return BASE::fequal(x, other.x) && BASE::fequal(y, other.y);
 	} 
 	inline bool operator!=(const Vector2& other) {
-		return !(fequal(x, other.x) && fequal(y, other.y));
+		return !(BASE::fequal(x, other.x) && BASE::fequal(y, other.y));
 	} 
 
 	// UTIL
@@ -194,7 +194,7 @@ class Vector3 {
 		return Vector3(x * other, y * other, z * other);
 	}
 	inline Vector3 div(float other) {
-		if (fzero(other)) return Vector3(0, 0, 0);
+		if (BASE::fzero(other)) return Vector3(0, 0, 0);
 		return Vector3(x / other, y / other, z / other);
 	}
 
@@ -216,13 +216,13 @@ class Vector3 {
 
 	inline Vector3 normalized() {
 		float len = length();
-		if (fzero(len)) return Vector3(1, 0, 0);
+		if (BASE::fzero(len)) return Vector3(1, 0, 0);
 		return Vector3(x / len, y / len, z / len);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal
 	inline float cosine(Vector3& other) {
-		if (fzero(length()) || fzero(other.length())) return 1;
+		if (BASE::fzero(length()) || BASE::fzero(other.length())) return 1;
 		return dot(other) / (length() * other.length());
 	}
 
@@ -231,7 +231,7 @@ class Vector3 {
 	}
 
 	inline Vector3 proj(Vector3& other) {
-		if (fzero(other.length())) return Vector3(0, 0, 0);
+		if (BASE::fzero(other.length())) return Vector3(0, 0, 0);
 		return Vector3(x, y, z) * (dot(other) / other.length());
 	}
 
@@ -270,15 +270,15 @@ class Vector3 {
 		return div(other);
 	} 
 	inline bool operator==(const Vector3& other) {
-		return fequal(x, other.x) && fequal(y, other.y) && fequal(z, other.z);
+		return BASE::fequal(x, other.x) && BASE::fequal(y, other.y) && BASE::fequal(z, other.z);
 	}
 	inline bool operator!=(const Vector3& other) {
-		return !(fequal(x, other.x) && fequal(y, other.y) && fequal(z, other.z));
+		return !(BASE::fequal(x, other.x) && BASE::fequal(y, other.y) && BASE::fequal(z, other.z));
 	}
 
 	inline bool operator<(const Vector3& other) const {
-		if (!fequal(x, other.x)) return x < other.x;
-		if (!fequal(y, other.y)) return y < other.y;
+		if (!BASE::fequal(x, other.x)) return x < other.x;
+		if (!BASE::fequal(y, other.y)) return y < other.y;
 		return z < other.z;
 	}
 
@@ -348,7 +348,7 @@ class Vector4 {
 		return Vector4(x * other, y * other, z * other, w * other);
 	}
 	inline Vector4 div(float other) {
-		if (fzero(other)) return Vector4(0, 0, 0, 0);
+		if (BASE::fzero(other)) return Vector4(0, 0, 0, 0);
 		return Vector4(x / other, y / other, z / other, w / other);
 	}
 
@@ -370,13 +370,13 @@ class Vector4 {
 
 	inline Vector4 normalized() {
 		float len = length();
-		if (fzero(len)) return Vector4(1, 0, 0, 0);
+		if (BASE::fzero(len)) return Vector4(1, 0, 0, 0);
 		return Vector4(x / len, y / len, z / len, w / len);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal
 	inline float cosine(Vector4& other) {
-		if (fzero(length()) || fzero(other.length())) return 1;
+		if (BASE::fzero(length()) || BASE::fzero(other.length())) return 1;
 		return dot(other) / (length() * other.length());
 	}
 
@@ -385,7 +385,7 @@ class Vector4 {
 	}
 
 	inline Vector4 proj(Vector4& other) {
-		if (fzero(other.length())) return Vector4(0, 0, 0, 0);
+		if (BASE::fzero(other.length())) return Vector4(0, 0, 0, 0);
 		return Vector4(x, y, z, w) * (dot(other) / other.length());
 	}
 
@@ -411,10 +411,10 @@ class Vector4 {
 		return div(other);
 	} 
 	inline bool operator==(const Vector4& other) {
-		return fequal(x, other.x) && fequal(y, other.y) && fequal(z, other.z) && fequal(w, other.w);
+		return BASE::fequal(x, other.x) && BASE::fequal(y, other.y) && BASE::fequal(z, other.z) && BASE::fequal(w, other.w);
 	}
 	inline bool operator!=(const Vector4& other) {
-		return !(fequal(x, other.x) && fequal(y, other.y) && fequal(z, other.z) && fequal(w, other.w));
+		return !(BASE::fequal(x, other.x) && BASE::fequal(y, other.y) && BASE::fequal(z, other.z) && BASE::fequal(w, other.w));
 	}
 
 	// UTIL

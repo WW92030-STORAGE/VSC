@@ -35,14 +35,14 @@ inline Vector2 quadratic(float a, float b, float c) {
 
 // Are these things zero?
 inline bool isZero(Vector2 v) {
-	return fzero(v.x) && fzero(v.y);
+	return BASE::fzero(v.x) && BASE::fzero(v.y);
 }
 
 inline bool isZero(Vector3 v) {
-	return fzero(v.x) && fzero(v.y) && fzero(v.z);
+	return BASE::fzero(v.x) && BASE::fzero(v.y) && BASE::fzero(v.z);
 }
 
 inline bool isZero(Vector4 v) {
-	return fzero(v.x) && fzero(v.y) && fzero(v.z) && fzero(v.w);
+	return BASE::fzero(v.x) && BASE::fzero(v.y) && BASE::fzero(v.z) && BASE::fzero(v.w);
 }
 #endif
