@@ -435,7 +435,7 @@ class Scene { // CENA!
 				}
 			}
 
-			for (int xx = x1; xx <= x2 + 1; xx++) {
+			for (int xx = x1 - 1; xx <= x2 + 1; xx++) {
 				DrawTriFrag(s, t, xx, y1, PHONGSHADE);
 			}
 		}
@@ -516,7 +516,7 @@ class Scene { // CENA!
 				}
 			}
 
-			for (int xx = x1; xx <= x2 + 1; xx++) {
+			for (int xx = x1 - 1; xx <= x2 + 1; xx++) {
 				DrawTriFrag(s, t, xx, y1, PHONGSHADE);
 			}
 		}
@@ -529,7 +529,7 @@ class Scene { // CENA!
 	inline void fillBotFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false) {
 		fillBotFlat(s, t, ifloor(min(bx1, bx2)), iceil(max(bx1, bx2)), ifloor(by), iround(tx), iceil(ty), PHONGSHADE);
 	}
-	inline void fillTriangleFast(TriangleF s, Triangle3 T, bool PHONGSHADE = false) {
+	inline void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false) {
 		// drawTriangle(t);
 		if (s.p[1].ndc.y < s.p[0].ndc.y) {
 			std::swap(s.p[0], s.p[1]);
@@ -554,9 +554,9 @@ class Scene { // CENA!
 		}
 	}
 
-	inline void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, bool OPTIM = true) {
-		if (OPTIM) {
-			fillTriangleFast(s, T, PHONGSHADE);
+	inline void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, bool SCAN = false) {
+		if (SCAN) {
+			fillTriangleFScan(s, T, PHONGSHADE);
 			return;
 		}
 
@@ -591,6 +591,7 @@ class Scene { // CENA!
 		return true;
 	}
 
+	// Right now this always draws triangles using the base color.
 	inline void drawTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false) {
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		Vector3 cen = s.centroid();
@@ -601,7 +602,7 @@ class Scene { // CENA!
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = vn[i];
 		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, p.material);
 		if (clip(p)) return;
-		drawTriangle(p, PHONGSHADE);
+		drawTriangle(p, rgb(material.baseColor));
 	}
 
 	inline void fillTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false) {

@@ -25,9 +25,9 @@ inline void phongtest() {
 
 	shi.Trans(Transform(Vector3(2, 2, -1)));
 
-	// Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
-	Mesh proto = icosphere(1, SUB);
-	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.5)));
+	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
+	// Mesh proto = icosphere(1, SUB);
+	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
 	
 	int N = 1024;
 

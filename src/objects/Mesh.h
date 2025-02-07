@@ -9,6 +9,7 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 
 // #include <iostream>
 
+#include <sstream>
 #include <string>
 #include <fstream>
 #include <vector>
@@ -265,6 +266,67 @@ class Mesh : public Object {
 
 	static Mesh fromOBJ(std::string filename) {
 		std::ifstream fin(filename);
+
+		std::string line;
+
+		std::vector<Vector3> verts;
+
+		std::vector<Vector3> vn;
+
+		std::vector<Triangle3> tris;
+		while (std::getline(fin, line)) {
+			// std::cout << ">" << line << "\n";
+			if (!line.length()) continue;
+			if (line[0] == '#') continue; // comment
+			std::vector<std::string> sp = split(line);
+			if (!sp.size()) continue;
+			// for (auto i : sp) std::cout << "[" << i << "]";
+			// std::cout << "\n";
+			
+			if (sp[0] == "v") {
+				// std::cout << "VERTEX\n";
+				verts.push_back(Vector3(std::stof(sp[1]), std::stof(sp[2]), std::stof(sp[3])));
+			}
+			if (sp[0] == "f") {
+
+				std::vector<int> vertices;
+				for (int i = 1; i < sp.size(); i++) {
+					int index = find(sp[i], '/', 0);
+					if (index < 0) vertices.push_back(std::stoi(sp[i]));
+					else vertices.push_back(std::stoi(sp[i].substr(0, index)));
+				}
+
+				if (!vertices.size()) continue;
+
+				// positive index i represents verts[i - 1]
+				// negative index -i represents verts[V - i];
+
+				// Triangulate a polygon
+
+				std::vector<Triangle3> triangulated = Triangulate(vertices, verts);
+				for (auto i : triangulated) tris.push_back(i);
+			}
+			if (sp[0] == "vn") { // Vertex normals
+				vn.push_back(Vector3(std::stof(sp[1]), std::stof(sp[2]), std::stof(sp[3])));
+			}
+			if (sp[0] == "vt") { // TODO later
+
+			}
+		}
+
+		Triangle3* triangles = new Triangle3[tris.size()];
+		for (int i = 0; i < tris.size(); i++) triangles[i] = tris[i];
+
+		Mesh mesh(triangles, tris.size());
+
+		// mesh.verts = fromvec<Vector3>(verts);
+		// mesh.vn = fromvec<Vector3>(vn);
+		// mesh.nverts = verts.size();
+		return mesh;
+	}
+
+	static Mesh fromOBJString(std::string source) {
+		std::stringstream fin(source);
 
 		std::string line;
 

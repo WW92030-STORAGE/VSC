@@ -86,6 +86,10 @@ inline std::vector<std::vector<int>> subdivide(std::vector<Vector3>& verts, std:
 
 // // https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
 inline Mesh icosphere(int R = 1, int S = 1) {
+	// Failsafe
+	S = min(S, 5);
+
+
 	const float X=.525731112119133606f;
 	const float Z=.850650808352039932f;
 	const float N=0.f;
