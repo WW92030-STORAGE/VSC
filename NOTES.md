@@ -113,8 +113,10 @@ But it's a lot less involved than a true raytracer--while a true raytracer compu
   
 Primitives.h  
 - Method to calculate when a Plane intersects a ray (line) with origin and unit vector direction (NaN for null intersection).  
+  
 Triangle.h  
 - Method to calculate when a Triangle3 intersects a ray with origin and unit vector direction (NaN for null intersection).  
+  
 Shapes.h  
 - Added some hardcoded meshes for basic shapes.  
   
@@ -122,10 +124,12 @@ Shapes.h
   
 PointLight.h  
 - Point light class with an attenuation. Also modified the base Light class to enclose the intensity as a Vector3 (three channels).  
+  
 Scene.h  
 - Added an illuminate method which does raycasting to compute the illumination of a point given the primary ray, position, base color, etc.  
-Material.h
-- Collating of material parameters such as base color and specular
+  
+Material.h  
+- Collating of material parameters such as base color and specular.
 
 # 8 - VISIBILITY
 
