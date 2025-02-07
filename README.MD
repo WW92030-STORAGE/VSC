@@ -6,9 +6,6 @@ VSC (VOUGA-SHREINER-CANTH) Verified is A 3D rendering engine that is intended to
 Inspired by DoomGeneric with its rather novel approach to separating the backend from the frontend.  
 Also self-inspired by my (NormalExisting's) other C++ backends mostly for games/clones such as The Witness and Chess.  
   
-Written in C++ with the intent of minimizing the usage of C++ heavy libraries (to reduce the compiled binary size).  
-Most data structures are defined in classes here, and mallocs are minimized. Most everything is stack allocated.  
-  
 This is a rasterizer. It uses computational techniques to approximate the reality of lights, shadows, textures, and materials.  
 If you want a raytracer stay tuned for the sequel FINAL DESTINATION coming soon to theaters near you.  
   
