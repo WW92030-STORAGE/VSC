@@ -29,9 +29,9 @@ inline void phongtest() {
 	// Mesh proto = icosphere(1, SUB);
 	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
 	
-	int N = 1024;
+	int N = 64;
 
-	Scene s(N / 2, N / 3);
+	Scene s(N, N / 2);
 
 	float A = 0;
 

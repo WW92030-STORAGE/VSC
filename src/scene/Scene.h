@@ -754,6 +754,14 @@ class Scene { // CENA!
 		output.close();
 	}
 
+	inline std::vector<std::vector<uint32_t>> bufferMatrix() {
+		std::vector<std::vector<uint32_t>> res(W, std::vector<uint32_t>(H, 0));
+		for (int i = 0; i < W; i++) {
+			for (int j = 0; j < H; j++) res[i][j] = buffer[i][j].color;
+		}
+		return res;
+	}
+
 
 	~Scene() {
 		for (int i = 0; i < W; i++) delete[] buffer[i];
