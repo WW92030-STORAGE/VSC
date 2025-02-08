@@ -12,8 +12,9 @@ std::string MESHES = "misc";
 std::string BUFFER_PATH = "BUFFER";
 std::string VIDEO_PATH = "video";
 
+// Test 6 Long
 inline void phongtest() {
-	int SUB = 3;
+	int SUB = 2;
 	Mesh lao = icosphere(1, SUB);
 
 
