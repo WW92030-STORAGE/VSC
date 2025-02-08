@@ -597,7 +597,7 @@ class Scene { // CENA!
 	}
 
 	// Right now this always draws triangles using the base color.
-	inline void drawTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false) {
+	inline void drawTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false, bool INTERPNORM = false) {
 		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		Vector3 cen = s.centroid();
@@ -605,13 +605,13 @@ class Scene { // CENA!
 		auto p = project(s);
 		p.material = BaseMaterial(material);
 		if (!vn) PHONGSHADE = false;
-		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = vn[i];
+		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
 		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, p.material);
 		if (clip(p)) return;
 		drawTriangle(p, rgb(material.baseColor));
 	}
 
-	inline void fillTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false) {
+	inline void fillTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false) {
 		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) {
 			// std::cout << "CULLED\n";
@@ -623,7 +623,8 @@ class Scene { // CENA!
 		auto p = project(s);
 		p.material = BaseMaterial(material);
 		if (!vn) PHONGSHADE = false;
-		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = vn[i];
+		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
+
 		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, p.material);
 		
 		if (clip(p)) return;
@@ -634,7 +635,7 @@ class Scene { // CENA!
 
 	// draw a MESH
 
-	inline void drawMesh(Mesh& m, BaseMaterial material = BASEMAT_WHITE, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool BACKFACECULL = false) {
+	inline void drawMesh(Mesh& m, BaseMaterial material = BASEMAT_WHITE, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
 		for (int i = 0; i < m.size; i++) {
 			Vector3* vn = new Vector3[3];
 			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
@@ -643,12 +644,12 @@ class Scene { // CENA!
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= SMOOTHSHADE;
-			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE);
+			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
 		}
 	}
 
-	inline void fillMesh(Mesh& m, BaseMaterial material = BASEMAT_WHITE, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool BACKFACECULL = true) {
+	inline void fillMesh(Mesh& m, BaseMaterial material = BASEMAT_WHITE, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
 		// std::cout << "\n" << m.nverts << "\n";
 		for (int i = 0; i < m.size; i++) {
@@ -666,7 +667,7 @@ class Scene { // CENA!
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= !SMOOTHSHADE;
-			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE);
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
 		}
 	}

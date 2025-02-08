@@ -83,15 +83,21 @@ inline void sss() {
 
 	Scene s(N, N / 2);
 
-	float A = 0.5;
+	float A = 0.2;
 
-	PointLight PL(Vector3(1, 0, 0), A);
-	PL.Trans(Transform(Vector3(-2, 1, 0)));
+	float S = sqrtf(3);
+
+  	PointLight PL(Vector3(1, 0, 0), A);
+	PL.Trans(Transform(Vector3(-S, 1, 0)));
 	s.lights.push_back(PL);
 
-	PointLight PL2(Vector3(0, 1, 1), A);
-	PL2.Trans(Transform(Vector3(2, 1, 0)));
+	PointLight PL2(Vector3(0, 0, 1), A);
+	PL2.Trans(Transform(Vector3(S, 1, 0)));
 	s.lights.push_back(PL2);
+
+  	PointLight PL3(Vector3(0, 1, 0), A);
+	PL3.Trans(Transform(Vector3(0, -2, 0)));
+	// s.lights.push_back(PL3);
 
 	s.clearBuffer();
 
@@ -99,7 +105,7 @@ inline void sss() {
 
 	int SPE = 16;
 
-	s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, true);
+	s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, true, true);
 
 	std::cout << "THING\n";
 
