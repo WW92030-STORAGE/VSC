@@ -44,6 +44,41 @@ class Fragment {
 	}
 };
 
+class ReducedFrag {
+	public:
+	float depth;
+	uint32_t color;
+
+	ReducedFrag() {
+		depth = FLT_MAX;
+		color = 0;
+	}
+
+	ReducedFrag(float F, uint32_t C) {
+		depth = F;
+		color = C;
+	}
+
+	ReducedFrag(const ReducedFrag& o) {
+		depth = o.depth;
+		color = o.color;
+	}
+
+	inline bool operator==(ReducedFrag& o) {
+		return BASE::fequal(depth, o.depth) && (color == o.color);
+	}
+
+	inline bool operator!=(ReducedFrag& o) {
+		return !( BASE::fequal(depth, o.depth) && (color == o.color) );
+	}
+
+	// UTIL
+
+	inline std::string to_string() {
+		return "ReducedFrag[" + std::to_string(depth) + " " + std::to_string(color) + "]";
+	}
+};
+
 Fragment NILFRAG(NILVEC4, NILVEC3, 0);
 
 

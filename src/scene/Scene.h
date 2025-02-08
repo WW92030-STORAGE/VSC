@@ -41,7 +41,7 @@ class Scene { // CENA!
 
 	Camera camera;
 
-	Fragment** buffer; // Coordinates are (x, y) where x goes right and y up. This is to align with the projection matrix.
+	ReducedFrag** buffer; // Coordinates are (x, y) where x goes right and y up. This is to align with the projection matrix.
 
 	Vector3 ambientLight = Vector3(0.1, 0.1, 0.1);
 
@@ -49,10 +49,10 @@ class Scene { // CENA!
 
 	inline void initBuffer() {
 		SIDE = H > W ? H : W;
-		buffer = new Fragment*[W];
-		for (int i = 0; i < W; i++) buffer[i] = new Fragment[H];
+		buffer = new ReducedFrag*[W];
+		for (int i = 0; i < W; i++) buffer[i] = new ReducedFrag[H];
 		for (int i = 0; i < W; i++) {
-			for (int j =- 0; j < H; j++) buffer[i][j] = Fragment();
+			for (int j =- 0; j < H; j++) buffer[i][j] = ReducedFrag();
 		}
 	}
 
@@ -84,8 +84,8 @@ class Scene { // CENA!
 	inline void fillScreen(int32_t c) {
 		for (int i = 0; i < W; i++) {
 			for (int j = 0; j < H; j++) {
-				buffer[i][j] = Fragment();
-				buffer[i][j].color = 0;
+				buffer[i][j] = ReducedFrag();
+				buffer[i][j].color = c;
 			}
 		}
 	}
@@ -94,15 +94,15 @@ class Scene { // CENA!
 
 	inline void drawPixel(int x, int y, uint32_t z) {
 		if (x < 0 || y < 0 || x >= W || y >= H) return;
-		buffer[x][y] = Fragment(buffer[x][y]);
+		buffer[x][y] = ReducedFrag(buffer[x][y]);
 		buffer[x][y].color = z;
 	}
 
 	inline void drawFragment(Fragment& F, int x, int y) {
 		if (x < 0 || y < 0 || x >= W || y >= H) return;
 		if (F.ndc.z < -2 || F.ndc.z > 2) return;
-		if (buffer[x][y].ndc.w < F.ndc.w) return;
-		buffer[x][y] = Fragment(F);
+		if (buffer[x][y].depth < F.ndc.w) return;
+		buffer[x][y] = ReducedFrag(F.ndc.w, F.color);
 	}
 
 	// Handle the lighting: compute the illumination of a given point.

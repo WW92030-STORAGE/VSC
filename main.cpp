@@ -13,7 +13,7 @@ std::string BUFFER_PATH = "BUFFER";
 std::string VIDEO_PATH = "video";
 
 inline void phongtest() {
-	int SUB = 4;
+	int SUB = 3;
 	Mesh lao = icosphere(1, SUB);
 
 
@@ -30,14 +30,14 @@ inline void phongtest() {
 
 	Mesh proto = icosphere(1, SUB);
 	proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
-	// proto = icosphere(1, SUB);
+	proto = icosphere(1, SUB);
 	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
 	
-	int N = 512;
+	int N = 1024;
 
 	Scene s(N, N / 2);
 
-	float A = 0;
+	float A = 0.5;
 
 	PointLight PL(Vector3(1, 1, 1), A);
 	PL.Trans(Transform(Vector3(-4, 2, 2)));
@@ -51,7 +51,7 @@ inline void phongtest() {
 
 	auto start = std::chrono::high_resolution_clock::now();
 
-	int SPE = 2;
+	int SPE = 16;
 
 	
 

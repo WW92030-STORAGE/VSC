@@ -33,6 +33,6 @@ Follow the Skeleton book until the end of chapter 5. Some linear algebra backgro
 After chapter 5 we make the actual renderer that has the basic rendering abilities of single-color triangles and meshes under a directional light.  
 And then after that we go into the more juicy stuff such as texturing, clipping, visibility culling, and the like.  
   
-There is a document named `NOTES.md` that holds notes that might be useful.
+There is a document named `NOTES.md` that holds notes that might be useful. It's like playing a game of Super Metroid.
 
 ![Example!](VIDEO.gif?raw=true)
