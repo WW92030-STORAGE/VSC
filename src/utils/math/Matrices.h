@@ -977,6 +977,7 @@ Matrix2 Rotation2(float angle) {
 
 Matrix3 Rotation3(Vector3 a, float angle) {
 	if (a.normsquared() == 0) return Matrix3::eye();
+	a = a.normalized();
 
 	float c = cosf(angle);
 	float s = sinf(angle);

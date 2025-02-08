@@ -42,6 +42,9 @@ def output():
 -name = specify the string name
 -out = specify the output file path
 
+-ignore-t = ignore textures
+-ignore-n = ignore normals
+
 '''
 
 if __name__ == "__main__":
