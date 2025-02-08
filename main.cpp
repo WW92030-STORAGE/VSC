@@ -105,7 +105,7 @@ inline void sss() {
 
 	int SPE = 16;
 
-	s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, true, true);
+	s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, false, true);
 
 	std::cout << "THING\n";
 

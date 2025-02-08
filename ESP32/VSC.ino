@@ -4,6 +4,7 @@
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include <vector>
 #include <cstdint>
+#include <iostream>
 using namespace std;
 
 #include <esp_random.h>
@@ -18,6 +19,7 @@ extern "C" {
 #include "panels.h"
 
 #include "VSCRender.h"
+#include "OBJ.h"
 
 vector<vector<vector<bool>>> animation{grid0, grid1, grid2, grid3, grid4, grid5, grid6, grid7, grid8};
 
@@ -42,39 +44,31 @@ SET_LOOP_TASK_STACK_SIZE(16*1024);
 
 Scene s(SCREEN_L, SCREEN_H);
 
-void test() {
-  dispstats();
-  int SUB = 2;
-	Mesh lao = icosphere(1, SUB);
+Mesh proto = cube(1);
 
+void sceneSetup() {
   dispstats();
 
-	float SSS = 1;
-
-	Transform offset(Vector3(0, -2, -4) * SSS, Rotation3(Vector3(1, 1, 1), M_PI / 8));
-	lao.Trans(offset);
-
-	Mesh shi(lao);
-
-  dispstats();
-	
-
-	shi.Trans(Transform(Vector3(2, 2, -1)));
-
-	Mesh proto = icosphere(1, SUB);
-	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
+  Transform forwards(Vector3(0, 0, -2), Rotation3(Vector3(0, 1, 0), M_PI / 4));
+  proto.Trans(forwards);
 
   dispstats();
 
-	Scene s(SCREEN_L, SCREEN_H);
+	float A = 0.2;
 
-  dispstats();
+  float S = sqrtf(3);
 
-	float A = 0;
+  PointLight PL(Vector3(1, 0, 0), A);
+	PL.Trans(Transform(Vector3(-S, 1, 0)));
+	s.lights.push_back(PL);
 
-	PointLight PL2(Vector3(1, 1, 1), A);
-	PL2.Trans(Transform(Vector3(2, 1, 0)));
+	PointLight PL2(Vector3(0, 0, 1), A);
+	PL2.Trans(Transform(Vector3(S, 1, 0)));
 	s.lights.push_back(PL2);
+
+  PointLight PL3(Vector3(0, 1, 0), A);
+	PL3.Trans(Transform(Vector3(0, -2, 0)));
+	s.lights.push_back(PL3);
   dispstats();
 
 	s.clearBuffer();
@@ -84,11 +78,6 @@ void test() {
 
 
   int SPE = 2;
-	
-
-	s.fillMesh(lao, BaseMaterial(0xFF0000FF, SPE * SPE), true, true);
-	s.fillMesh(shi, BaseMaterial(0x00FF00FF, SPE), true, true);
-	s.fillMesh(proto, BaseMaterial(0x0000FFFF, 1), false);
 
   dispstats();
 
@@ -104,7 +93,7 @@ void setup() {
   disp(grid0);
 
 
-  test();
+  sceneSetup();
 
 }
 
@@ -134,9 +123,31 @@ void anim_loop(uint16_t color) {
 
 // LOOP
 
+Vector3 axis(1, 1, 1);
+
+
+
 void loop() {
-  if (flashbyte == 4) {
+  if (flashbyte == 0) {
     anim_loop(matrixpanel->color565(255, 255, 255));
     return;
   }
+
+  axis = Rotation3(Vector3(0, 0, 1), 0.037) * axis;
+
+  Transform t(Vector3(0, 0, 0), Rotation3(axis, 0.1));
+  Transform goback(proto.transform.origin, Matrix3::eye());
+
+  proto.Trans(goback.inv());
+  proto.Trans(t);
+  proto.Trans(goback);
+
+  s.clearBuffer();
+  s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, true, false);
+  RenderBuffer(s);
+  disp();
+
+
+  delay(50);
+
 }
