@@ -42,7 +42,7 @@ inline void phongtest() {
 
 	PointLight PL(Vector3(1, 1, 1), A);
 	PL.Trans(Transform(Vector3(-4, 2, 2)));
-	// s.lights.push_back(PL);
+	s.lights.push_back(PL);
 
 	PointLight PL2(Vector3(1, 1, 1), A);
 	PL2.Trans(Transform(Vector3(2, 1, 0)));
@@ -74,8 +74,49 @@ inline void phongtest() {
 	s.outputBuffer(BUFFER_PATH);
 }
 
+// TEST 7 debug lighting
+inline void sss() {
+	Mesh proto = cube(1);
+	proto.Trans(Transform(Vector3(0, 0, -2), Rotation3(Vector3(0, 1, 2), M_PI * 1.2)));
+	
+	int N = 1024;
+
+	Scene s(N, N / 2);
+
+	float A = 0.5;
+
+	PointLight PL(Vector3(1, 0, 0), A);
+	PL.Trans(Transform(Vector3(-2, 1, 0)));
+	s.lights.push_back(PL);
+
+	PointLight PL2(Vector3(0, 1, 1), A);
+	PL2.Trans(Transform(Vector3(2, 1, 0)));
+	s.lights.push_back(PL2);
+
+	s.clearBuffer();
+
+	auto start = std::chrono::high_resolution_clock::now();
+
+	int SPE = 16;
+
+	s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, true);
+
+	std::cout << "THING\n";
+
+	s.drawQueue();
+
+	std::cout << "CNT " << s.TRIANGLE_COUNT << "\n";
+
+	auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << double(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count()) / 1000000 << "ns\n";
+
+	// s.outputFrags("OUT");
+
+	s.outputBuffer(BUFFER_PATH);
+}
+
 
 int main() {
-	phongtest();
+	sss();
 	return 0;
 }

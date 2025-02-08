@@ -125,19 +125,22 @@ class Scene { // CENA!
 
 				// Diffuse term
 				float scale = normal.normalized() * L.normalized();
-				if (scale > 0) shadedIntensity = shadedIntensity + (pl.intensity * scale);
+				// Only do light contribution if normal is facing light
+				if (scale > 0) {
+					shadedIntensity = shadedIntensity + (pl.intensity * scale);
 
-				// Specular term
+					// Specular term
 
-				if (material.specular > 0) {
+					if (material.specular > 0) {
 
-				Vector3 reflected = normal * (2 * normal.dot(L)) - L;
-				float rv = reflected.normalized().dot((position * -1).normalized());
-				if (rv > 0) {
-					float spec = powf(rv, material.specular);
-					shadedIntensity = shadedIntensity + (pl.intensity * spec);
-					// std::cout << (pl.intensity * spec).to_string() << " " << specular << "\n";
-				}
+						Vector3 reflected = normal * (2 * normal.dot(L)) - L;
+						float rv = reflected.normalized().dot((position * -1).normalized());
+						if (rv > 0) {
+							float spec = powf(rv, material.specular);
+							shadedIntensity = shadedIntensity + (pl.intensity * spec);
+						// std::cout << (pl.intensity * spec).to_string() << " " << specular << "\n";
+						}
+					}
 
 				}
 
