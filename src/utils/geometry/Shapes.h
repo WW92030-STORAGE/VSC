@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-inline Mesh cube(int X = 16) {
+inline Mesh cube(float X = 16) {
 
 	Vector3 OFFSET(-X, -X, X);
 	OFFSET = OFFSET * 0.5;
