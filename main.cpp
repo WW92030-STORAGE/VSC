@@ -77,7 +77,7 @@ inline void phongtest() {
 // TEST 7 debug lighting
 inline void sss() {
 	Mesh proto = cube(1);
-	proto.Trans(Transform(Vector3(0, 0, -2), Rotation3(Vector3(0, 1, 2), M_PI * 1.2)));
+	proto.Trans(Transform(Vector3(0, 0, -2), Rotation3(Vector3(0, 1, 2), M_PI * 1.3)));
 	
 	int N = 1024;
 
@@ -97,7 +97,7 @@ inline void sss() {
 
   	PointLight PL3(Vector3(0, 1, 0), A);
 	PL3.Trans(Transform(Vector3(0, -2, 0)));
-	// s.lights.push_back(PL3);
+	s.lights.push_back(PL3);
 
 	s.clearBuffer();
 
@@ -105,7 +105,64 @@ inline void sss() {
 
 	int SPE = 16;
 
-	s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, false, true);
+	s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, true, false);
+
+	std::cout << "THING\n";
+
+	s.drawQueue();
+
+	std::cout << "CNT " << s.TRIANGLE_COUNT << "\n";
+
+	auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << double(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count()) / 1000000 << "ns\n";
+
+	// s.outputFrags("OUT");
+
+	s.outputBuffer(BUFFER_PATH);
+}
+
+inline void protospin() {
+	Mesh proto = Mesh::fromOBJ("misc/mcrproto.obj");
+	proto.Trans(Transform(Vector3(0, 0, -2)));
+	proto.ForceTrans(Transform(Vector3(0, -1, 0)));
+	
+	int N = 512;
+
+	Scene s(N, N);
+
+	float A = 0.2;
+
+	float S = sqrtf(3);
+
+  	PointLight PL(Vector3(1, 0, 0), A);
+	PL.Trans(Transform(Vector3(-S, 1, 0)));
+	s.lights.push_back(PL);
+
+	PointLight PL2(Vector3(0, 0, 1), A);
+	PL2.Trans(Transform(Vector3(S, 1, 0)));
+	s.lights.push_back(PL2);
+
+  	PointLight PL3(Vector3(0, 1, 0), A);
+	PL3.Trans(Transform(Vector3(0, -2, 0)));
+	s.lights.push_back(PL3);
+
+	s.clearBuffer();
+
+	auto start = std::chrono::high_resolution_clock::now();
+
+	int SPE = 16;
+
+	int LEN = 45;
+	int LEN2 = 60;
+
+	int lcm = LEN * (LEN2 / BASE::gcd(LEN, LEN2));
+
+	float THT = M_PI * 2 / LEN;
+	float PHI = M_PI * 2 / LEN2;
+
+	Vector3 axis(0, 1, 0);
+
+	s.fillMesh(proto, BaseMaterial(0xFFFFFFFF, 1), true, true, false);
 
 	std::cout << "THING\n";
 
@@ -123,6 +180,6 @@ inline void sss() {
 
 
 int main() {
-	sss();
+	protospin();
 	return 0;
 }

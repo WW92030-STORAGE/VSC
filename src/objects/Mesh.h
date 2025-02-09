@@ -73,6 +73,9 @@ class Mesh : public Object {
 	TTT = TTT + OFFSET;
 
 	verts = std::vector<Vector3>({FFF, TFF, FTF, TTF, FFT, TFT, FTT, TTT});
+	for (int i = 0; i < 8; i++) verts[i] = Vector3(verts[i]);
+
+	nverts = 8;
 
 	/*
 

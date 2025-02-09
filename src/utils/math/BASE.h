@@ -1,6 +1,7 @@
 #ifndef MATH_BASE_EXT
 #define MATH_BASE_EXT
 
+#include <cstdint>
 #include <cstdlib>
 #include <ctime>
 
@@ -74,6 +75,23 @@ inline float clamp(float f, float l, float h) {
     if (f < l) return l;
     if (f > h) return h;
     return f;
+}
+
+// Number theory
+
+inline int64_t gcd(int64_t x, int64_t y) {
+    if (x == 0 && y == 0) return 1;
+    if (x < 0 || y < 0) return gcd(abs(x), abs(y));
+    if (x < y) return gcd(y, x);
+
+    if (y == 0) return x;
+    return gcd(x % y, y);
+}
+
+inline int64_t lcm(int64_t x, int64_t y) {
+    if (abs(x) > abs(y)) return lcm(y, x);
+
+    return x * (y / gcd(x, y));
 }
 
 // Random number
