@@ -139,7 +139,7 @@ Vector3 axis(1, 1, 1);
 
 
 void loop() {
-  if (flashbyte == 4) {
+  if (flashbyte == 0) {
     anim_loop(matrixpanel->color565(255, 255, 255));
     return;
   }
