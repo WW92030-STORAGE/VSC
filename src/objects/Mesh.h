@@ -7,8 +7,6 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 
 */
 
-#include <iostream>
-
 #include <sstream>
 #include <string>
 #include <fstream>
@@ -109,8 +107,6 @@ class Mesh : public Object {
 	Mesh(int sz) {
 		size = sz;
 		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
-
-		setupvns();
 	}
 
 	Mesh(Vector3* v, int** t, int nv, int sz) {
@@ -129,7 +125,7 @@ class Mesh : public Object {
 		
 	}
 
-	Mesh(std::vector<Vector3> v, std::vector<std::vector<int>> t) {
+	Mesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t) {
 		size = t.size();
 		nverts = v.size();
 
