@@ -116,13 +116,15 @@ inline Mesh icosphere(float R = 1, int S = 1) {
 
 	int NL = triangles.size();
 
+	/*
 	Triangle3* res = new Triangle3[NL];
 	for (int i = 0; i < NL; i++) {
 		res[i] = Triangle3(vertices[triangles[i][0]], vertices[triangles[i][2]], vertices[triangles[i][1]]);
 	}
+	*/
 
-	Mesh ret(res, NL);
+	Mesh ret(vertices, triangles);
 
-	delete[] res;
+	// delete[] res;
 	return ret;
 }

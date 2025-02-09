@@ -121,6 +121,7 @@ inline void sss() {
 	s.outputBuffer(BUFFER_PATH);
 }
 
+// WIP
 inline void protospin() {
 	Mesh proto = Mesh::fromOBJ("misc/mcrproto.obj");
 	proto.Trans(Transform(Vector3(0, 0, -2)));
@@ -180,6 +181,6 @@ inline void protospin() {
 
 
 int main() {
-	protospin();
+	sss();
 	return 0;
 }

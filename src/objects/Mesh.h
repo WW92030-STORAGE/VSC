@@ -113,6 +113,38 @@ class Mesh : public Object {
 		setupvns();
 	}
 
+	Mesh(Vector3* v, int** t, int nv, int sz) {
+		nverts = nv;
+		size = sz;
+
+		verts = std::vector<Vector3>(nverts);
+		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+
+		for (int i = 0; i < nverts; i++) verts[i] = Vector3(v[i]);
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < 3; j++) triindices[i][j] = t[i][j];
+		} 
+
+		setupvns();
+		
+	}
+
+	Mesh(std::vector<Vector3> v, std::vector<std::vector<int>> t) {
+		size = t.size();
+		nverts = v.size();
+
+		verts = std::vector<Vector3>(nverts);
+		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+
+		for (int i = 0; i < nverts; i++) verts[i] = Vector3(v[i]);
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < 3 && j < t[i].size(); j++) triindices[i][j] = t[i][j];
+		} 
+
+		setupvns();
+		
+	}
+
 	Mesh(Triangle3* tt, int sz) {
 		size = sz;
 		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3));
