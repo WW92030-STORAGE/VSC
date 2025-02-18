@@ -31,11 +31,14 @@ class Mesh : public Object {
 
 	std::vector<Vector3> verts; // Array of vertices
 	std::vector<std::vector<int>> triindices; // Triangle indices in the vertex array;
+	std::vector<std::vector<int>> texcoords; // Texture indices per triangle
 
 	std::vector<Vector3> vn; // Vertex normals. Initialized when we do setupvertsntris() but can also be manually set e.g. when looking thru a .obj file.
-	
+	std::vector<Vector2> uv; // Texture coordinates
+
 	// Initialize vertex normals
 	inline void setupvns() {
+
 		vn = std::vector<Vector3>(nverts);
 		for (int i = 0; i < nverts; i++) vn[i] = Vector3();
 
@@ -100,6 +103,8 @@ class Mesh : public Object {
 
 	size = 12;
 
+	uv = std::vector<Vector2>(nverts, Vector2(0, 0));
+
 	setupvns();
 
 	}
@@ -115,10 +120,39 @@ class Mesh : public Object {
 
 		verts = std::vector<Vector3>(nverts);
 		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+		uv = std::vector<Vector2>(nverts);
 
-		for (int i = 0; i < nverts; i++) verts[i] = Vector3(v[i]);
+		for (int i = 0; i < nverts; i++) {
+			verts[i] = Vector3(v[i]);
+			uv[i] = Vector2(0, 0);
+		}
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < 3; j++) triindices[i][j] = t[i][j];
+		} 
+
+		setupvns();
+		
+	}
+
+	Mesh(Vector3* v, int** t, Vector2* tex, int** texco, int nv, int sz) {
+		nverts = nv;
+		size = sz;
+
+		verts = std::vector<Vector3>(nverts);
+		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+		uv = std::vector<Vector2>(nverts);
+
+		for (int i = 0; i < nverts; i++) {
+			verts[i] = Vector3(v[i]);
+			uv[i] = Vector2(tex[i]);
+		}
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < 3; j++) {
+				triindices[i][j] = t[i][j];
+				texcoords[i][j] = texco[i][j];
+			}
 		} 
 
 		setupvns();
@@ -131,10 +165,41 @@ class Mesh : public Object {
 
 		verts = std::vector<Vector3>(nverts);
 		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
 
-		for (int i = 0; i < nverts; i++) verts[i] = Vector3(v[i]);
+		uv = std::vector<Vector2>(nverts);
+
+		for (int i = 0; i < nverts; i++) {
+			verts[i] = Vector3(v[i]);
+			uv[i] = Vector2(0, 0);
+		}
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < 3 && j < t[i].size(); j++) triindices[i][j] = t[i][j];
+		} 
+
+		setupvns();
+		
+	}
+
+	Mesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t,std::vector<Vector2> tex, std::vector<std::vector<int>>& texco) {
+		size = t.size();
+		nverts = v.size();
+
+		verts = std::vector<Vector3>(nverts);
+		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+
+		uv = std::vector<Vector2>(nverts);
+
+		for (int i = 0; i < nverts; i++) {
+			verts[i] = Vector3(v[i]);
+			uv[i] = Vector2(tex[i]);
+		}
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < 3 && j < t[i].size(); j++) {
+				triindices[i][j] = t[i][j];
+				texcoords[i][j] = texco[i][j];
+			}
 		} 
 
 		setupvns();
@@ -144,6 +209,7 @@ class Mesh : public Object {
 	Mesh(Triangle3* tt, int sz) {
 		size = sz;
 		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3));
+		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3));
 		std::map<Vector3, int> indices;
 		for (int i = 0; i < sz; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -166,8 +232,13 @@ class Mesh : public Object {
 		nverts = other.nverts;
 		verts = std::vector<Vector3>(nverts);
 		triindices = std::vector<std::vector<int>>(size);
+		texcoords = std::vector<std::vector<int>>(size);
 		for (int i = 0; i < nverts; i++) verts[i] = Vector3(other.verts[i]);
-		for (int i = 0; i < size; i++) triindices[i] = std::vector<int>(other.triindices[i]);
+		for (int i = 0; i < size; i++) {
+			triindices[i] = std::vector<int>(other.triindices[i]);
+			texcoords[i] = std::vector<int>(other.texcoords[i]);
+		}
+
 		setupvns();
 	}
 
@@ -206,6 +277,18 @@ class Mesh : public Object {
 
 	inline Triangle3 makeTriangle(int i) {
 		return Triangle3(verts[triindices[i][0]], verts[triindices[i][1]], verts[triindices[i][2]]);
+	}
+
+	// Flip the normals
+
+	inline void flipNormals() {
+		for (int i = 0; i < size; i++) {
+			int temp = triindices[i][0];
+			triindices[i][0] = triindices[i][1];
+			triindices[i][1] = temp;
+		}
+
+		setupvns();
 	}
 
 

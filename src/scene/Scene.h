@@ -19,7 +19,7 @@
 #include "../utils/geometry/Fragment.h"
 
 #include "Color.h"
-#include "Material.h"
+#include "../material/Material.h"
 
 #include "../lighting/Light.h"
 #include "../lighting/PointLight.h"
@@ -111,8 +111,8 @@ class Scene { // CENA!
 	// material = Material used to do the calcs
 	// LIT = debug
 
-	inline uint32_t shade(Vector3 position, Vector3 normal, BaseMaterial material, bool LIT = true) {
-		Vector3 col = (material.baseColor);
+	inline uint32_t shade(Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial material, bool LIT = true) {
+		Vector3 col = rgb(material.getColor(uv));
 		if (!LIT) return rgb(col);
 		
 		Vector3 I(ambientLight);
@@ -161,9 +161,8 @@ class Scene { // CENA!
 	}
 
 	// Actual raytracing. The pRay is the slope of the ray, the position is the intersection point.
-	inline uint32_t illuminate(Vector3 pRay, Vector3 position, Vector3 normal, BaseMaterial material, bool LIT = true) {
-
-		return shade(position, normal, material, LIT);
+	inline uint32_t illuminate(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial material, bool LIT = true) {
+		return shade(position, normal, uv, material, LIT);
 	}
 
 	// The rest of this class deals with drawing primitives such as triangles.
@@ -284,7 +283,7 @@ class Scene { // CENA!
 	}
 
 	// The updated version takes a Triangle3 and returns a triangle of fragments.
-	// The fragments for now only have normalized device coordinates, the original triangle normal, and teh color.
+	// The fragments for now only have normalized device coordinates, the original triangle normal, the color, and teh uvs of the original triangle.
 	// The triangle is returned with the coordinates as they are represented in NDC. However
 	// However the x and y coordinates are transformed to fit in the buffer.
 	inline TriangleF project(Triangle3 s, uint32_t c = 0xFFFFFFFF) {
@@ -306,7 +305,7 @@ class Scene { // CENA!
 		tri.ON = Vector3(s.normal());
 
 		for (int i = 0; i < 3; i++) {
-			tri.p[i] = Fragment(res[i], s.N, c);
+			tri.p[i] = Fragment(res[i], s.N, c, s.uv[i]);
 		}
 
 		return tri;
@@ -336,10 +335,13 @@ class Scene { // CENA!
 
 		// std::cout << s.to_string() << " " << x <<  " " << y << " = " << b.to_string() << "\n\n";
 
-		Vector3 theColor;
-		for (int i = 0; i < 3; i++) theColor = theColor + rgb(s.p[i].color) * b.get(i);
-		uint32_t c = rgb(theColor);
+		// Interpolate uv TODO - make this perspective correct
 
+		Vector2 finaluv;
+		for (int i = 0; i < 3; i++) finaluv = finaluv + (s.p[i].uv * b.get(i));
+
+
+		uint32_t c = s.material.getColor(finaluv);
 		if (PHONGSHADE) {
 			Vector3 point;
 			for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * b.get(ss));
@@ -352,7 +354,9 @@ class Scene { // CENA!
 			interpnormal = interpnormal.normalized();
 
 			// std::cout << s.material.to_string() << "\n";
-			c = illuminate(point, point, interpnormal, s.material);
+			c = illuminate(point, point, interpnormal, finaluv, s.material);
+		} else {
+			c = illuminate(t.centroid(), t.centroid(), s.N, finaluv, s.material);
 		}
 		Fragment F__F(Vector4(x, y, zc, wc), Vector3(s.ON), c);
 
@@ -597,21 +601,22 @@ class Scene { // CENA!
 	}
 
 	// Right now this always draws triangles using the base color.
-	inline void drawTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false, bool INTERPNORM = false) {
+	inline void drawTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false, bool INTERPNORM = false) {
 		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		Vector3 cen = s.centroid();
 		// c = illuminate(cen, cen, s.N, c);
 		auto p = project(s);
 		p.material = BaseMaterial(material);
+		if (!uv) uv = new Vector2[3] {Vector2(), Vector2(), Vector2()};
 		if (!vn) PHONGSHADE = false;
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
-		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, p.material);
+		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material);
 		if (clip(p)) return;
 		drawTriangle(p, rgb(material.baseColor));
 	}
 
-	inline void fillTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false) {
+	inline void fillTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false) {
 		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) {
 			// std::cout << "CULLED\n";
@@ -622,10 +627,11 @@ class Scene { // CENA!
 
 		auto p = project(s);
 		p.material = BaseMaterial(material);
+		if (!uv) uv = new Vector2[3] {Vector2(), Vector2(), Vector2()};
 		if (!vn) PHONGSHADE = false;
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
 
-		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, p.material);
+		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material);
 		
 		if (clip(p)) return;
 		fillTriangle(p, s, PHONGSHADE);
@@ -644,7 +650,7 @@ class Scene { // CENA!
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= SMOOTHSHADE;
-			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, nullptr, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
 		}
 	}
@@ -667,7 +673,7 @@ class Scene { // CENA!
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= !SMOOTHSHADE;
-			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, nullptr, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
 		}
 	}

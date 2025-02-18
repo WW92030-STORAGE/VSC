@@ -3,13 +3,7 @@
 
 // Math and linalg
 
-#include "utils/math/BASE.h"
-#include "utils/math/UTIL.h"
-#include "utils/math/Vectors.h"
-#include "utils/math/Matrices.h"
-#include "utils/math/Transform.h"
-#include "utils/math/Quaternion.h"
-
+#include "utils/Math.h"
 // Geometry and objects
 
 #include "utils/geometry/Primitives.h"
@@ -31,6 +25,10 @@
 
 #include "scene/Color.h"
 #include "scene/Scene.h"
-#include "scene/Material.h"
+
+// Material
+
+#include "material/Material.h"
+#include "material/ImageTexture.h"
 
 #endif

@@ -186,7 +186,7 @@ class Plane : public Object {
 			return NILVEC3;
 		}
 
-		float T = -1 * (n * L.point + distanceFromOrigin()) / (n * L.slope);
+		float T = intersectionTime(L);
 		return L.get(T);
 	}
 

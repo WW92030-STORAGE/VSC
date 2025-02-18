@@ -4,13 +4,14 @@
 #include <string>
 
 #include "../math/Vectors.h"
-#include "../../scene/Material.h"
+#include "../../material/Material.h"
 
 class Fragment {
 	public:
 	Vector4 ndc;
 	Vector3 normal;
-	uint32_t color;
+	Vector2 uv = NILVEC2;
+	uint32_t color = 0;
 
 	Fragment() {
 		ndc = Vector4(0, 0, FLT_MAX, FLT_MAX);
@@ -23,24 +24,32 @@ class Fragment {
 		color = C;
 	}
 
+	Fragment(Vector4 V, Vector3 N, uint32_t C, Vector2 U) {
+		ndc = Vector4(V);
+		normal = Vector3(N);
+		color = C;
+		uv = Vector2(U);
+	}
+
 	Fragment(const Fragment& o) {
 		ndc = Vector4(o.ndc);
 		normal = Vector3(o.normal);
 		color = o.color;
+		uv = Vector2(o.uv);
 	}
 
 	inline bool operator==(Fragment& o) {
-		return (ndc == o.ndc) && (normal == o.normal) && (color == o.color);
+		return (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv);
 	}
 
 	inline bool operator!=(Fragment& o) {
-		return !( (ndc == o.ndc) && (normal == o.normal) && (color == o.color) );
+		return !( (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv));
 	}
 
 	// UTIL
 
 	inline std::string to_string() {
-		return "Fragment[" + ndc.to_string() + ", " + normal.to_string() + ", " + std::to_string(color) + "]";
+		return "Fragment[ndc=" + ndc.to_string() + ", n=" + normal.to_string() + ", c=" + std::to_string(color) + ", uv=" + uv.to_string() + "]";
 	}
 };
 

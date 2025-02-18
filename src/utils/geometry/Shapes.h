@@ -112,6 +112,8 @@ inline Mesh icosphere(float R = 1, int S = 1) {
 		triangles = subdivide(vertices, triangles);
 	}
 
+
+
 	for (int i = 0; i < vertices.size(); i++) vertices[i] = vertices[i] * R;
 
 	int NL = triangles.size();
@@ -124,6 +126,7 @@ inline Mesh icosphere(float R = 1, int S = 1) {
 	*/
 
 	Mesh ret(vertices, triangles);
+	ret.flipNormals();
 
 	// delete[] res;
 	return ret;

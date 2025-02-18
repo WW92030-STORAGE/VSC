@@ -86,10 +86,14 @@ class Triangle2 {
 class Triangle3 : public Object {
 	public:
 	Vector3 p[3];
+	Vector2 uv[3];
 	Vector3 N;
 
 	Triangle3() {
-		for (int i = 0; i < 3; i++) p[i] = Vector3(i == 0, i == 1, i == 2);
+		for (int i = 0; i < 3; i++) {
+			p[i] = Vector3(i == 0, i == 1, i == 2);
+			uv[i] = Vector2();
+		}
 		N = normal();
 	}
 
@@ -97,16 +101,38 @@ class Triangle3 : public Object {
 		p[0] = Vector3(a);
 		p[1] = Vector3(b);
 		p[2] = Vector3(c);
+		for (int i = 0; i < 3; i++) uv[i] = Vector2();
+		N = normal();
+	}
+
+	Triangle3(Vector3& a, Vector3& b, Vector3& c, Vector2& q, Vector2& r, Vector2 s) {
+		p[0] = Vector3(a);
+		p[1] = Vector3(b);
+		p[2] = Vector3(c);
+		uv[0] = Vector2(q);
+		uv[1] = Vector2(r);
+		uv[2] = Vector2(s);
+
 		N = normal();
 	}
 
 	Triangle3(Vector3 x[3]) {
 		for (int i = 0; i < 3; i++) p[i] = Vector3(x[i]);
+		for (int i = 0; i < 3; i++) uv[i] = Vector2();
+		N = normal();
+	}
+
+	Triangle3(Vector3 x[3], Vector2 uu[3]) {
+		for (int i = 0; i < 3; i++) p[i] = Vector3(x[i]);
+		for (int i = 0; i < 3; i++) uv[i] = Vector2(uu[i]);
 		N = normal();
 	}
 
 	Triangle3(const Triangle3& other) {
-		for (int i = 0; i < 3; i++) p[i] = Vector3(other.p[i]);
+		for (int i = 0; i < 3; i++) {
+			p[i] = Vector3(other.p[i]);
+			uv[i] = Vector2(other.uv[i]);
+		}
 		N = normal();
 	}
 
