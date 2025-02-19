@@ -5,6 +5,7 @@ archive/*
 video/*
 misc/*.obj
 tests/*
+deprecated/*
 
 OUT
 BUFFER
