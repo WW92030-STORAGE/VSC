@@ -35,4 +35,8 @@ inline int find(std::string s, char t, int x) {
 	return -1;
 }
 
+inline std::string substr(std::string s, int a, int b) {
+	return s.substr(a, b - a);
+}
+
 #endif
