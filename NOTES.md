@@ -104,8 +104,6 @@ Scene.h
 Triangle.h  
 - Added a new TriangleF class which now stores fragments. It is a generalization of Triangle3. When a Triangle3 is attempted to be drawn it is now projected into TriangleF structures which represent location in NDC  
   
-# ACT III - RECONVENE
-  
 # 6. RAY TRACING
   
 Yes, there is some ray tracing involved.  
@@ -129,8 +127,20 @@ Scene.h
 - Added an illuminate method which does raycasting to compute the illumination of a point given the primary ray, position, base color, etc.  
   
 Material.h  
-- Collating of material parameters such as base color and specular.
-
-# 8 - VISIBILITY
-
-# 9 - POLYGONS
+- Collating of material parameters such as base color and specular.  
+  
+# ACT III - RECONVENE  
+  
+ImageTexture.h  
+- Image texture format to store images as 2-dimensional color matrices  
+  
+Mesh.h  
+- Meshes now store texture data in uvs.
+- objs can now be imported with the texture coordinates  
+  
+Scene.h  
+- Illumination and color picking methods changed to detect image textures and apply the texture mapping.  
+  
+# 8 - VISIBILITY  
+  
+# 9 - POLYGONS  

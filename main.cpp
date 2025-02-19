@@ -66,7 +66,7 @@ inline void textest() {
 	s.outputBuffer(BUFFER_PATH);
 }
 
-// TEST 1.1 OBJ
+// TEST 7.5 OBJ
 inline void objtest() {
 	std::string path = MESHES + "/mcrproto.obj";
 	Mesh mesh = Mesh::fromOBJ(path);
@@ -105,11 +105,6 @@ inline void objtest() {
 	s.outputBuffer(BUFFER_PATH);
 
 	std::cout << "Stored\n";
-}
-
-// TEST 8 New Mesh Loader
-inline void objtest2() {
-
 }
 
 int main() {
