@@ -270,6 +270,15 @@ class Mesh : public Object {
 		return vn[i];
 	}
 
+	// Get texture coord for triangle index
+	inline Vector2 getVertexUV(int i, int s) {
+		if (i < 0 || i >= size) return NILVEC2;
+		if (s < 0 || s >= texcoords[i].size()) return NILVEC2;
+		int sss = texcoords[i][s];
+		if (sss < 0 || sss >= uv.size()) return NILVEC2;
+		return Vector2(uv[sss]);
+	}
+
 	~Mesh() {
 	}
 

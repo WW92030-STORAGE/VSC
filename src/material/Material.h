@@ -13,8 +13,8 @@ struct BaseMaterial {
 	float specular;
 
 	enum MaterialType {
-		BASE,
-		IMAGE
+		BASE = 0,
+		IMAGE = 1
 	};
 
 	MaterialType TYPE = BASE;
@@ -37,6 +37,8 @@ struct BaseMaterial {
 	BaseMaterial(const BaseMaterial& other) {
 		baseColor = Vector3(other.baseColor);
 		specular = other.specular;
+
+		TYPE = other.TYPE;
 	}
 
 	virtual inline uint32_t getColor(Vector2 v) {

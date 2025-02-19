@@ -20,6 +20,7 @@
 
 #include "Color.h"
 #include "../material/Material.h"
+#include "../material/ImageTexture.h"
 
 #include "../lighting/Light.h"
 #include "../lighting/PointLight.h"
@@ -37,7 +38,7 @@ class Scene { // CENA!
 
 
 
-	std::queue<std::pair<Triangle3, std::pair<BaseMaterial, bool>>> triqueue;
+	std::queue<std::pair<Triangle3, std::pair<BaseMaterial*, bool>>> triqueue;
 
 	Camera camera;
 
@@ -105,14 +106,25 @@ class Scene { // CENA!
 		buffer[x][y] = ReducedFrag(F.ndc.w, F.color);
 	}
 
+	// Get color from material
+
+	inline uint32_t getColor(BaseMaterial* material, Vector2 uv) {
+		std::cout << material->TYPE;
+		if (material->TYPE == BaseMaterial::IMAGE) {
+			ImageTexture* imgtex = dynamic_cast<ImageTexture*>(material);
+			if (imgtex) return imgtex->getColor(uv);
+		}
+		return material->getColor(uv);
+	}
+
 	// Handle the lighting: compute the illumination of a given point.
 	// Params: pRay = source ray direction (from the light source)
 	// position = position in EUCLIDEAN space
 	// material = Material used to do the calcs
 	// LIT = debug
 
-	inline uint32_t shade(Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial material, bool LIT = true) {
-		Vector3 col = rgb(material.getColor(uv));
+	inline uint32_t shade(Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
+		Vector3 col = rgb(getColor(material, uv));
 		if (!LIT) return rgb(col);
 		
 		Vector3 I(ambientLight);
@@ -131,12 +143,12 @@ class Scene { // CENA!
 
 					// Specular term
 
-					if (material.specular > 0) {
+					if (material->specular > 0) {
 
 						Vector3 reflected = normal * (2 * normal.dot(L)) - L;
 						float rv = reflected.normalized().dot((position * -1).normalized());
 						if (rv > 0) {
-							float spec = powf(rv, material.specular);
+							float spec = powf(rv, material->specular);
 							shadedIntensity = shadedIntensity + (pl.intensity * spec);
 						// std::cout << (pl.intensity * spec).to_string() << " " << specular << "\n";
 						}
@@ -161,7 +173,7 @@ class Scene { // CENA!
 	}
 
 	// Actual raytracing. The pRay is the slope of the ray, the position is the intersection point.
-	inline uint32_t illuminate(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial material, bool LIT = true) {
+	inline uint32_t illuminate(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
 		return shade(position, normal, uv, material, LIT);
 	}
 
@@ -341,7 +353,8 @@ class Scene { // CENA!
 		for (int i = 0; i < 3; i++) finaluv = finaluv + (s.p[i].uv * b.get(i));
 
 
-		uint32_t c = s.material.getColor(finaluv);
+		uint32_t c = getColor(s.material, finaluv);
+		// std::cout << finaluv.to_string() << " " << c << " " << (s.material.TYPE == BaseMaterial::IMAGE) << "\n";
 		if (PHONGSHADE) {
 			Vector3 point;
 			for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * b.get(ss));
@@ -601,22 +614,27 @@ class Scene { // CENA!
 	}
 
 	// Right now this always draws triangles using the base color.
-	inline void drawTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false, bool INTERPNORM = false) {
+	inline void drawTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false, bool INTERPNORM = false) {
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
 		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		Vector3 cen = s.centroid();
 		// c = illuminate(cen, cen, s.N, c);
 		auto p = project(s);
-		p.material = BaseMaterial(material);
+		p.material = material;
 		if (!uv) uv = new Vector2[3] {Vector2(), Vector2(), Vector2()};
 		if (!vn) PHONGSHADE = false;
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
+		if (uv) for (int i = 0; i < 3; i++) p.p[i].uv = uv[i];
 		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material);
 		if (clip(p)) return;
-		drawTriangle(p, rgb(material.baseColor));
+		drawTriangle(p, rgb(material->baseColor));
 	}
 
-	inline void fillTriangle(Triangle3 s, BaseMaterial material = BASEMAT_WHITE, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false) {
+	inline void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false) {
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
 		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) {
 			// std::cout << "CULLED\n";
@@ -626,10 +644,11 @@ class Scene { // CENA!
 		// c = illuminate(cen, cen, s.N, c);
 
 		auto p = project(s);
-		p.material = BaseMaterial(material);
+		p.material = material;
 		if (!uv) uv = new Vector2[3] {Vector2(), Vector2(), Vector2()};
 		if (!vn) PHONGSHADE = false;
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
+		if (uv) for (int i = 0; i < 3; i++) p.p[i].uv = uv[i];
 
 		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material);
 		
@@ -641,27 +660,43 @@ class Scene { // CENA!
 
 	// draw a MESH
 
-	inline void drawMesh(Mesh& m, BaseMaterial material = BASEMAT_WHITE, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
+	inline void drawMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
 		for (int i = 0; i < m.size; i++) {
 			Vector3* vn = new Vector3[3];
 			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+			Vector2* vt = new Vector2[3];
+			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
+
 			bool isna = false;
 			for (int s = 0; s < 3; s++) {
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= SMOOTHSHADE;
-			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, nullptr, BACKFACECULL, PHONGSHADE, INTERPNORM);
+
+			bool isnat = false;
+			for (int s = 0; s < 3; s++) {
+				if (vt[s] == NILVEC2) isnat = true;
+			}
+
+			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr: vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
 		}
 	}
 
-	inline void fillMesh(Mesh& m, BaseMaterial material = BASEMAT_WHITE, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
+	inline void fillMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
 		// std::cout << "\n" << m.nverts << "\n";
 		for (int i = 0; i < m.size; i++) {
 			// if (i % 64 == 0) std::cout << i << "/" << m.size << "...\n";
 			Vector3* vn = new Vector3[3];
 			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+
+			Vector2* vt = new Vector2[3];
+			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
 			/*
 			std::cout << "\n";
 			for (int t = 0; t < 3; t++) std::cout << m.tris[i].p[t].to_string() << " / " << vn[t].to_string() << "\n";
@@ -673,19 +708,26 @@ class Scene { // CENA!
 				if (vn[s] == Vector3()) isna = true;
 			}
 			isna |= !SMOOTHSHADE;
-			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, nullptr, BACKFACECULL, PHONGSHADE, INTERPNORM);
+
+
+			bool isnat = false;
+			for (int s = 0; s < 3; s++) {
+				if (vt[s] == NILVEC2) isnat = true;
+			}
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr : vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
+			delete[] vt;
 		}
 	}
 
 	// Queue various meshes and triangles to be drawn. WARNING - This will result in flat shading.
 
-	inline void QueueTriangle(Triangle3 s, BaseMaterial material, bool FILL = false, bool BACKFACECULL = true) {
+	inline void QueueTriangle(Triangle3 s, BaseMaterial* material, bool FILL = false, bool BACKFACECULL = true) {
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		triqueue.push({s, {material, FILL}});
 	}
 
-	inline void QueueMesh(Mesh& m, BaseMaterial material, bool FILL = true) {
+	inline void QueueMesh(Mesh& m, BaseMaterial* material, bool FILL = true) {
 		for (int i = 0; i < m.size; i++) QueueTriangle(m.makeTriangle(i), material, FILL);
 	}
 

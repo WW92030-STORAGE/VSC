@@ -9,11 +9,12 @@
 
 // If you want to set the base material params DO IT SEPARATELY
 class ImageTexture : public BaseMaterial {
+	public:
 	std::vector<std::vector<uint32_t>> image; // Image pixels go left to right and top to bottom
 
 	int W, H;
 
-	ImageTexture(int w, int h) : BaseMaterial() {
+	ImageTexture(int w, int h) {
 		W = w;
 		H = h;
 
@@ -22,7 +23,8 @@ class ImageTexture : public BaseMaterial {
 		TYPE = IMAGE;
 	}
 
-	ImageTexture(std::vector<std::vector<uint32_t>> tex) : BaseMaterial() {
+	ImageTexture(std::vector<std::vector<uint32_t>> tex) {
+		std::cout << "IMG\n";
 		W = tex.size();
 		H = tex[0].size();
 		for (auto i : tex) H = BASE::max(H, int(i.size()));
@@ -58,7 +60,7 @@ class ImageTexture : public BaseMaterial {
 		return {x, y};
 	}
 
-	inline uint32_t getColor(int x, int y) override {
+	virtual inline uint32_t getColor(int x, int y) override {
 		if (x < 0) x = 0;
 		if (y < 0) y = 0;
 		if (x >= W) x = W - 1;
@@ -66,7 +68,7 @@ class ImageTexture : public BaseMaterial {
 		return image[x][y];
 	}
 
-	inline uint32_t getColor(Vector2 v) override {
+	virtual inline uint32_t getColor(Vector2 v) override {
 		auto p = getTexel(v);
 		return getColor(p.first, p.second);
 	}

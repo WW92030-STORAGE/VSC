@@ -33,7 +33,7 @@ def render():
 			im.putpixel((x, y), (r, g, b, a))
 			index += 1
 
-	im.show()
+	im.save("RENDER.PNG")
 
 	file.close()
 

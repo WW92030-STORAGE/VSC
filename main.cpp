@@ -12,30 +12,22 @@ std::string MESHES = "misc";
 std::string BUFFER_PATH = "BUFFER";
 std::string VIDEO_PATH = "video";
 
+
+// TEST 7 FU
 inline void textest() {
 	int SUB = 0;
-	Mesh lao = icosphere(1, SUB);
+	Mesh FU = icosphere(1, SUB);
+	FU = cube(1);
 	float SSS = 1;
 
 	Transform offset(Vector3(0, -2, -4) * SSS, Rotation3(Vector3(1, 1, 1), M_PI / 8));
-	lao.Trans(offset);
+	FU.Trans(offset);
 
-	Mesh shi(lao);
-	
-
-	shi.Trans(Transform(Vector3(2, 2, -1)));
-	
-
-	Mesh proto = icosphere(1, SUB);
-	proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
-	proto = icosphere(1, SUB);
-	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
-	
 	int N = 1024;
 
 	Scene s(N, N / 2);
 
-	float A = 00.2;
+	float A = 00.5;
 
 	PointLight PL(Vector3(1, 1, 1), A);
 	PL.Trans(Transform(Vector3(-4, 0, 0)));
@@ -43,7 +35,7 @@ inline void textest() {
 
 	PointLight PL2(Vector3(1, 1, 1), A);
 	PL2.Trans(Transform(Vector3(4, 0, 0)));
-	// s.lights.push_back(PL2);
+	s.lights.push_back(PL2);
 
 	s.clearBuffer();
 
@@ -51,12 +43,13 @@ inline void textest() {
 
 	int SPE = 16;
 
-	
+	uint32_t col1 = 0xFFFFFFFF;
+	uint32_t col2 = 0xFF0000FF;
 
-	s.fillMesh(lao, BaseMaterial(0xFF0000FF, SPE * SPE), true, true);
-	s.fillMesh(shi, BaseMaterial(0x00FF00FF, SPE), true, true);
-	s.fillMesh(proto, BaseMaterial(0x0000FFFF, 1), false);
+	std::vector<std::vector<uint32_t>> tex({std::vector<uint32_t>{col1, col2}, std::vector<uint32_t>{col2, col1}});
 
+	ImageTexture texx(tex);
+	s.fillMesh(FU, texx, false);
 	std::cout << "THING\n";
 
 	s.drawQueue();
