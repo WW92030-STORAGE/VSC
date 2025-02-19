@@ -20,14 +20,14 @@ inline void textest() {
 	FU = cube(1);
 	float SSS = 1;
 
-	Transform offset(Vector3(0, -2, -4) * SSS, Rotation3(Vector3(1, 1, 1), M_PI / 8));
+	Transform offset(Vector3(0, -2, -4) * SSS, Rotation3(Vector3(1, 2, 1), M_PI / 4));
 	FU.Trans(offset);
 
 	int N = 1024;
 
 	Scene s(N, N / 2);
 
-	float A = 00.5;
+	float A = 00.2;
 
 	PointLight PL(Vector3(1, 1, 1), A);
 	PL.Trans(Transform(Vector3(-4, 0, 0)));
@@ -43,13 +43,13 @@ inline void textest() {
 
 	int SPE = 16;
 
-	uint32_t col1 = 0xFFFFFFFF;
+	uint32_t col1 = 0x00FFFFFF;
 	uint32_t col2 = 0xFF0000FF;
 
-	std::vector<std::vector<uint32_t>> tex({std::vector<uint32_t>{col1, col2}, std::vector<uint32_t>{col2, col1}});
+	std::vector<std::vector<uint32_t>> tex({std::vector<uint32_t>{col1, col2, col1, col2}, std::vector<uint32_t>{col2, col1, col2, col1}, std::vector<uint32_t>{col1, col2, col1, col2}, std::vector<uint32_t>{col2, col1, col2, col1}});
 
-	ImageTexture texx(tex);
-	s.fillMesh(FU, texx, false);
+	ImageTexture* texx = new ImageTexture(tex);
+	s.fillMesh(FU, texx, true, true);
 	std::cout << "THING\n";
 
 	s.drawQueue();

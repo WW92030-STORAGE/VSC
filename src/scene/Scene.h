@@ -109,7 +109,6 @@ class Scene { // CENA!
 	// Get color from material
 
 	inline uint32_t getColor(BaseMaterial* material, Vector2 uv) {
-		std::cout << material->TYPE;
 		if (material->TYPE == BaseMaterial::IMAGE) {
 			ImageTexture* imgtex = dynamic_cast<ImageTexture*>(material);
 			if (imgtex) return imgtex->getColor(uv);
@@ -348,9 +347,11 @@ class Scene { // CENA!
 		// std::cout << s.to_string() << " " << x <<  " " << y << " = " << b.to_string() << "\n\n";
 
 		// Interpolate uv TODO - make this perspective correct
+		// u/z and v/z linearly interpolate
 
 		Vector2 finaluv;
-		for (int i = 0; i < 3; i++) finaluv = finaluv + (s.p[i].uv * b.get(i));
+		for (int i = 0; i < 3; i++) finaluv = finaluv + ((s.p[i].uv / s.p[i].ndc.w) * b.get(i));
+		finaluv = finaluv * wc;
 
 
 		uint32_t c = getColor(s.material, finaluv);
