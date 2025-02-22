@@ -70,7 +70,7 @@ inline void textest() {
 inline void objtest() {
 	std::string path = MESHES + "/mcrproto.obj";
 	Mesh mesh = Mesh::fromOBJ(path);
-	Transform movemeback(Vector3(0, -2, -2), Rotation3(Vector3(0, 1, 0), M_PI * 1.25));
+	Transform movemeback(Vector3(0, -1, -1), Rotation3(Vector3(0, 1, 0), M_PI * 1.25));
 
 	mesh.Trans(movemeback);
 
@@ -90,6 +90,9 @@ inline void objtest() {
 
 	ImageTexture mat(mcrproto);
 
+	auto start = std::chrono::high_resolution_clock::now();
+
+
 	for (int i = 0; i < 1; i++) {
 		s.clearBuffer();
 		s.fillMesh(mesh, &mat, true, true, false);
@@ -100,6 +103,9 @@ inline void objtest() {
 	
 
 	std::cout << "Drawn\n";
+
+	auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << double(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count()) / 1000000 << "ns\n";
 
 
 	s.outputBuffer(BUFFER_PATH);

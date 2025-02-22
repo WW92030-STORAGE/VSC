@@ -355,6 +355,7 @@ class Scene { // CENA!
 
 
 		uint32_t c = getColor(s.material, finaluv);
+		uint32_t oc = c;
 		// std::cout << finaluv.to_string() << " " << c << " " << (s.material.TYPE == BaseMaterial::IMAGE) << "\n";
 		if (PHONGSHADE) {
 			Vector3 point;
@@ -372,7 +373,7 @@ class Scene { // CENA!
 		} else {
 			c = illuminate(t.centroid(), t.centroid(), s.N, finaluv, s.material);
 		}
-		Fragment F__F(Vector4(x, y, zc, wc), Vector3(s.ON), c);
+		Fragment F__F(Vector4(x, y, zc, wc), Vector3(s.ON), c, finaluv, oc);
 
 		// std::cout << s.bary(x, y).to_string() << " " << F.ndc.z << " " << F.ndc.w << " = " << F.color << "\n";
 		drawFragment(F__F, x, y);
@@ -595,8 +596,8 @@ class Scene { // CENA!
 			if (y1 < s.p[i].ndc.y) y1 = s.p[i].ndc.y;
 		}
 
-		for (int x = x0; x <= x1; x++) {
-			for (int y = y0; y <= y1; y++) {
+		for (int x = BASE::max(x0, 0); x <= x1 && x < W; x++) {
+			for (int y = BASE::max(y0, 0); y <= y1 && y < H; y++) {
 				if (!s.inside(Vector2(x, y))) continue;
 				DrawTriFrag(s, T, x, y, PHONGSHADE);
 			}

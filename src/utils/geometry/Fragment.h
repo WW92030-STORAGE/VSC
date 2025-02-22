@@ -12,6 +12,7 @@ class Fragment {
 	Vector3 normal;
 	Vector2 uv = NILVEC2;
 	uint32_t color = 0;
+	uint32_t albedo = 0;
 
 	Fragment() {
 		ndc = Vector4(0, 0, FLT_MAX, FLT_MAX);
@@ -31,19 +32,28 @@ class Fragment {
 		uv = Vector2(U);
 	}
 
+	Fragment(Vector4 V, Vector3 N, uint32_t C, Vector2 U, uint32_t A) {
+		ndc = Vector4(V);
+		normal = Vector3(N);
+		color = C;
+		uv = Vector2(U);
+		albedo = A;
+	}
+
 	Fragment(const Fragment& o) {
 		ndc = Vector4(o.ndc);
 		normal = Vector3(o.normal);
 		color = o.color;
 		uv = Vector2(o.uv);
+		albedo = o.albedo;
 	}
 
 	inline bool operator==(Fragment& o) {
-		return (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv);
+		return (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv) && (albedo == o.albedo);
 	}
 
 	inline bool operator!=(Fragment& o) {
-		return !( (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv));
+		return !( (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv) && (albedo == o.albedo));
 	}
 
 	// UTIL
