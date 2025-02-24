@@ -113,7 +113,86 @@ inline void objtest() {
 	std::cout << "Stored\n";
 }
 
+inline void morphtest() {
+	Mesh test = Mesh::fromOBJ(MESHES + "/cubenomorph.obj");
+	Mesh test2 = Mesh::fromOBJ(MESHES + "/cubemorph.obj");
+
+	MorphedMesh darkdragon(test);
+
+	darkdragon.copyTo(test2);
+
+
+
+	std::cout << darkdragon.nstates << " " << darkdragon.nverts << " = " << darkdragon.size << "\n";
+
+	Transform back(Vector3(0, -2, -4));
+
+	darkdragon.Trans(back);
+	
+	darkdragon.morph(std::vector<float>({1, 0}));
+
+	int N = 512;
+
+	Scene s(N, N);
+
+	PointLight PL(Vector3(1, 1, 1), 0);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	s.lights.push_back(P2);
+
+	std::cout << "Loaded" << " " << darkdragon.uv.size() << "\n";
+
+	s.clearBuffer();
+
+	int LEN = 60;
+
+	Transform rot(Vector3(), Rotation3(Vector3(0, 1, 0), M_PI * 2 / LEN));
+
+	ImageTexture* mat = new ImageTexture(rgbcube2);
+
+	for (int i = 0; i < LEN; i++) {
+		float sine = 1 + cosf(i * M_PI * 2 / LEN);
+		std::cout << i << " " << sine << "\n";
+		darkdragon.morph({2 - sine, sine});
+
+		Transform origin(darkdragon.transform.origin);
+		darkdragon.Trans(origin.inv());
+		darkdragon.Trans(rot);
+		darkdragon.Trans(origin);
+
+		s.clearBuffer();
+		s.fillMesh(darkdragon, mat, true, true);
+
+		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
+	}
+
+	std::ofstream len(VIDEO_PATH + "/LEN");
+	len << LEN;
+	len.close();
+
+	darkdragon.morphToState(1);
+
+	std::cout << "Animated\n";
+
+	s.clearBuffer();
+
+	test.Trans(back);
+
+	s.fillMesh(darkdragon, mat);
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	delete mat;
+}
+
 int main() {
-	objtest();
+	morphtest();
 	return 0;
 }

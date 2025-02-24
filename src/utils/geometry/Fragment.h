@@ -6,6 +6,12 @@
 #include "../math/Vectors.h"
 #include "../../material/Material.h"
 
+/*
+
+Fragments represent pixel data which can be used in shaders. Fragments can hold information such as position, normal, uv, and color.
+
+*/
+
 class Fragment {
 	public:
 	Vector4 ndc;

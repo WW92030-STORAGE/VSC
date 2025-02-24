@@ -1,6 +1,8 @@
 #ifndef EVERYTHING_EXT
 #define EVERYTHING_EXT
 
+#include <iostream>
+
 // Math and linalg
 
 #include "utils/Math.h"
@@ -11,8 +13,11 @@
 #include "objects/Object.h"
 #include "objects/Triangle.h"
 #include "objects/Mesh.h"
+#include "objects/MorphedMesh.h"
 
 #include "utils/geometry/Fragment.h"
+
+#include "objects/Triangulate.h"
 
 // Camera and lighting
 

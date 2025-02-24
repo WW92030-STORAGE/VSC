@@ -9,7 +9,7 @@ That is a triangle that you see.''
 -Barney and Friends song
 
 Triangles are formed of three points and represent the plane the three points go through. Triangles can occur in 2d and 3d.
-3d triangles form into groups to form meshes and manifolds, while 2d triangles are more useful for uv mapping and textures.
+3d triangles form into groups to form meshes and manifolds, while 2d (and Fragment) triangles are more useful for uv mapping and textures.
 
 */
 

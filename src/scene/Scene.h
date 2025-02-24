@@ -1,7 +1,6 @@
 #ifndef SCENE_EXT
 #define SCENE_EXT
 
-// #include <iostream>
 #include <string>
 #include <cstdint>
 #include <fstream>
@@ -331,6 +330,9 @@ class Scene { // CENA!
 	inline void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false) {
 		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
 		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
+
+		// for (int i = 0; i < 3; i++) std::cout << "UV " << s.p[i].uv.to_string() << " ";
+		// std::cout << "\n";
 
 		Vector3 b = s.bary(x, y);
 		// if (b.x > 1 || b.y > 1 || b.z > 1) return;
@@ -668,8 +670,39 @@ class Scene { // CENA!
 		for (int i = 0; i < m.size; i++) {
 			Vector3* vn = new Vector3[3];
 			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+			// std::cout << "normals " << vn[0].to_string() << " " << vn[1].to_string() << " " << vn[2].to_string() << "\n";
 			Vector2* vt = new Vector2[3];
 			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
+
+			// std::cout << "tex " << vt[0].to_string() << " " << vt[1].to_string() << " " << vt[2].to_string() << "\n";
+
+			bool isna = false;
+			for (int s = 0; s < 3; s++) {
+				if (vn[s] == Vector3()) isna = true;
+			}
+			isna |= SMOOTHSHADE;
+
+			bool isnat = false;
+			for (int s = 0; s < 3; s++) {
+				if (vt[s] == NILVEC2) isnat = true;
+			}
+
+			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr: vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			delete[] vn;
+		}
+	}
+
+	inline void drawMesh(MorphedMesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
+		for (int i = 0; i < m.size; i++) {
+			Vector3* vn = new Vector3[3];
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+			// std::cout << "normals " << vn[0].to_string() << " " << vn[1].to_string() << " " << vn[2].to_string() << "\n";
+			Vector2* vt = new Vector2[3];
+			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
+
+			// std::cout << "tex " << vt[0].to_string() << " " << vt[1].to_string() << " " << vt[2].to_string() << "\n";
 
 			bool isna = false;
 			for (int s = 0; s < 3; s++) {
@@ -688,6 +721,42 @@ class Scene { // CENA!
 	}
 
 	inline void fillMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
+		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
+		// std::cout << "\n" << m.nverts << "\n";
+		for (int i = 0; i < m.size; i++) {
+			// if (i % 64 == 0) std::cout << i << "/" << m.size << "...\n";
+			Vector3* vn = new Vector3[3];
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+
+			Vector2* vt = new Vector2[3];
+			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
+			for (int s = 0; s < 3; s++) std::cout << vt[s].to_string() << " ";
+			/*
+			std::cout << "\n";
+			for (int t = 0; t < 3; t++) std::cout << m.tris[i].p[t].to_string() << " / " << vn[t].to_string() << "\n";
+			std::cout << "\n" << m.tris[i].N.to_string() << "\n\n";
+			*/
+			
+			bool isna = false;
+			for (int s = 0; s < 3; s++) {
+				if (vn[s] == Vector3()) isna = true;
+			}
+			isna |= !SMOOTHSHADE;
+
+
+			bool isnat = false;
+			for (int s = 0; s < 3; s++) {
+				if (vt[s] == NILVEC2) isnat = true;
+			}
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr : vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			delete[] vn;
+			delete[] vt;
+		}
+	}
+
+	inline void fillMesh(MorphedMesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";

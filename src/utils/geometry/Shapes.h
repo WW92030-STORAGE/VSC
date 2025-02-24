@@ -6,7 +6,13 @@
 #include <vector>
 #include <utility>
 
-#include <iostream>
+// #include <iostream>
+
+/*
+
+Some generators for basic shapes.
+
+*/
 
 inline Mesh cube(float X = 16) {
 

@@ -24,7 +24,7 @@ class ImageTexture : public BaseMaterial {
 	}
 
 	ImageTexture(std::vector<std::vector<uint32_t>> tex) {
-		std::cout << "IMG\n";
+		// std::cout << "IMG\n";
 		W = tex.size();
 		H = tex[0].size();
 		for (auto i : tex) H = BASE::max(H, int(i.size()));

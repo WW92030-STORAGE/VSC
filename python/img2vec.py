@@ -3,7 +3,7 @@ import sys
 
 INPUT = "img"
 NAME = ""
-INFILE = "Earth.jpeg"
+INFILE = "rgbcube2.png"
 OUTPUT = "misc"
 OUTSUF = "_texture.dat"
 

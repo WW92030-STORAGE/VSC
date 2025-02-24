@@ -7,7 +7,7 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 
 */
 
-#include <iostream>
+// #include <iostream>
 #include <sstream>
 #include <string>
 #include <fstream>
@@ -27,8 +27,9 @@ Meshes are the formation of triangles into manifolds, approximating three-dimens
 
 class Mesh : public Object {
 	public:
-	int size;
-	int nverts;
+	int size = 0;
+	int nverts = 0;
+	int nuv = 0;
 
 	std::vector<Vector3> verts; // Array of vertices
 	std::vector<std::vector<int>> triindices; // Triangle indices in the vertex array;
@@ -106,6 +107,8 @@ class Mesh : public Object {
 
 	uv = std::vector<Vector2>(nverts, Vector2(0, 0));
 
+	nuv = nverts;
+
 	setupvns();
 
 	}
@@ -124,6 +127,8 @@ class Mesh : public Object {
 		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
 		uv = std::vector<Vector2>(nverts);
 
+		nuv = nverts;
+
 		for (int i = 0; i < nverts; i++) {
 			verts[i] = Vector3(v[i]);
 			uv[i] = Vector2(0, 0);
@@ -136,19 +141,18 @@ class Mesh : public Object {
 		
 	}
 
-	Mesh(Vector3* v, int** t, Vector2* tex, int** texco, int nv, int sz) {
+	Mesh(Vector3* v, int** t, Vector2* tex, int** texco, int nv, int sz, int nuuv) {
 		nverts = nv;
 		size = sz;
+		nuv = nuuv;
 
 		verts = std::vector<Vector3>(nverts);
 		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
 		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
-		uv = std::vector<Vector2>(nverts);
+		uv = std::vector<Vector2>(nuv);
 
-		for (int i = 0; i < nverts; i++) {
-			verts[i] = Vector3(v[i]);
-			uv[i] = Vector2(tex[i]);
-		}
+		for (int i = 0; i < nverts; i++) verts[i] = Vector3(v[i]);
+		for (int i = 0; i < nuv; i++) uv[i] = Vector2(tex[i]);
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < 3; j++) {
 				triindices[i][j] = t[i][j];
@@ -170,6 +174,8 @@ class Mesh : public Object {
 
 		uv = std::vector<Vector2>(nverts);
 
+		nuv = nverts;
+
 		for (int i = 0; i < nverts; i++) {
 			verts[i] = Vector3(v[i]);
 			uv[i] = Vector2(0, 0);
@@ -185,18 +191,16 @@ class Mesh : public Object {
 	Mesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t,std::vector<Vector2> tex, std::vector<std::vector<int>>& texco) {
 		size = t.size();
 		nverts = v.size();
+		nuv = tex.size();
 
 		verts = std::vector<Vector3>(nverts);
 		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
 		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
 
-		uv = std::vector<Vector2>(nverts);
+		uv = std::vector<Vector2>(nuv);
 
-		for (int i = 0; i < nverts; i++) {
-			verts[i] = Vector3(v[i]);
-			if (i < tex.size()) uv[i] = Vector2(tex[i]);
-			else uv[i] = Vector2();
-		}
+		for (int i = 0; i < nverts; i++) verts[i] = Vector3(v[i]);
+		for (int i = 0; i < tex.size(); i++) uv[i] = Vector2(tex[i]);
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < 3 && j < t[i].size(); j++) {
 				triindices[i][j] = t[i][j];
@@ -225,6 +229,7 @@ class Mesh : public Object {
 		}
 
 		nverts = verts.size();
+		nuv = nverts;
 
 		setupvns();
 	}
@@ -232,10 +237,13 @@ class Mesh : public Object {
 	Mesh(const Mesh& other) {
 		size = other.size;
 		nverts = other.nverts;
+		nuv = other.nuv;
 		verts = std::vector<Vector3>(nverts);
 		triindices = std::vector<std::vector<int>>(size);
 		texcoords = std::vector<std::vector<int>>(size);
+		uv = std::vector<Vector2>(nverts);
 		for (int i = 0; i < nverts; i++) verts[i] = Vector3(other.verts[i]);
+		for (int i = 0; i < nuv; i++) uv[i] = Vector2(other.uv[i]);
 		for (int i = 0; i < size; i++) {
 			triindices[i] = std::vector<int>(other.triindices[i]);
 			texcoords[i] = std::vector<int>(other.texcoords[i]);
@@ -274,10 +282,20 @@ class Mesh : public Object {
 
 	// Get texture coord for triangle index
 	inline Vector2 getVertexUV(int i, int s) {
-		if (i < 0 || i >= size) return NILVEC2;
-		if (s < 0 || s >= texcoords[i].size()) return NILVEC2;
+		if (i < 0 || i >= texcoords.size()) {
+			std::cout << "BAD INDEX " << i << " " << nuv << "\n";
+			return Vector2(0, 0);
+		}
+		if (s < 0 || s >= texcoords[i].size()) {
+			std::cout << "BAD VERTEX " << s << " " << texcoords[i].size() << "\n";
+			return Vector2(0, 0);
+		}
 		int sss = texcoords[i][s];
-		if (sss < 0 || sss >= uv.size()) return NILVEC2;
+		if (sss < 0 || sss >= uv.size()) {
+			std::cout << "BAD UV POSITION " << sss << " " << uv.size() << "\n";
+			return Vector2(0, 0);
+		}
+		
 		return Vector2(uv[sss]);
 	}
 
@@ -305,75 +323,6 @@ class Mesh : public Object {
 
 	// The rest of the methods detail reading in from OBJ files.
 
-	// Get vertex given list of vertices and obj form index
-	inline static Vector3 vindex(std::vector<Vector3>& v, int i) {
-		int n = v.size();
-		if (i > 0) return Vector3(v[i - 1]);
-		return Vector3(v[n - i]);
-	}
-
-	inline static std::vector<Triangle3> TriangulateConvex(std::vector<int> vertices, std::vector<Vector3> verts) {
-		std::vector<Triangle3> tris;
-		
-		Vector3 v0 = vindex(verts, vertices[0]);
-		for (int i = 1; i < vertices.size() - 1; i++) {
-			Vector3 v1 = vindex(verts, vertices[i]);
-			Vector3 v2 = vindex(verts, vertices[i + 1]);
-			tris.push_back(Triangle3(v0, v1, v2));
-		}
-
-		return tris;
-	}
-
-	// Algorithm: until there aRe N - 2 triangles: find 3 consecutive verticEs that are counterclockwise and contain no vertices in the interior.
-	// The three vertices form a triangle, and the middle vertex is clipped.
-	inline static std::vector<Triangle3> Triangulate(std::vector<int> vertices, std::vector<Vector3> verts) {
-
-		std::vector<Triangle3> tris;
-		int N = vertices.size();
-		if (N < 3) return tris;
-
-		if (N == 3) {
-			Vector3 s[3];
-			for (int i = 0; i < 3; i++) s[i] = vindex(verts, vertices[i]);
-			return std::vector<Triangle3>(1, Triangle3(s[0], s[1], s[2]));
-		}
-
-		std::vector<int> v(vertices);
-
-		for (int in = 0; in < N - 2; in++) {
-			int n = v.size();
-			int i = 0;
-			for (i = 0; i < n; i++) {
-				int a = vertices[i];
-				int b = vertices[(i + 1) % n];
-				int c = vertices[(i + 2) % n];
-				auto A = vindex(verts, a);
-				auto B = vindex(verts, b);
-				auto C = vindex(verts, c);
-				Triangle3 testtri(A, B, C);
-				bool ear = true;
-				for (int j = 3; j < n; j++) {
-					auto D = vindex(verts, vertices[(i + j) % n]);
-					if (testtri.inside(D)) {
-						ear = false;
-						break;
-					}
-				}
-				if (ear) break;
-			}
-				int a = vertices[i];
-				int b = vertices[(i + 1) % n];
-				int c = vertices[(i + 2) % n];
-				auto A = vindex(verts, a);
-				auto B = vindex(verts, b);
-				auto C = vindex(verts, c);
-			Triangle3 thetri(A, B, C);
-			tris.push_back(thetri);
-			vertices.erase(vertices.begin() + i);
-		}
-		return tris;
-	}
 
 	static Mesh fromOBJ(std::string filename) {
 		std::ifstream fin(filename);
@@ -417,7 +366,8 @@ class Mesh : public Object {
 							uvs.push_back(0);
 						}
 						else {
-							uvs.push_back(std::stoi(substr(sp[i], index + 1, texindex)));
+							int thing = std::stoi(substr(sp[i], index + 1, texindex));
+							uvs.push_back(thing);
 						}
 					}
 				}
@@ -436,8 +386,12 @@ class Mesh : public Object {
 
 				for (int i = 0; i < uvs.size(); i++) {
 					if (uvs[i] > 0) uvs[i]--;
-					else uvs[i] = n - uvs[i];
+					else uvs[i] = uv.size() - uvs[i];
 				}
+
+				// std::cout << "TRIANGLE ";
+				// for (int i = 0; i < uvs.size(); i++) std::cout << uv[uvs[i]].to_string() << " ";
+				// std::cout << "\n";
 				texco.push_back(uvs);
 
 			}
@@ -463,6 +417,8 @@ class Mesh : public Object {
 		std::cout << "\n";
 
 		*/
+
+		std::cout << "MESH " << verts.size() << " "  << tris.size() << " " <<  uv.size() << " " << texco.size() << "\n";
 
 		Mesh mesh(verts, tris, uv, texco);
 		return mesh;
