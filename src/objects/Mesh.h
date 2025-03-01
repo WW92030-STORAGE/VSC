@@ -241,7 +241,7 @@ class Mesh : public Object {
 		verts = std::vector<Vector3>(nverts);
 		triindices = std::vector<std::vector<int>>(size);
 		texcoords = std::vector<std::vector<int>>(size);
-		uv = std::vector<Vector2>(nverts);
+		uv = std::vector<Vector2>(nuv);
 		for (int i = 0; i < nverts; i++) verts[i] = Vector3(other.verts[i]);
 		for (int i = 0; i < nuv; i++) uv[i] = Vector2(other.uv[i]);
 		for (int i = 0; i < size; i++) {
@@ -283,16 +283,16 @@ class Mesh : public Object {
 	// Get texture coord for triangle index
 	inline Vector2 getVertexUV(int i, int s) {
 		if (i < 0 || i >= texcoords.size()) {
-			std::cout << "BAD INDEX " << i << " " << nuv << "\n";
+			// std::cout << "BAD INDEX " << i << " " << nuv << "\n";
 			return Vector2(0, 0);
 		}
 		if (s < 0 || s >= texcoords[i].size()) {
-			std::cout << "BAD VERTEX " << s << " " << texcoords[i].size() << "\n";
+			// std::cout << "BAD VERTEX " << s << " " << texcoords[i].size() << "\n";
 			return Vector2(0, 0);
 		}
 		int sss = texcoords[i][s];
 		if (sss < 0 || sss >= uv.size()) {
-			std::cout << "BAD UV POSITION " << sss << " " << uv.size() << "\n";
+			// std::cout << "BAD UV POSITION " << sss << " " << uv.size() << "\n";
 			return Vector2(0, 0);
 		}
 		
@@ -418,7 +418,7 @@ class Mesh : public Object {
 
 		*/
 
-		std::cout << "MESH " << verts.size() << " "  << tris.size() << " " <<  uv.size() << " " << texco.size() << "\n";
+		// std::cout << "MESH " << verts.size() << " "  << tris.size() << " " <<  uv.size() << " " << texco.size() << "\n";
 
 		Mesh mesh(verts, tris, uv, texco);
 		return mesh;
