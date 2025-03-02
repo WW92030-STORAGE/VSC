@@ -37,5 +37,9 @@ And then after that we go into the more juicy stuff such as texturing, clipping,
   
 There is a document named `NOTES.md` that holds notes that might be useful. It's like playing a game of Super Metroid.
 
+# QUESTIONS/CONCERNS/ISSUES
+
+Feel free to push an issue, do a pull request, or simply contact me (NormalExisting on Discord, Bluesky, and Telegram).
+
 ![Example!](example_outputs/mcrproto.PNG?raw=true)
 ![Example!](example_outputs/mcrproto.gif?raw=true)
