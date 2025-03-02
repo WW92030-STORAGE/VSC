@@ -2,7 +2,7 @@
   
 "I might have to wait, I'll never give up. I guess it's half timing, and the other half is luck..." -Michael Buble  
   
-VSC (VOUGA-SHREINER-CANTH) Verified is A 3D rendering engine that is intended to be literally ported anywhere.   
+VSC (VOUGA-SHREINER-CANTH) Verified is A real-time 3D rendering engine written entirely using software with the intention of being portable.
 Inspired by DoomGeneric with its rather novel approach to separating the backend from the frontend.  
 Also self-inspired by my (NormalExisting's) other C++ backends mostly for games/clones such as The Witness and Chess.  
   
