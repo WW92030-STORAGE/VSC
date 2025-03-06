@@ -89,6 +89,14 @@ class Transform {
 	}
 };
 
+inline Transform RotationAroundPoint(Vector3 p, Vector3 a, float t) {
+	Transform back(p * -1);
+	Transform rot(Vector3(), Rotation3(a, t));
+	Transform forward(p);
+
+	return forward * rot * back;
+}
+
 // Obtain a transform for a normal vector N, assuming the tangent vector T goes through the M transform
 /*
 

@@ -1,3 +1,6 @@
+#ifndef SHAPES_EXT
+#define SHAPES_EXT
+
 #include "Primitives.h"
 #include "../../objects/Mesh.h"
 #include "../../objects/Triangle.h"
@@ -16,17 +19,17 @@ Some generators for basic shapes.
 
 inline Mesh cube(float X = 16) {
 
-	Vector3 OFFSET(-X, -X, X);
+	Vector3 OFFSET(-X, -X, -X);
 	OFFSET = OFFSET * 0.5;
 
 	Vector3 FFF(0, 0, 0);
 	Vector3 TFF(X, 0, 0);
 	Vector3 FTF(0, X, 0);
 	Vector3 TTF(X, X, 0);
-	Vector3 FFT(0, 0, -X);
-	Vector3 TFT(X, 0, -X);
-	Vector3 FTT(0, X, -X);
-	Vector3 TTT(X, X, -X);
+	Vector3 FFT(0, 0, X);
+	Vector3 TFT(X, 0, X);
+	Vector3 FTT(0, X, X);
+	Vector3 TTT(X, X, X);
 
 	FFF = FFF + OFFSET;
 	TFF = TFF + OFFSET;
@@ -63,37 +66,37 @@ inline Mesh cube(float X = 16) {
 	std::vector<Vector3> verts({FFF, TFF, FTF, TTF, FFT, TFT, FTT, TTT});
 
 	std::vector<std::vector<int>> trii({
-		std::vector<int>{0, 1, 2},
-		std::vector<int>{1, 3, 2},
-		std::vector<int>{0, 2, 4},
-		std::vector<int>{2, 6, 4},
+		std::vector<int>{0, 2, 1},
+		std::vector<int>{3, 1, 2},
+		std::vector<int>{0, 4, 2},
+		std::vector<int>{6, 2, 4},
 
-		std::vector<int>{0, 4, 1},
-		std::vector<int>{4, 5, 1},
-		std::vector<int>{7, 5, 6},
-		std::vector<int>{6, 5, 4},
+		std::vector<int>{0, 1, 4},
+		std::vector<int>{5, 4, 1},
+		std::vector<int>{7, 6, 5},
+		std::vector<int>{4, 5, 6},
 
-		std::vector<int>{7, 3, 5},
-		std::vector<int>{5, 3, 1},
-		std::vector<int>{7, 6, 3},
-		std::vector<int>{3, 6, 2},
+		std::vector<int>{7, 5, 3},
+		std::vector<int>{1, 3, 5},
+		std::vector<int>{7, 3, 6},
+		std::vector<int>{2, 6, 3}
 	});
 	std::vector<Vector2> uv({UL, UR, BL, BR});
 	std::vector<std::vector<int>> texco({
 		std::vector<int>{2, 3, 0},
-		std::vector<int>{3, 1, 0},
-		std::vector<int>{3, 1, 2},
-		std::vector<int>{1, 0, 2},
-
-		std::vector<int>{0, 2, 1},
-		std::vector<int>{2, 3, 1},
-		std::vector<int>{0, 2, 1},
-		std::vector<int>{1, 2, 3},
-
-		std::vector<int>{1, 0, 2},
-		std::vector<int>{3, 0, 2},
 		std::vector<int>{1, 0, 3},
-		std::vector<int>{3, 0, 2}
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3},
+
+		
+		std::vector<int>{1, 0, 3},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3}
 	});
 
 	Mesh res(verts, trii, uv, texco);
@@ -103,17 +106,17 @@ inline Mesh cube(float X = 16) {
 
 inline Mesh cube6(float X = 16) {
 
-	Vector3 OFFSET(-X, -X, X);
+	Vector3 OFFSET(-X, -X, -X);
 	OFFSET = OFFSET * 0.5;
 
 	Vector3 FFF(0, 0, 0);
 	Vector3 TFF(X, 0, 0);
 	Vector3 FTF(0, X, 0);
 	Vector3 TTF(X, X, 0);
-	Vector3 FFT(0, 0, -X);
-	Vector3 TFT(X, 0, -X);
-	Vector3 FTT(0, X, -X);
-	Vector3 TTT(X, X, -X);
+	Vector3 FFT(0, 0, X);
+	Vector3 TFT(X, 0, X);
+	Vector3 FTT(0, X, X);
+	Vector3 TTT(X, X, X);
 
 	FFF = FFF + OFFSET;
 	TFF = TFF + OFFSET;
@@ -124,30 +127,60 @@ inline Mesh cube6(float X = 16) {
 	FTT = FTT + OFFSET;
 	TTT = TTT + OFFSET;
 
-	Vector2 UL(0, 0);
-	Vector2 UR(1, 0);
-	Vector2 BL(0, 1);
-	Vector2 BR(1, 1); 
+	std::vector<Vector3> verts({FFF, TFF, FTF, TTF, FFT, TFT, FTT, TTT});
 
-	Triangle3* tris = new Triangle3[12] {Triangle3(FFF, TFF, FTF), 
-	Triangle3(TFF, TTF, FTF),
-	Triangle3(FFF, FTF, FFT),
-	Triangle3(FTF, FTT, FFT),
-	Triangle3(FFF, FFT, TFF),
-	Triangle3(FFT, TFT, TFF),
-	Triangle3(TTT, TFT, FTT),
-	Triangle3(FTT, TFT, FFT),
-	Triangle3(TTT, TTF, TFT),
-	Triangle3(TFT, TTF, TFF),
-	Triangle3(TTT, FTT, TTF),
-	Triangle3(TTF, FTT, FTF)
-	};
+	std::vector<Vector2> uv({Vector2(0.375, 0), Vector2(0.625, 0), 
+		Vector2(0.375, 0.25), Vector2(0.625, 0.25), 
+		Vector2(0.125, 0.5), Vector2(0.375, 0.5), Vector2(0.625, 0.5), Vector2(0.875, 0.5), 
+		Vector2(0.125, 0.75), Vector2(0.375, 0.75), Vector2(0.625, 0.75), Vector2(0.875, 0.75), 
+		Vector2(0.375, 1), Vector2(0.625, 1)
+	});
 
-	Mesh res(tris, 12);
+	/*
+	.01.
+	.23.
+	4567
+	89AB
+	.CD.
+	
+	*/
+
+	std::vector<std::vector<int>> texco({
+		{9, 10, 5}, 
+		{6, 5, 10}, 
+		{9, 12, 10}, 
+		{13, 10, 12}, 
+		{5, 4, 9}, 
+		{8, 9, 4}, 
+
+		{3, 1, 2}, 
+		{0, 2, 1}, 
+		{3, 2, 6},
+		{5, 6, 2},
+		{6, 10, 7}, 
+		{11, 7, 10}
+	});
+
+	std::vector<std::vector<int>> trii({
+		std::vector<int>{0, 2, 1},
+		std::vector<int>{3, 1, 2},
+		std::vector<int>{0, 4, 2},
+		std::vector<int>{6, 2, 4},
+		std::vector<int>{0, 1, 4},
+		std::vector<int>{5, 4, 1},
+
+		std::vector<int>{7, 6, 5},
+		std::vector<int>{4, 5, 6},
+		std::vector<int>{7, 5, 3},
+		std::vector<int>{1, 3, 5},
+		std::vector<int>{7, 3, 6},
+		std::vector<int>{2, 6, 3}
+	});
+
+	Mesh res(verts, trii, uv, texco);
 
 	return res;
 }
-
 
 // Methods for subdividing triangles
 inline int VFE(std::vector<Vector3>& vertices, std::map<std::pair<int, int>, int>& lookup, int f, int s) {
@@ -230,3 +263,5 @@ inline Mesh icosphere(float R = 1, int S = 1) {
 	// delete[] res;
 	return ret;
 }
+
+#endif

@@ -45,4 +45,13 @@ inline bool isZero(Vector3 v) {
 inline bool isZero(Vector4 v) {
 	return BASE::fzero(v.x) && BASE::fzero(v.y) && BASE::fzero(v.z) && BASE::fzero(v.w);
 }
+
+// L1-normalize a vector (so the sum of the elements is 1)
+
+inline Vector3 NormSum(Vector3 v) {
+	float sum = v.x + v.y + v.z;
+	if (BASE::fzero(sum)) return v;
+	return v / sum;
+}
+
 #endif

@@ -22,6 +22,21 @@ class Camera : public Object {
 
 	Matrix4 frustum;
 
+	// Get axes
+
+	inline Vector3 right() {
+		return Vector3(transform.basis.xAxis);
+	}
+
+	inline Vector3 up() {
+		return Vector3(transform.basis.yAxis);
+	}
+
+	inline Vector3 look() {
+		return Vector3(transform.basis.zAxis);
+	}
+
+
 	// Initializes a camera at (0, 0, 0) and facing (0, 0, -1) with a given FOV
 	// The Camera Space is defined here where X is to the right, Y is up, and Z outwards/backwards.
 	// In other words, imagine the camera in a Minecraft world, facing NORTH (-Z).

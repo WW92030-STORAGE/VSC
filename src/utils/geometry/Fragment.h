@@ -21,7 +21,7 @@ class Fragment {
 	uint32_t albedo = 0;
 
 	Fragment() {
-		ndc = Vector4(0, 0, FLT_MAX, FLT_MAX);
+		ndc = Vector4(0, 0, INF, INF);
 		normal = Vector3(0, 0, 1);
 	}
 

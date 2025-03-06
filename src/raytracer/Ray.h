@@ -1,9 +1,11 @@
 #ifndef RAY_EXT
 #define RAY_EXT
 
+#include <string>
+
 #include "../utils/Math.h"
 #include "../utils/geometry/Primitives.h"
-#include "../scene/Material.h"
+#include "../material/Material.h"
 #include "../objects/Mesh.h"
 #include "../objects/Object.h"
 #include "../objects/Triangle.h"
@@ -25,9 +27,13 @@ class Ray {
 		slope = Vector3(s).normalized();
 	}
 
-	Ray(Ray& other) {
+	Ray(const Ray& other) {
 		point = Vector3(other.point);
 		slope = Vector3(other.slope).normalized();
+	}
+
+	Vector3 get(float t) {
+		return point + slope * t;
 	}
 
 	Line toLine() {
@@ -38,16 +44,31 @@ class Ray {
 		return t.intersectionTime(toLine());
 	}
 
-
+	inline std::string to_string() {
+		return "Ray[" + point.to_string() + ", " + slope.to_string() + "]";
+	}
 };
 
 class IntersectionPoint {
 	public:
-	BaseMaterial material;
+	BaseMaterial* material;
+	float time;
 	Vector3 N;
-	Object* obj;
+	Vector2 uv;
 
+	IntersectionPoint(BaseMaterial* bm, float t, Vector3 n, Vector2 u) {
+		material = bm;
+		time = t;
+		N = Vector3(n);
+		uv = Vector2(u);
+	}
 
+	inline bool valid() {
+		return (!BASE::fequal(INF, time) && N != NILVEC3);
+	}
+
+	~IntersectionPoint() {
+	}
 };
 
 #endif

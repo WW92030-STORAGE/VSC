@@ -11,6 +11,8 @@ struct BaseMaterial {
 	public:
 	Vector3 baseColor;
 	float specular;
+	float reflective;
+	float refraction;
 
 	enum MaterialType {
 		BASE = 0,
@@ -24,19 +26,25 @@ struct BaseMaterial {
 		specular = 0;
 	}
 
-	BaseMaterial(Vector3 v, float f) {
+	BaseMaterial(Vector3 v, float spec = 0, float refl = 0, float refr = 0) {
 		baseColor = Vector3(v);
-		specular = f;
+		specular = spec;
+		reflective = refl;
+		refraction = refr;
 	}
 
-	BaseMaterial(uint32_t u, float f) {
+	BaseMaterial(uint32_t u, float spec = 0, float refl = 0, float refr = 0) {
 		baseColor = rgb(u);
-		specular = f;
+		specular = spec;
+		reflective = refl;
+		refraction = refr;
 	}
 
 	BaseMaterial(const BaseMaterial& other) {
 		baseColor = Vector3(other.baseColor);
 		specular = other.specular;
+		reflective = other.reflective;
+		refraction = other.refraction;
 
 		TYPE = other.TYPE;
 	}

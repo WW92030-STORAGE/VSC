@@ -10,6 +10,7 @@
 // Defines
 
 #define M_PI 3.14159265358979323846
+#define INF FLT_MAX
 
 namespace BASE {
 
@@ -22,6 +23,7 @@ inline bool fzero(float f) {
 // Are they equal?
 
 inline bool fequal(float f, float g) {
+    if (f == g) return true;
     return fzero(f - g);
 }
 
@@ -75,6 +77,12 @@ inline float clamp(float f, float l, float h) {
     if (f < l) return l;
     if (f > h) return h;
     return f;
+}
+
+inline int iclamp(int i, int l, int h) {
+    if (i < l) return l;
+    if (i > h) return h;
+    return i;
 }
 
 // Number theory

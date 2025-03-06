@@ -106,8 +106,7 @@ Triangle.h
   
 # 6. RAY TRACING
   
-Yes, there is some ray tracing involved.  
-But it's a lot less involved than a true raytracer--while a true raytracer computes one or more illuminations per pixel, this rasterizer uses triangles to compute small numbers of illuminations and then interpolating between vertices and triangle faces.  
+The ray tracer portion of this project wil
   
 Primitives.h  
 - Method to calculate when a Plane intersects a ray (line) with origin and unit vector direction (NaN for null intersection).  
@@ -142,5 +141,8 @@ Scene.h
 - Illumination and color picking methods changed to detect image textures and apply the texture mapping.  
   
 # 8 - VISIBILITY  
+  
+Scene.h  
+- Backface culling -- the act of not drawing triangles that face away from the camera.  
   
 # 9 - POLYGONS  

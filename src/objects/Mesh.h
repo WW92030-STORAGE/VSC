@@ -280,6 +280,17 @@ class Mesh : public Object {
 		return vn[i];
 	}
 
+	inline Vector3 getVertexNormal(int ind, int i) {
+		return getVertexNormal(triindices[ind][i]);
+	}
+
+	// Get normal for point in triangle, interpolated
+	inline Vector3 getInterpolatedNormal(Vector3 pos, int ind) {
+		Triangle3 tri = makeTriangle(ind);
+
+		return (tri.interp<Vector3>(pos, getVertexNormal(ind, 0), getVertexNormal(ind, 1), getVertexNormal(ind, 2))).normalized();
+	}
+
 	// Get texture coord for triangle index
 	inline Vector2 getVertexUV(int i, int s) {
 		if (i < 0 || i >= texcoords.size()) {
@@ -298,6 +309,15 @@ class Mesh : public Object {
 		
 		return Vector2(uv[sss]);
 	}
+
+	// get UV of a point in a triangle
+	inline Vector2 getUV(Vector3 pos, int ind) {
+		Triangle3 tri = makeTriangle(ind);
+
+		return tri.interp<Vector2>(pos, getVertexUV(ind, 0), getVertexUV(ind, 1), getVertexUV(ind, 2));
+	}
+
+
 
 	~Mesh() {
 	}

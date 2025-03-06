@@ -48,7 +48,7 @@ inline void textest() {
 	uint32_t col2 = 0xFF0000FF;
 
 	std::vector<std::vector<uint32_t>> tex(5, std::vector<uint32_t>(5, col1));
-	for (int i = 0; i < 5; i++) tex[i][i] = col2;
+	for (int i = 0; i < 3; i++) tex[i][i] = col2;
 
 	ImageTexture* texx = new ImageTexture(tex);
 	s.fillMesh(FU, texx, true, true);
@@ -113,6 +113,7 @@ inline void objtest() {
 	std::cout << "Stored\n";
 }
 
+// TEST 8 DARK
 inline void morphtest() {
 	Mesh test = Mesh::fromOBJ(MESHES + "/cubenomorph.obj");
 	Mesh test2 = Mesh::fromOBJ(MESHES + "/cubemorph.obj");
@@ -125,7 +126,7 @@ inline void morphtest() {
 
 	std::cout << darkdragon.nstates << " " << darkdragon.nverts << " = " << darkdragon.size << "\n";
 
-	Transform back(Vector3(0, -2, -4));
+	Transform back(Vector3(0, -2, -4), Rotation3(Vector3(0, 1, 0), M_PI / 4));
 
 	darkdragon.Trans(back);
 	
@@ -160,7 +161,7 @@ inline void morphtest() {
 
 		Transform origin(darkdragon.transform.origin);
 		darkdragon.Trans(origin.inv());
-		darkdragon.Trans(rot);
+		// darkdragon.Trans(rot);
 		darkdragon.Trans(origin);
 
 		s.clearBuffer();
@@ -192,7 +193,135 @@ inline void morphtest() {
 	delete mat;
 }
 
+// i'm running out of ideas for codenames from disneyxd let's switch to pbs kids
+// TEST 8.1 ORD (Menger Sponge)
+inline void mengersponge() {
+	std::vector<Mesh> ord = MengerSponge(2, 4, true);
+
+	std::cout << ord.size() << " Sponge\n";
+
+	Transform back = Transform(Vector3(0, 0, -2));
+
+	for (int i = 0; i < ord.size(); i++) {
+		ord[i].Trans(back);
+	}
+	
+	int N = 512;
+	Scene s(N, N);
+
+	PointLight PL(Vector3(1, 1, 1) * 0.5, 0);
+	PL.Trans(Transform(Vector3(-2, 2, 2)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0.4);
+	P2.Trans(Transform(back.origin));
+	s.lights.push_back(P2);
+	
+	s.clearBuffer();
+
+	ImageTexture* mat = new ImageTexture(rgbcube2);
+
+	Transform rotabit = RotationAroundPoint(back.origin, Vector3(2, 1, -1), 0.8);
+
+	for (auto i : ord) {
+		i.Trans(rotabit);
+		s.fillMesh(i, mat, true, true);
+	}
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	delete mat;
+}
+
+// TEST 8.2 CASSIE (Texture map of the cube6)
+inline void texmapref() {
+
+	int N = 512;
+
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+	PointLight PL(Vector3(1, 1, 1), 0);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	s.lights.push_back(P2);
+
+	Mesh cassie = Mesh::fromOBJ(MESHES + "/cubenomorph.obj");
+	cassie = cube6(1);
+
+	Transform back(Vector3(0, -2, -4), Rotation3(Vector3(0, 1, 0), -0.4));
+
+	std::cout << "Animated\n";
+
+	s.clearBuffer();
+
+	cassie.Trans(back);
+
+	ImageTexture* mat = new ImageTexture(cubemap);
+
+	s.fillMesh(cassie, mat, true, true);
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	delete mat;
+}
+
+// TEST 9 ORD II (RAY TRACING)
+inline void RTXTest() {
+
+	int N = 512;
+	int D = 0;
+
+	RayTracer s(D, N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+	PointLight PL(Vector3(1, 1, 1), 0.2);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	// s.lights.push_back(P2);
+
+	Mesh ord = cube(1);
+	Mesh ord2 = icosphere(0.5, 2);
+
+	Transform back(Vector3(0, -2, -5), Rotation3(Vector3(0, 1, 0), -0.4));
+	ord.Trans(back);
+
+	Transform back2(Vector3(-1, -0.5, -3.5), Rotation3(Vector3(0, 1, 0), -0.4));
+	ord2.Trans(back2);
+
+	ImageTexture mat(cubemap);
+	BaseMaterial red(0xFF000000, 64);
+	BaseMaterial green(0x00FF0000, 64);
+
+	s.addMesh(ord, red, false);
+	s.addMesh(ord2, green, true);
+
+	s.render(true);
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
 int main() {
-	morphtest();
+	RTXTest();
 	return 0;
 }

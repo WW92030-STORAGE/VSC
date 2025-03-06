@@ -38,12 +38,16 @@ class MorphedMesh : public Mesh {
 
 	// Other stuff from base Mesh
 
+	/*
+
 	std::vector<Vector3> verts; // Array of vertices
 	std::vector<std::vector<int>> triindices; // Triangle indices in the vertex array;
 	std::vector<std::vector<int>> texcoords; // Texture indices per triangle
 
 	std::vector<Vector3> vn; // Vertex normals. Initialized when we do setupvertsntris() but can also be manually set e.g. when looking thru a .obj file.
 	std::vector<Vector2> uv; // Texture coordinates
+
+	*/
 
 	// Initialize vertex normals
 	inline void setupvns() {
@@ -288,16 +292,16 @@ class MorphedMesh : public Mesh {
 	// Get texture coord for triangle index
 	inline Vector2 getVertexUV(int i, int s) {
 		if (i < 0 || i >= texcoords.size()) {
-			std::cout << "BAD INDEX " << i << " " << texcoords.size() << "\n";
+			// std::cout << "BAD INDEX " << i << " " << texcoords.size() << "\n";
 			return  Vector2(0, 0);
 		}
 		if (s < 0 || s >= texcoords[i].size()) {
-			std::cout << "BAD VERTEX " << s << " " << texcoords[i].size() << "\n";
+			// std::cout << "BAD VERTEX " << s << " " << texcoords[i].size() << "\n";
 			return  Vector2(0, 0);
 		}
 		int sss = texcoords[i][s];
 		if (sss < 0 || sss >= uv.size()) {
-			std::cout << "BAD UV POSITION " << sss << " " << uv.size() << "\n";
+			// std::cout << "BAD UV POSITION " << sss << " " << uv.size() << "\n";
 			return  Vector2(0, 0);
 		}
 		return Vector2(uv[sss]);

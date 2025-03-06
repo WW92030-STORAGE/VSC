@@ -47,6 +47,8 @@ class Scene { // CENA!
 
 	std::vector<Light> lights;
 
+	// Functions
+
 	inline void initBuffer() {
 		SIDE = H > W ? H : W;
 		buffer = new ReducedFrag*[W];
@@ -64,6 +66,8 @@ class Scene { // CENA!
 		W = 256;
 		H = 256;
 
+		SIDE = H > W ? H : W;
+
 		initBuffer();
 	}
 
@@ -73,6 +77,8 @@ class Scene { // CENA!
 
 		W = w;
 		H = h;
+
+		SIDE = H > W ? H : W;
 
 		initBuffer();
 	}
@@ -121,7 +127,7 @@ class Scene { // CENA!
 	// material = Material used to do the calcs
 	// LIT = debug
 
-	inline uint32_t shade(Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
+	inline virtual uint32_t shade(Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
 		Vector3 col = rgb(getColor(material, uv));
 		if (!LIT) return rgb(col);
 		
@@ -732,7 +738,7 @@ class Scene { // CENA!
 
 			Vector2* vt = new Vector2[3];
 			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
-			for (int s = 0; s < 3; s++) std::cout << vt[s].to_string() << " ";
+			// for (int s = 0; s < 3; s++) std::cout << vt[s].to_string() << " ";
 			/*
 			std::cout << "\n";
 			for (int t = 0; t < 3; t++) std::cout << m.tris[i].p[t].to_string() << " / " << vn[t].to_string() << "\n";

@@ -155,7 +155,7 @@ class Triangle3 : public Object {
 		return true;
 	}
 
-	inline float intersectionTime(Line& L) {
+	inline float intersectionTime(Line L) {
 		Plane PP(p[0], normal());
 		float f = PP.intersectionTime(L);
 		if (std::isnan(f)) return NAN;
@@ -216,6 +216,26 @@ class Triangle3 : public Object {
 		for (int i = 0; i < 3; i++) res = res + (i ? ", " : "") + p[i].to_string();
 		res = res + " | " + N.to_string() + "]";
 		return res;
+	}
+	
+	// Barycentric coordinates of a point. **Undefined behavior for points outside the triangle plane
+
+	inline Vector3 bary(Vector3 pos) {
+		Matrix3 A(p[0], p[1], p[2]);
+		return A.solve(pos);
+	}	
+
+	// Interpolate on the vertices
+
+	inline float interp(Vector3 pos, float f0, float f1, float f2) {
+		Vector3 F__F(f0, f1, f2);
+		return NormSum(bary(pos)) * F__F;
+	}
+
+	template <typename T>
+	inline T interp(Vector3 pos, T a, T b, T c) {
+		Vector3 r = NormSum(bary(pos));
+		return a * r.x + b * r.y + c * r.z;
 	}
 };
 
@@ -316,7 +336,14 @@ class TriangleF {
 
 	inline float interp(int x, int y, float f0, float f1, float f2) {
 		Vector3 F__F(f0, f1, f2);
-		return bary(x, y) * F__F;
+		return NormSum(bary(x, y)) * F__F;
+	}
+
+	template <typename T>
+	inline T interp(int x, int y, T a, T b, T c) {
+		Vector3 r = NormSum(bary(x, y));
+
+		return a * r.x + b * r.y + c * r.z;
 	}
 
 	// Comparison -- sort by centroid z position, so that the "largest" triangles have the lowest z.
