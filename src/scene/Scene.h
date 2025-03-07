@@ -127,9 +127,9 @@ class Scene { // CENA!
 	// material = Material used to do the calcs
 	// LIT = debug
 
-	inline virtual uint32_t shade(Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
+	inline virtual Vector3 shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
 		Vector3 col = rgb(getColor(material, uv));
-		if (!LIT) return rgb(col);
+		if (!LIT) return col;
 		
 		Vector3 I(ambientLight);
 
@@ -150,7 +150,7 @@ class Scene { // CENA!
 					if (material->specular > 0) {
 
 						Vector3 reflected = normal * (2 * normal.dot(L)) - L;
-						float rv = reflected.normalized().dot((position * -1).normalized());
+						float rv = reflected.normalized().dot((pRay * -1).normalized());
 						if (rv > 0) {
 							float spec = powf(rv, material->specular);
 							shadedIntensity = shadedIntensity + (pl.intensity * spec);
@@ -173,12 +173,20 @@ class Scene { // CENA!
 
 
 		Vector3 res(col.x * I.x, col.y * I.y, col.z * I.z);
-		return rgb(res);
+		return res;
+	}
+
+	inline uint32_t shadeInt(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
+		return rgb(shade(pRay, position, normal, uv, material, LIT));
 	}
 
 	// Actual raytracing. The pRay is the slope of the ray, the position is the intersection point.
-	inline uint32_t illuminate(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
-		return shade(position, normal, uv, material, LIT);
+	inline Vector3 illuminate(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
+		return shade(pRay, position, normal, uv, material, LIT);
+	}
+
+	inline uint32_t illuminateInt(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
+		return rgb(illuminate(pRay, position, normal, uv, material, LIT));
 	}
 
 	// The rest of this class deals with drawing primitives such as triangles.
@@ -377,9 +385,9 @@ class Scene { // CENA!
 			interpnormal = interpnormal.normalized();
 
 			// std::cout << s.material.to_string() << "\n";
-			c = illuminate(point, point, interpnormal, finaluv, s.material);
+			c = rgb(illuminate(point, point, interpnormal, finaluv, s.material));
 		} else {
-			c = illuminate(t.centroid(), t.centroid(), s.N, finaluv, s.material);
+			c = rgb(illuminate(t.centroid(), t.centroid(), s.N, finaluv, s.material));
 		}
 		Fragment F__F(Vector4(x, y, zc, wc), Vector3(s.ON), c, finaluv, oc);
 
@@ -630,14 +638,13 @@ class Scene { // CENA!
 		TRIANGLE_COUNT++;
 		if (BACKFACECULL && BackFaceCull(s)) return;
 		Vector3 cen = s.centroid();
-		// c = illuminate(cen, cen, s.N, c);
 		auto p = project(s);
 		p.material = material;
 		if (!uv) uv = new Vector2[3] {Vector2(), Vector2(), Vector2()};
 		if (!vn) PHONGSHADE = false;
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
 		if (uv) for (int i = 0; i < 3; i++) p.p[i].uv = uv[i];
-		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material);
+		for (int i = 0; i < 3; i++) p.p[i].color = rgb(illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material));
 		if (clip(p)) return;
 		drawTriangle(p, rgb(material->baseColor));
 	}
@@ -651,7 +658,6 @@ class Scene { // CENA!
 			return;
 		}
 		Vector3 cen = s.centroid();
-		// c = illuminate(cen, cen, s.N, c);
 
 		auto p = project(s);
 		p.material = material;
@@ -660,7 +666,7 @@ class Scene { // CENA!
 		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
 		if (uv) for (int i = 0; i < 3; i++) p.p[i].uv = uv[i];
 
-		for (int i = 0; i < 3; i++) p.p[i].color = illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material);
+		for (int i = 0; i < 3; i++) p.p[i].color = rgb(illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material));
 		
 		if (clip(p)) return;
 		fillTriangle(p, s, PHONGSHADE);

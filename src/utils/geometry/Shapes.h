@@ -182,8 +182,58 @@ inline Mesh cube6(float X = 16) {
 	return res;
 }
 
+// Generates a square grid parallel to the XZ plane composed of triangles facing in the positive Y. The diagonals run parallel to z = x.
+// Texture mappings go (u, v) --> (x, z). You can set the size of the plane and how many times the texture is repeated.
+
+inline Mesh GridSquare(float X = 16, int N = 1) {
+	X = fabs(X);
+	N = BASE::max(N, 1);
+
+	Vector2 UL(0, 0);
+	Vector2 UR(1, 0);
+	Vector2 BL(0, 1);
+	Vector2 BR(1, 1); 
+
+	std::vector<Vector3> verts;
+
+	std::vector<std::vector<int>> trii;
+	std::vector<Vector2> uv({UL, UR, BL, BR});
+	std::vector<std::vector<int>> texco;
+
+	int NP = N + 1;
+
+	float R = X * 0.5;
+	float D = X / N;
+
+	// Grab the verts. Vertex (xi, zi) has index (xi * (N + 1) + zi)
+	for (int xi = 0; xi <= N; xi++) {
+		for (int zi = 0; zi <= N; zi++) {
+			verts.push_back(Vector3(-R + xi * D, 0, -R + zi * D));
+		}
+	}
+
+	// Setup the triangles
+	// Each square (xi, zi) has two triangles on the four vertices [xi, zi] [xi, zi + 1] [xi + 1, zi + 1] [xi + 1, zi]
+	for (int xi = 0; xi < N; xi++) {
+		for (int zi = 0; zi < N; zi++) {
+			trii.push_back(std::vector<int>{xi * NP + zi, (xi + 1) * NP + (zi + 1), (xi + 1) * NP + zi});
+			trii.push_back(std::vector<int>{(xi + 1) * NP + (zi + 1), xi * NP + zi, xi * NP + (zi + 1)});
+
+			texco.push_back(std::vector<int>{0, 3, 1});
+			texco.push_back(std::vector<int>{3, 0, 2});
+		}
+	}
+
+	Mesh res(verts, trii, uv, texco);
+
+	return res;
+}
+
+
+// BELOW - ICOSPHERE GENERATOR
+
 // Methods for subdividing triangles
-inline int VFE(std::vector<Vector3>& vertices, std::map<std::pair<int, int>, int>& lookup, int f, int s) {
+inline int VFE_sphere(std::vector<Vector3>& vertices, std::map<std::pair<int, int>, int>& lookup, int f, int s) {
 	std::pair<int, int> p = {f, s};
 	if (f > s) p = {s, f};
 
@@ -198,14 +248,14 @@ inline int VFE(std::vector<Vector3>& vertices, std::map<std::pair<int, int>, int
 	return inserted.first->second;
 }
 
-inline std::vector<std::vector<int>> subdivide(std::vector<Vector3>& verts, std::vector<std::vector<int>>& tris) {
+inline std::vector<std::vector<int>> subdivide_sphere(std::vector<Vector3>& verts, std::vector<std::vector<int>>& tris) {
 	std::map<std::pair<int, int>, int> lookup;
 	std::vector<std::vector<int>> result;
 
 	for (auto each : tris) {
 		int mid[3];
 		for (int e = 0; e < 3; e++) {
-			mid[e] = VFE(verts, lookup, each[e], each[(e + 1) % 3]);
+			mid[e] = VFE_sphere(verts, lookup, each[e], each[(e + 1) % 3]);
 		}
 
 		result.push_back({each[0], mid[0], mid[2]});
@@ -241,7 +291,7 @@ inline Mesh icosphere(float R = 1, int S = 1) {
 };
 
 	for (int s = 0; s < S; s++) {
-		triangles = subdivide(vertices, triangles);
+		triangles = subdivide_sphere(vertices, triangles);
 	}
 
 

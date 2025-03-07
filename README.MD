@@ -7,7 +7,7 @@ Inspired by DoomGeneric with its rather novel approach to separating the backend
 Also self-inspired by my (NormalExisting's) other C++ backends mostly for games/clones such as The Witness and Chess.  
   
 This is a rasterizer. It uses computational techniques to approximate the reality of lights, shadows, textures, and materials.  
-If you want a raytracer stay tuned for the sequel FINAL DESTINATION coming soon to theaters near you.  
+If you want a raytracer stay tuned for the sequel FINAL DESTINATION coming soon to theaters near you in the `raytracer` directory.  
   
 # CREDITS  
   
@@ -25,10 +25,12 @@ VSC Verified is a community-made level created and completed ("verified") by pla
 
 # HOW TO USE THIS
 
-Look in the `test` folder for some example runner code. Or you can modify `main.cpp` as the runner. The Makefile provided is a template that builds and runs `main.cpp` and then the `render.py` which renders the contents of the output buffer (The buffer to render is to be specified in `render.py`).
-
-There is also code in `ESP32` that makes this compatible with your ESP32.
+Look in the `test` folder for some example runner code. Or you can modify `main.cpp` as the runner. The Makefile provided is a template that builds and runs `main.cpp` and then the `render.py` which renders the contents of the output buffer (The buffer to render is to be specified in `render.py`).  
   
+There is also code in `ESP32` that makes this compatible with your ESP32.  
+  
+Be aware that the API is constantly changing as this is in development. However the changes should not need to be too severe.
+
 # HOW TO RECREATE THIS  
   
 Follow the Skeleton book until the end of chapter 5. Some linear algebra background is recommended.  

@@ -58,11 +58,11 @@ struct BaseMaterial {
 	}
 
 	bool operator==(BaseMaterial& other) {
-		return (baseColor == other.baseColor) && BASE::fequal(specular, other.specular);
+		return (baseColor == other.baseColor) && BASE::fequal(specular, other.specular) && BASE::fequal(reflective, other.reflective), BASE::fequal(refraction, other.refraction);
 	}
 
 	inline std::string to_string() {
-		return "BaseMaterial[" + baseColor.to_string() + ", " + std::to_string(specular) + "]";
+		return "BaseMaterial[" + baseColor.to_string() + ", " + std::to_string(specular) + ", " + std::to_string(reflective) + ", " + std::to_string(refraction) + "]";
 	}
 };
 

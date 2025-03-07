@@ -140,6 +140,12 @@ Mesh.h
 Scene.h  
 - Illumination and color picking methods changed to detect image textures and apply the texture mapping.  
   
+Ray.h  
+- Rays and Intersection Points  
+  
+RayTracer.h  
+- A subclass of Scene.h that supports the rasterization of Scene but now also the rendering of ray-traced scenes. (You can do both RTX and rasterization, the buffer is the same.)  
+  
 # 8 - VISIBILITY  
   
 Scene.h  

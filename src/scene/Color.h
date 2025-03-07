@@ -60,4 +60,8 @@ Vector4 FullHue(float prop) {
 	return Vector4(1, 1, 1, 1);
 }
 
+Vector3 clampColor(Vector3 s) {
+	return Vector3(BASE::clamp(s.x, 0, 1), BASE::clamp(s.y, 0, 1), BASE::clamp(s.z, 0, 1));
+}
+
 #endif

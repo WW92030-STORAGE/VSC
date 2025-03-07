@@ -54,4 +54,12 @@ inline Vector3 NormSum(Vector3 v) {
 	return v / sum;
 }
 
+// Elementwise min/max
+inline Vector3 min(Vector3 a, Vector3 b) {
+	return Vector3(fmin(a.x, b.x), fmin(a.y, b.y), fmin(a.z, b.z));
+}
+inline Vector3 max(Vector3 a, Vector3 b) {
+	return Vector3(fmax(a.x, b.x), fmax(a.y, b.y), fmax(a.z, b.z));
+}
+
 #endif
