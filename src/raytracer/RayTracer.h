@@ -37,7 +37,9 @@ VSC PART II - FINAL DESTINATION
 
 RayTracer.h is a subclass of Scene.h that supports both rasterization and ray tracing.
 Currently we support Phong shading of objects and the casting of shadows.
-Indirect illumination coming soon to VSC entities near you.
+Reflections are also supported but not refractions/translucent objects yet.
+
+WARNING - Image textures not supported yet. Thank you for your patience.
 
 */
 
