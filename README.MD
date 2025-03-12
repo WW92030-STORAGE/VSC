@@ -44,7 +44,7 @@ There is a document named `NOTES.md` that holds notes that might be useful. It's
 Feel free to push an issue, do a pull request, or simply contact me (NormalExisting on Discord, Bluesky, and Telegram).
 
 # SHOWCASE!
-
+|               |               |
 | ------------- | ------------- |
 | <img src="example_outputs/mcrproto.gif" width="256" height="256" alt="Example!">  | <img src="example_outputs/mcrproto.PNG" width="256" height="256" alt="Example!">  |
 | <img src="example_outputs/ray_traced_cubes.PNG" width="256" height="256" alt="Example!">  | <img src="example_outputs/cubemorph.gif" width="256" height="256" alt="Example!">  |
