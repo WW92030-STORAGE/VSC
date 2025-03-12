@@ -7,7 +7,7 @@ Inspired by DoomGeneric with its rather novel approach to separating the backend
 Also self-inspired by my (NormalExisting's) other C++ backends mostly for games/clones such as The Witness and Chess.  
   
 This is a rasterizer. It uses computational techniques to approximate the reality of lights, shadows, textures, and materials.  
-If you want a raytracer stay tuned for the sequel FINAL DESTINATION coming soon to theaters near you in the `raytracer` directory.  
+If you want a raytracer stay tuned for the sequel FINAL DESTINATION coming soon to theaters near you in the `src/raytracer` directory.  
   
 # CREDITS  
   
@@ -45,7 +45,6 @@ Feel free to push an issue, do a pull request, or simply contact me (NormalExist
 
 # SHOWCASE!
 
-|     |     |
 | ------------- | ------------- |
 | <img src="example_outputs/mcrproto.gif" width="256" height="256" alt="Example!">  | <img src="example_outputs/mcrproto.PNG" width="256" height="256" alt="Example!">  |
 | <img src="example_outputs/ray_traced_cubes.PNG" width="256" height="256" alt="Example!">  | <img src="example_outputs/cubemorph.gif" width="256" height="256" alt="Example!">  |
