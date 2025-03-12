@@ -83,7 +83,7 @@ class RayTracer : public Scene {
 		Vector3 col = rgb(getColor(material, uv));
 		if (material->TYPE == BaseMaterial::IMAGE) {
 			ImageTexture* ii = dynamic_cast<ImageTexture*>(material);
-			std::cout << col.to_string() << "\n";
+			// std::cout << col.to_string() << "\n";
 		}
 		if (!LIT) return col;
 		
