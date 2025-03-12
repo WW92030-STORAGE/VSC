@@ -12,6 +12,7 @@ struct BaseMaterial {
 	Vector3 baseColor;
 	float specular;
 	float reflective;
+	bool refractive = false;
 	float refraction;
 
 	enum MaterialType {
@@ -31,6 +32,8 @@ struct BaseMaterial {
 		specular = spec;
 		reflective = refl;
 		refraction = refr;
+
+		if (refraction >= 0) refractive = true;
 	}
 
 	BaseMaterial(uint32_t u, float spec = 0, float refl = 0, float refr = 0) {
@@ -38,12 +41,15 @@ struct BaseMaterial {
 		specular = spec;
 		reflective = refl;
 		refraction = refr;
+
+		if (refraction >= 0) refractive = true;
 	}
 
 	BaseMaterial(const BaseMaterial& other) {
 		baseColor = Vector3(other.baseColor);
 		specular = other.specular;
 		reflective = other.reflective;
+		refractive = other.refractive;
 		refraction = other.refraction;
 
 		TYPE = other.TYPE;
@@ -58,7 +64,7 @@ struct BaseMaterial {
 	}
 
 	bool operator==(BaseMaterial& other) {
-		return (baseColor == other.baseColor) && BASE::fequal(specular, other.specular) && BASE::fequal(reflective, other.reflective), BASE::fequal(refraction, other.refraction);
+		return (baseColor == other.baseColor) && BASE::fequal(specular, other.specular) && BASE::fequal(reflective, other.reflective), BASE::fequal(refraction, other.refraction) && (refractive == other.refractive);
 	}
 
 	inline std::string to_string() {

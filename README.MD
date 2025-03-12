@@ -2,7 +2,7 @@
   
 "I might have to wait, I'll never give up. I guess it's half timing, and the other half is luck..." -Michael Buble  
   
-VSC (VOUGA-SHREINER-CANTH) Verified is A real-time 3D rendering engine written entirely using software with the intention of being portable.
+VSC (VOUGA-SHREINER-CANTH) Verified is A real-time 3D rendering engine written _entirely using software_ with the intention of being portable.
 Inspired by DoomGeneric with its rather novel approach to separating the backend from the frontend.  
 Also self-inspired by my (NormalExisting's) other C++ backends mostly for games/clones such as The Witness and Chess.  
   
@@ -30,6 +30,8 @@ Look in the `examples` folder for some example runner code. Or you can modify `m
 There is also code in `ESP32` that makes this compatible with your ESP32.  
   
 Be aware that the API is constantly changing as this is in development. However the changes should not need to be too severe.
+
+Rudimentary documentation can be found in the `.docs` subdirectory.
 
 # HOW TO RECREATE THIS  
   

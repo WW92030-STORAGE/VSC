@@ -335,6 +335,10 @@ class Mesh : public Object {
 			int temp = triindices[i][0];
 			triindices[i][0] = triindices[i][1];
 			triindices[i][1] = temp;
+
+			temp = texcoords[i][0];
+			texcoords[i][0] = texcoords[i][1];
+			texcoords[i][1] = temp;
 		}
 
 		setupvns();

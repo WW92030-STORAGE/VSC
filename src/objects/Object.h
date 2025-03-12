@@ -1,6 +1,7 @@
 #ifndef OBJECT_EXT
 #define OBJECT_EXT
 
+#include <string>
 #include "../utils/math/Transform.h"
 
 // Abstract class representing a 3 dimensional object.
@@ -26,6 +27,10 @@ class Object {
 
 	virtual void ForceTrans(Transform t) {
 
+	}
+
+	std::string to_string() {
+		return "Object[" + transform.to_string() + "]";
 	}
 };
 
