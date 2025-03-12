@@ -43,6 +43,13 @@ There is a document named `NOTES.md` that holds notes that might be useful. It's
 
 Feel free to push an issue, do a pull request, or simply contact me (NormalExisting on Discord, Bluesky, and Telegram).
 
+# SHOWCASE!
+
+|     |     |
+| ------------- | ------------- |
+| ![Example!](example_outputs/mcrproto.gif?raw=true)  | ![Example!](example_outputs/ray_traced_cubes.PNG?raw=true)  |
+| ![Example!](example_outputs/mcrproto.PNG?raw=true)  | ![Example!](example_outputs/cubemorph.gif?raw=true)  |
+
 <!-- ![Example!](example_outputs/mcrproto.PNG?raw=true) -->
-![Example!](example_outputs/mcrproto.gif?raw=true)
-![Example!](example_outputs/ray_traced_cubes.PNG?raw=true)
+<!-- ![Example!](example_outputs/mcrproto.gif?raw=true) -->
+<!-- ![Example!](example_outputs/ray_traced_cubes.PNG?raw=true) -->
