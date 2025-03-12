@@ -1,7 +1,7 @@
 #ifndef SHAPESII_EXT
 #define SHAPESII_EXT
 
-#include <iostream>
+// #include <iostream>
 
 #include "Primitives.h"
 #include "../../objects/Mesh.h"
