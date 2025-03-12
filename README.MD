@@ -25,7 +25,7 @@ VSC Verified is a community-made level created and completed ("verified") by pla
 
 # HOW TO USE THIS
 
-Look in the `test` folder for some example runner code. Or you can modify `main.cpp` as the runner. The Makefile provided is a template that builds and runs `main.cpp` and then the `render.py` which renders the contents of the output buffer (The buffer to render is to be specified in `render.py`).  
+Look in the `examples` folder for some example runner code. Or you can modify `main.cpp` as the runner. The Makefile provided is a template that builds and runs `main.cpp` and then the `render.py` which renders the contents of the output buffer (The buffer to render is to be specified in `render.py`).  
   
 There is also code in `ESP32` that makes this compatible with your ESP32.  
   
