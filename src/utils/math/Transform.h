@@ -27,6 +27,11 @@ class Transform {
 		basis = Matrix3::eye();
 	}
 
+	Transform(Matrix3 rot) {
+		origin = Vector3();
+		basis = Matrix3(rot);
+	}
+
 	Transform(Vector3 loc, Matrix3 rot) {
 		origin = Vector3(loc);
 		basis = Matrix3(rot);

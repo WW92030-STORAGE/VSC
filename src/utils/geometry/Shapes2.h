@@ -19,7 +19,7 @@ This header has generators for more advanced shapes. Often these shapes are comp
 
 */
 
-std::vector<Mesh> MengerSponge(float R, int L, bool cubesix = false) {
+inline std::vector<Mesh> MengerSponge(float R, int L, bool cubesix = false) {
 	L = BASE::iclamp(L, 0, 4);
 
 	if (L <= 0 || BASE::fzero(R) || R < 0) return std::vector<Mesh>(1, cube(1));

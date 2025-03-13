@@ -28,4 +28,4 @@ Template for documentation
 
 # Static instances
 
-- Static instances of the objects, intended for convenience or as special values.
+- Static instances of the objects and static functions that generate objects, intended for convenience or as special values.

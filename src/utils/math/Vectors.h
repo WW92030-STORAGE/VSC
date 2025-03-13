@@ -435,18 +435,15 @@ Vector4 NILVEC4 = Vector4(NAN, NAN, NAN, NAN);
 // Lerp
 
 inline Vector2 lerp(Vector2& a, Vector2& b, float p) {
-	Vector2 d = b - a;
-	return a + d * p;
+	return (a * (1 - p)) + (b * p);
 }
 
 inline Vector3 lerp(Vector3& a, Vector3& b, float p) {
-	Vector3 d = b - a;
-	return a + d * p;
+	return (a * (1 - p)) + (b * p);
 }
 
 inline Vector4 lerp(Vector4& a, Vector4& b, float p) {
-	Vector4 d = b - a;
-	return a + d * p;
+	return (a * (1 - p)) + (b * p);
 }
 
 // Conversions

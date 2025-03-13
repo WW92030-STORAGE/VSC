@@ -162,10 +162,14 @@ inline Quaternion QuaternionAA(Vector3 A, float t) {
 }
 
 inline Quaternion lerp(Quaternion a, Quaternion b, float t) {
+	a = a.normalized();
+	b = b.normalized();
 	return ( (a * (1 - t)) + (b * t) ).normalized();
 }
 
 inline Quaternion spherp(Quaternion a, Quaternion b, float t) {
+	a = a.normalized();
+	b = b.normalized();
 	float c = a.dot(b);
 	float s = sqrtf(1 - c * c);
 	float theta = acosf(a.dot(b));
@@ -177,6 +181,10 @@ inline Quaternion spherp(Quaternion a, Quaternion b, float t) {
 
 
 	return ( (a * A) + (b * B) ).normalized();
+}
+
+inline Quaternion slerp(Quaternion a, Quaternion b, float t) {
+	return spherp(a, b, t);
 }
 
 #endif
