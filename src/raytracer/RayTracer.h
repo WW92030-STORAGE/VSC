@@ -72,7 +72,12 @@ class RayTracer : public Scene {
 		MorphedMesh* morphed = dynamic_cast<MorphedMesh*>(mesh);
 		if (morphed != nullptr) meshes.push_back(new MorphedMesh(*morphed));
 		else meshes.push_back(new Mesh(*mesh));
-		if (mat != nullptr) materials.push_back(mat);
+
+		if (mat != nullptr) {
+			ImageTexture* imgtex = dynamic_cast<ImageTexture*>(mat);
+			if (imgtex != nullptr) materials.push_back(new ImageTexture(*imgtex));
+			else materials.push_back(new BaseMaterial(*mat));
+		}
 		else materials.push_back(new BaseMaterial(BASEMAT_WHITE));
 		NormInterps.push_back(INTERPNORM);
 	}

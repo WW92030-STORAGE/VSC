@@ -6,6 +6,8 @@
 // Math and linalg
 
 #include "utils/Math.h"
+#include "utils/Random.h"
+
 // Geometry and objects
 
 #include "utils/geometry/Primitives.h"

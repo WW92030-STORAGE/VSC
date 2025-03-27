@@ -102,10 +102,14 @@ inline int64_t lcm(int64_t x, int64_t y) {
     return x * (y / gcd(x, y));
 }
 
-// Random number
+// Random number (Alternatively there is a Mersenne twister in the ../random folder.)
 
 inline void randomseed() {
     srand(time(0));
+}
+
+inline void randomseed(uint64_t n) {
+    srand(n);
 }
 
 inline float random() {
