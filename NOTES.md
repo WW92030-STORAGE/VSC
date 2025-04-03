@@ -151,4 +151,11 @@ RayTracer.h
 Scene.h  
 - Backface culling -- the act of not drawing triangles that face away from the camera.  
   
-# 9 - POLYGONS  
+aabb.h  
+- Axis-Aligned Bounding Boxes and ray intersections.  
+  
+BVH.h  
+- Bounding Volume Hierarch system with recursive ray intersections with AABBs and Triangle3s.  
+  
+RayTracer.h  
+- Configuration ability to toggle BVH usage when rendering. Results are significantly faster with a BVH.  

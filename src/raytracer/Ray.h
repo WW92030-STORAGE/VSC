@@ -56,6 +56,13 @@ class IntersectionPoint {
 	Vector3 N;
 	Vector2 uv;
 
+	IntersectionPoint() {
+		material = nullptr;
+		time = INF;
+		N = Vector3(1, 0, 0);
+		uv = Vector2(0 ,0);
+	}
+
 	IntersectionPoint(BaseMaterial* bm, float t, Vector3 n, Vector2 u) {
 		material = bm;
 		time = t;
@@ -68,6 +75,12 @@ class IntersectionPoint {
 	}
 
 	~IntersectionPoint() {
+	}
+
+	std::string to_string() {
+		std::string res = "IntersectionPoint[" + std::to_string(time) + ", " + N.to_string() + ", " + uv.to_string() + ", ";
+		if (material) res = res + material->to_string();
+		return res + "]";
 	}
 };
 

@@ -71,6 +71,15 @@
 		"queue": "cpp",
 		"ranges": "cpp",
 		"span": "cpp",
-		"climits": "cpp"
+		"climits": "cpp",
+		"*.tcc": "cpp",
+		"cwctype": "cpp",
+		"functional": "cpp",
+		"memory_resource": "cpp",
+		"numeric": "cpp",
+		"random": "cpp",
+		"string_view": "cpp",
+		"numbers": "cpp",
+		"variant": "cpp"
 	}
 }

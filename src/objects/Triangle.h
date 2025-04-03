@@ -97,7 +97,7 @@ class Triangle3 : public Object {
 		N = normal();
 	}
 
-	Triangle3(Vector3& a, Vector3& b, Vector3& c) {
+	Triangle3(Vector3 a, Vector3 b, Vector3 c) {
 		p[0] = Vector3(a);
 		p[1] = Vector3(b);
 		p[2] = Vector3(c);
@@ -133,6 +133,13 @@ class Triangle3 : public Object {
 			p[i] = Vector3(other.p[i]);
 			uv[i] = Vector2(other.uv[i]);
 		}
+		N = normal();
+	}
+
+	inline void flipNormal() {
+		Vector3 temp(p[0]);
+		p[0] = Vector3(p[1]);
+		p[1] = temp;
 		N = normal();
 	}
 

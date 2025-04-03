@@ -46,5 +46,7 @@
 
 #include "raytracer/Ray.h"
 #include "raytracer/RayTracer.h"
+#include "raytracer/aabb.h"
+#include "raytracer/BVH.h"
 
 #endif

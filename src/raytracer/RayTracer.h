@@ -27,6 +27,8 @@
 #include "../lighting/DirectionalLight.h"
 
 #include "Ray.h"
+#include "aabb.h"
+#include "BVH.h"
 
 
 // #include <iostream>
@@ -50,6 +52,9 @@ class RayTracer : public Scene {
 	std::vector<bool> NormInterps;
 	int DEPTH = 0;
 
+	BVH* bvh = nullptr;
+	bool UseBVH = false;
+
 	const float RAY_EPSILON = 0.01;
 
 	RayTracer(float depth = 0) : Scene() {
@@ -61,6 +66,7 @@ class RayTracer : public Scene {
 	}
 
 	~RayTracer() {
+		if (bvh) delete bvh;
 		for (int i = 0; i < meshes.size(); i++) {
 			delete meshes[i];
 			delete materials[i];
@@ -143,10 +149,10 @@ class RayTracer : public Scene {
 		Vector3 res(col.x * I.x, col.y * I.y, col.z * I.z);
 		return res;
 	}
-
+	
 	// Ray Tracing
 
-	inline IntersectionPoint intersectRay(Ray r) {
+	inline IntersectionPoint intersectRayNaive(Ray r) {
 
 		Triangle3 t;
 		float minTime = INF;
@@ -164,7 +170,7 @@ class RayTracer : public Scene {
 
 				float time = r.intersectTriangle(triangle);
 				if (time < 0) continue;
-				if (time == NAN) continue;
+				if (std::isnan(time)) continue;
 				if (time < minTime) {
 					minTime = time;
 					t = Triangle3(triangle);
@@ -182,6 +188,14 @@ class RayTracer : public Scene {
 		// if (minTime != INF) std::cout << r.to_string() << minTime << " " << uv.to_string() << " " << mat.TYPE << "\n";
 
 		return IntersectionPoint{mat, minTime, N, uv};
+	}
+
+	inline IntersectionPoint intersectRay(Ray r) {
+		if (!UseBVH) return intersectRayNaive(r);
+
+		auto i = bvh->IntersectRay(r);
+		// std::cout << r.to_string() << " " << i.to_string() << "\n";
+		return i;
 	}
 
 	inline Ray castRay(Vector2 NDC) {
@@ -253,6 +267,7 @@ class RayTracer : public Scene {
 
 	// Remember: pixels go from BOTTOM LEFT TO TOP RIGHT. This means you will have to reverse the Y direction when outputting.
 	inline void render(bool LIT = true, int depth = 0) {
+		if (UseBVH) bvh = create(meshes, materials, NormInterps);
 		for (int x = 0; x < W; x++) {
 			for (int y = 0; y < H; y++) {
 				buffer[x][y] = ReducedFrag(0, tracePixel(x, y, LIT, depth));
@@ -278,6 +293,12 @@ class RayTracer : public Scene {
 		MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
 		if (mm == nullptr) return;
 		mm->morphToState(state);
+	}
+
+	inline uint64_t countTriangles() {
+		uint64_t res = 0;
+		for (auto i : meshes) res += i->triindices.size();
+		return res;
 	}
 };
 

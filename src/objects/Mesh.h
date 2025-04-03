@@ -231,6 +231,10 @@ class Mesh : public Object {
 		nverts = verts.size();
 		nuv = nverts;
 
+		uv = std::vector<Vector2>(nuv, Vector2(0, 0));
+		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+
+
 		setupvns();
 	}
 
