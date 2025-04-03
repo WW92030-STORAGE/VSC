@@ -12,10 +12,6 @@
 #include "Ray.h"
 #include "../objects/Object.h"
 
-
-
-#include <iostream>
-
 /*
 
 BVH - Bounding Volume Hierarchy
@@ -56,7 +52,7 @@ struct TriangleData {
         return mesh->makeTriangle(tri);
     }
 
-    bool operator<(TriangleData& o) {
+    inline bool operator<(TriangleData& o) {
         Triangle3 a = get();
         Triangle3 b = o.get();
         if (a.centroid() != b.centroid()) return a.centroid() < b.centroid();
@@ -65,7 +61,7 @@ struct TriangleData {
         return false;
     }
 
-    std::string to_string(bool nofluff = false) {
+    inline std::string to_string(bool nofluff = false) {
         
         std::string res = "TriangleData[" + std::to_string(tri) + ", " + std::to_string((unsigned long long)(mesh));
         if (!nofluff) res = res + ", " + get().to_string();
@@ -165,6 +161,7 @@ class BVHNode {
         }
     }
 
+    // Intersection point with the first Triangle3 contained in the subtree.
     inline IntersectionPoint IntersectRay(Ray r) {
         if (isObject()) {
             // std::cout << "NODE " << (unsigned long long)(this) << " = " << isObject() << " " << r.to_string() << "\n";
