@@ -31,7 +31,7 @@
 #include "BVH.h"
 
 
-// #include <iostream>
+#include <iostream>
 
 /*
 
@@ -269,6 +269,7 @@ class RayTracer : public Scene {
 	inline void render(bool LIT = true, int depth = 0) {
 		if (UseBVH) bvh = create(meshes, materials, NormInterps);
 		for (int x = 0; x < W; x++) {
+			std::cout << x << "\n";
 			for (int y = 0; y < H; y++) {
 				buffer[x][y] = ReducedFrag(0, tracePixel(x, y, LIT, depth));
 			}

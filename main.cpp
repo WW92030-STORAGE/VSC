@@ -275,7 +275,7 @@ inline void BVHSimpleObject() {
 	std::cout << "Stored\n";
 }
 
-// TEST 9.4 QUETZAL (BVH Test With More Triangles)
+// TEST 9.4A QUETZAL (BVH Test With More Triangles)
 inline void BVHTest() {
 	
 	int N = 512;
@@ -363,14 +363,128 @@ inline void BVHTest() {
 	std::cout << "Stored\n";
 }
 
+// TEST 9.4B Menger Sponge (BVH Test With More Triangles)
+inline void BVHSponge() {
+	
+	int N = 512;
+	int D = 0;
+
+	RayTracer s(D, N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+	float A = 0.1;
+
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	// s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), A);
+	P2.Trans(Transform(Vector3(0, 2, 0)));
+	s.lights.push_back(P2);
+
+	auto spong = MengerSponge(2, 3);
+
+	int S = 2;
+
+	Transform back(Vector3(0, 0, -3), Rotation3(Vector3(0, 1, 0), -0.4));
+	for (int i = 0; i < spong.size(); i++) spong[i].Trans(back);
+
+	Mesh floor = GridSquare(64, 4);
+	floor.Trans(Transform(Vector3(0, -2.5, 0)));
+
+	float SP = 128;
+	ImageTexture mat(cubemap);
+	BaseMaterial red(0xFF000000, SP, 1);
+	BaseMaterial cyan(0x00FFFF00, SP, 1);
+	BaseMaterial white(0x80808000, SP, 1);
+
+	for (auto i : spong) s.addMesh(&i, &red, false);
+	s.addMesh(&floor, &cyan, false);
+
+	s.UseBVH = true;
+
+	s.DEPTH = 2;
+
+	std::cout << "Prepared\n";
+
+	s.render(true);
+
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
+// TEST 9.4C Stanford Models (BVH Test With More Triangles)
+inline void BVHStanford() {
+	
+	int N = 512;
+	int D = 0;
+
+	RayTracer s(D, N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+	float A = 0.1;
+
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	// s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), A);
+	P2.Trans(Transform(Vector3(0, 2, 0)));
+	s.lights.push_back(P2);
+
+	auto model = Mesh::fromOBJ(MESHES + "/" + "stanford-bunny.obj");
+
+	int S = 2;
+
+	float X = 8;
+	Transform theScale(Matrix4(X, 0, 0, 0, 0, X, 0, 0, 0, 0, X, 0, 0, 0, 0, 1));
+
+	Transform back(Vector3(0, -0.8, -1.2), Rotation3(Vector3(0, 1, 0), -0.4));
+	model.Trans(theScale);
+
+	model.Trans(back);
+
+	Mesh floor = GridSquare(64, 4);
+	floor.Trans(Transform(Vector3(0, -2.5, 0)));
+
+	float SP = 128;
+	ImageTexture mat(cubemap);
+	BaseMaterial red(0xFF000000, SP, 1);
+	BaseMaterial cyan(0x00FFFF00, SP, 1);
+	BaseMaterial white(0x80808000, SP, 1);
+
+	s.addMesh(&model, &red, false);
+	s.addMesh(&floor, &cyan, false);
+
+	s.UseBVH = true;
+
+	s.DEPTH = 0;
+
+	std::cout << "Prepared " << s.countTriangles() << " Triangles\n";
+
+	s.render(true);
+
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
 #include <chrono>
 
 int main() {
 	auto start = std::chrono::high_resolution_clock::now();
 
-	BVHTest();
-
+	// BVHStanford();
+	// BVHSponge();
 	// BVHTest();
+	BVHSimpleObject();
 	// BoxTest();
 	std::cout << "End\n";
 
