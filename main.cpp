@@ -483,8 +483,8 @@ int main() {
 
 	// BVHStanford();
 	// BVHSponge();
-	// BVHTest();
-	BVHSimpleObject();
+	BVHTest();
+	// BVHSimpleObject();
 	// BoxTest();
 	std::cout << "End\n";
 
