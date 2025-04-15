@@ -6,5 +6,6 @@
 
 #include "random/Noise.h"
 #include "random/PerlinNoise.h"
+#include "random/MultiNoise.h"
 
 #endif

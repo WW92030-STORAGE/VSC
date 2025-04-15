@@ -281,7 +281,9 @@ class Camera : public Object {
 	}
 
 	// To get to the fully normalized device coordinates we simply divide all components of the clip point by its w coordinate:
-
+	// Be aware that the w coordinate will NOT be normalized because we seek to encode the depth information as well. 
+	
+	// This method first converts points to camera space, then NDC. In a way, this serves as the vertex shader to convert from world to NDC.
 	inline Vector4 glFrustum(Vector4 p) {
 		Vector4 res = Frustum() * transform.inv().matrix() * p;
 		if (BASE::fzero(res.w)) return res;

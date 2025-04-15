@@ -8,7 +8,7 @@ Image texture material.
 
 ## Notes
 
-- ImageTexture not supported on the raytracer.
+- ImageTexture not supported on the raytracer for morphed meshes (Normal meshes OK).
 - Python converters included.
 
 ## Fields

@@ -133,6 +133,10 @@ class Vector2 {
 	inline bool operator!=(const Vector2& other) {
 		return !(BASE::fequal(x, other.x) && BASE::fequal(y, other.y));
 	} 
+	inline bool operator<(const Vector2& other) const {
+		if (!BASE::fequal(x, other.x)) return x < other.x;
+		return y < other.y;
+	} 
 
 	// UTIL
 

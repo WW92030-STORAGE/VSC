@@ -8,6 +8,11 @@
 #include "utils/Math.h"
 #include "utils/Random.h"
 
+// Curves
+
+#include "utils/curves/BaseCurve.h"
+#include "utils/curves/Bezier.h"
+
 // Geometry and objects
 
 #include "utils/geometry/Primitives.h"
@@ -16,9 +21,11 @@
 #include "objects/Mesh.h"
 #include "objects/MorphedMesh.h"
 
+
 #include "utils/geometry/Fragment.h"
 
 #include "objects/Triangulate.h"
+#include "objects/Subdivide.h"
 
 // Pre-built shape generators
 

@@ -39,4 +39,15 @@ inline std::string substr(std::string s, int a, int b) {
 	return s.substr(a, b - a);
 }
 
+inline std::string gradientBlock(float f) {
+	std::vector<std::string> res({" ", "░", "▒", "▓", "█"});
+
+	float threshold = 1.0 / (res.size() - 1);
+
+	for (int i = 0; i < res.size() - 1; i++) {
+		if (f < threshold * i) return res[i];
+	}
+	return res[res.size() - 1];
+}
+
 #endif

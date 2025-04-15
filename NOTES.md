@@ -159,3 +159,10 @@ BVH.h
   
 RayTracer.h  
 - Configuration ability to toggle BVH usage when rendering. Results are significantly faster with a BVH.  
+  
+# 11 - CURVES  
+  
+BaseCurve.h  
+- Base class for curves.  
+Bezier.h  
+- Bezier curves and splines.  

@@ -41,8 +41,6 @@ RayTracer.h is a subclass of Scene.h that supports both rasterization and ray tr
 Currently we support Phong shading of objects and the casting of shadows.
 Reflections are also supported but not refractions/translucent objects yet.
 
-WARNING - Image textures not supported yet. Thank you for your patience.
-
 */
 
 class RayTracer : public Scene {

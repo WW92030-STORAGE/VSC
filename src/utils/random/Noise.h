@@ -4,18 +4,18 @@
 #include <cstdint>
 #include <cmath>
 
-class BaseNoise2 {
+class NoiseOctave2 {
     protected:
     RandomSource* rs;
 
     public:
-    BaseNoise2() {
+    NoiseOctave2() {
         rs = new MersenneTwister();
 
         init(0);
     }
 
-    BaseNoise2(uint64_t seed) {
+    NoiseOctave2(uint64_t seed) {
         rs = new MersenneTwister();
 
         init(seed);
@@ -29,7 +29,7 @@ class BaseNoise2 {
         return 0;
     }
 
-    ~BaseNoise2() {
+    virtual ~NoiseOctave2() {
         delete rs;
     }
 };

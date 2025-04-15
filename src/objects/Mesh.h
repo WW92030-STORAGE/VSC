@@ -4,6 +4,7 @@
 /*
 
 Meshes are the formation of triangles into manifolds, approximating three-dimensional surfaces. 
+All meshes are defined to be "watertight" in the sense that you don't really have 2 different stored vertices in the same position.
 
 */
 

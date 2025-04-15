@@ -8,7 +8,7 @@ PY = render.py
 all: $(FILE)
 	$(CXX) $(FILE) -o $(TARGET) $(CXXFLAGS) 
 	./$(TARGET)
-	python $(PY)
+	python3 $(PY)
 
 clean:
 	rm -f $(TARGET)
