@@ -5,3 +5,5 @@ mcrproto.obj https://sketchfab.com/3d-models/minecraft-protogen-model-1cf00d1d4f
 
 stanford-bunny.obj https://graphics.stanford.edu/~mdfisher/Data/Meshes/bunny.obj
 teapot.obj https://graphics.stanford.edu/courses/cs148-10-summer/as3/code/as3/teapot.obj
+
+MOVE ALL MESHES IN `public_meshes` TO THIS FOLDER FOR THE EXAMPLES. THE REST YOU NEED TO DOWNLOAD
