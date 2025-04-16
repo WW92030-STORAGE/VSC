@@ -49,7 +49,7 @@ Feel free to push an issue, do a pull request, or simply contact me (NormalExist
 |               |               |
 | ------------- | ------------- |
 | <img src="example_outputs/mcrproto.gif" width="256" height="256" alt="Example!">  | <img src="example_outputs/mcrproto.PNG" width="256" height="256" alt="Example!">  |
-| <img src="example_outputs/ray_traced_cubes.PNG" width="256" height="256" alt="Example!">  | <img src="example_outputs/cubemorph.gif" width="256" height="256" alt="Example!">  |
+| <img src="example_outputs/ray_traced_cubes.PNG" width="256" height="256" alt="Example!">  | <img src="example_outputs/bouncycube.gif" width="256" height="256" alt="Example!">  |
 
 <!-- ![Example!](example_outputs/mcrproto.PNG?raw=true) -->
 <!-- ![Example!](example_outputs/mcrproto.gif?raw=true) -->

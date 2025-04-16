@@ -345,7 +345,7 @@ inline void RTexBVH() {
 
 	std::cout << "Prepared\n";
 
-	s.UseBVH = true;
+	s.UseBVH = true; // feel free to toggle this if uncertain
 
 	s.render(true);
 
