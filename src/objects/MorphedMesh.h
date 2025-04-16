@@ -152,7 +152,7 @@ class MorphedMesh : public Mesh {
 		m_setupvns();
 	}
 
-	MorphedMesh(const MorphedMesh& other) {
+	MorphedMesh(const MorphedMesh& other) : Mesh(other) {
 		size = other.size;
 		nverts = other.nverts;
 		nuv = other.nuv;
@@ -176,7 +176,7 @@ class MorphedMesh : public Mesh {
 		m_setupvns();
 	}
 
-	MorphedMesh(const Mesh& other) {
+	MorphedMesh(const Mesh& other) : Mesh(other) {
 		size = other.size;
 		nverts = other.nverts;
 		nuv = other.nuv;
@@ -305,6 +305,13 @@ class MorphedMesh : public Mesh {
 			return  Vector2(0, 0);
 		}
 		return Vector2(uv[sss]);
+	}
+
+		// get UV of a point in a triangle
+	inline Vector2 getUV(Vector3 pos, int ind) {
+		Triangle3 tri = makeTriangle(ind);
+	
+		return tri.interp<Vector2>(pos, getVertexUV(ind, 0), getVertexUV(ind, 1), getVertexUV(ind, 2));
 	}
 
 	~MorphedMesh() {

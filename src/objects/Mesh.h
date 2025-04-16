@@ -239,7 +239,7 @@ class Mesh : public Object {
 		setupvns();
 	}
 
-	Mesh(const Mesh& other) {
+	Mesh(const Mesh& other) : Object(other) {
 		size = other.size;
 		nverts = other.nverts;
 		nuv = other.nuv;

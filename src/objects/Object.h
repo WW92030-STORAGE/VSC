@@ -15,6 +15,10 @@ class Object {
 
 	}
 
+	Object(const Object& other) {
+		transform = Transform(other.transform);
+	}
+
 	// MUST OVERRIDE ME
 
 	// Transform the object but also affect the transform itself. This is so you can keep track of the position.

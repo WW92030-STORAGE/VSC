@@ -282,6 +282,7 @@ inline void RTexBVH() {
 	RayTracer s(D, N, N);
 
 	s.camera = Camera(M_PI / 2.0);
+	s.camera.Trans(Transform(Vector3(0, 0, -1)));
 
 	float A = 0.1;
 
@@ -299,10 +300,9 @@ inline void RTexBVH() {
 	Mesh test2 = Mesh::fromOBJ(MESHES + "/cubemorph.obj");
 
 	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
-	Mesh wheezie(test2);
 
-	// MorphedMesh zak(proto);
-	// zak.copyTo(test2);
+	MorphedMesh wheezie(test);
+	wheezie.copyTo(test2);
 
 	// Mesh zak(test2);
 
@@ -339,9 +339,9 @@ inline void RTexBVH() {
 	s.addMesh(&floor, &white, false);
 	s.addMesh(&proto, &texproto, false);
 	
-	// s.morph(0, std::vector<float>{0, 1});
+	s.morph(0, std::vector<float>{0, 1});
 
-	s.DEPTH = 2;
+	s.DEPTH = 1;
 
 	std::cout << "Prepared\n";
 
@@ -354,6 +354,34 @@ inline void RTexBVH() {
 	s.outputBuffer(BUFFER_PATH);
 
 	std::cout << "Stored\n";
+
+	// Animation example
+	return;
+
+	int LEN = 24;
+
+	for (int i = 0; i < LEN; i++) {
+		float DISP = 0.5 * (1 + cosf(float(i) * 2 * M_PI / LEN));
+		s.morph(0, std::vector<float>({1 - DISP, DISP}));
+
+
+
+		Transform protoorigin = s.meshes[4]->transform.inv();
+		Transform ppp = s.meshes[4]->transform;
+		Transform protoback(Vector3(0, -0.4 * DISP, -5), Rotation3(Vector3(0, 1, 0), M_PI * 0.9 + 0.25 * DISP));
+		s.meshes[4]->Trans(protoback * protoorigin);
+		
+
+		s.render();
+
+		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
+
+		std::cout << "FRAME " << i << "DONE\n";
+	}
+
+	std::ofstream len(VIDEO_PATH + "/LEN");
+	len << LEN;
+	len.close();
 }
 
 // Bounding Box Test
@@ -730,9 +758,9 @@ int main() {
 
 	// noisetex();
 
-	RTexTest();
+	// RTexTest();
 
-	// RTexBVH(); // TODO - RTexBVH in progress for MORPHED MESHES.
+	RTexBVH(); // TODO - RTexBVH in progress for MORPHED MESHES.
 
 	// texmapref();
 

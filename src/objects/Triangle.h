@@ -128,7 +128,7 @@ class Triangle3 : public Object {
 		N = normal();
 	}
 
-	Triangle3(const Triangle3& other) {
+	Triangle3(const Triangle3& other) : Object(other) {
 		for (int i = 0; i < 3; i++) {
 			p[i] = Vector3(other.p[i]);
 			uv[i] = Vector2(other.uv[i]);

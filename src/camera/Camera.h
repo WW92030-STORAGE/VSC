@@ -92,7 +92,7 @@ class Camera : public Object {
 		init();
 	}
 
-	Camera(Camera& other) {
+	Camera(Camera& other) : Object(other) {
 		alpha = other.alpha;
 		n = other.n;
 		f = other.f;
