@@ -61,12 +61,12 @@ class PerlinNoise2 : public NoiseOctave2 {
         int ycell = BASE::ifloor(y / spacing);
         Vector2 scaledpoint(x / spacing, y / spacing);
 
-        Vector2 TL = randvec(xcell, ycell);
-        Vector2 TR = randvec(xcell + 1, ycell);
-        Vector2 BL = randvec(xcell, ycell + 1);
-        Vector2 BR = randvec(xcell + 1, ycell + 1);
+        Vector2 TL_ = randvec(xcell, ycell);
+        Vector2 TR_ = randvec(xcell + 1, ycell);
+        Vector2 BL_ = randvec(xcell, ycell + 1);
+        Vector2 BR_ = randvec(xcell + 1, ycell + 1);
 
-        Vector2 grads[4] = {TL, TR, BL, BR};
+        Vector2 grads[4] = {TL_, TR_, BL_, BR_};
         Vector2 corners[4];
         for (int i = 0; i < 4; i++) corners[i] = Vector2(xcell + i % 2, ycell + i / 2);
         float s[4];

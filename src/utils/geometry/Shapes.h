@@ -40,10 +40,10 @@ inline Mesh cube(float X = 16) {
 	FTT = FTT + OFFSET;
 	TTT = TTT + OFFSET;
 
-	Vector2 UL(0, 0);
-	Vector2 UR(1, 0);
-	Vector2 BL(0, 1);
-	Vector2 BR(1, 1); 
+	Vector2 UL_(0, 0);
+	Vector2 UR_(1, 0);
+	Vector2 BL_(0, 1);
+	Vector2 BR_(1, 1); 
 
 	/*
 
@@ -81,7 +81,7 @@ inline Mesh cube(float X = 16) {
 		std::vector<int>{7, 3, 6},
 		std::vector<int>{2, 6, 3}
 	});
-	std::vector<Vector2> uv({UL, UR, BL, BR});
+	std::vector<Vector2> uv({UL_, UR_, BL_, BR_});
 	std::vector<std::vector<int>> texco({
 		std::vector<int>{2, 3, 0},
 		std::vector<int>{1, 0, 3},
@@ -189,15 +189,15 @@ inline Mesh GridSquare(float X = 16, int N = 1) {
 	X = fabs(X);
 	N = BASE::max(N, 1);
 
-	Vector2 UL(0, 0);
-	Vector2 UR(1, 0);
-	Vector2 BL(0, 1);
-	Vector2 BR(1, 1); 
+	Vector2 UL_(0, 0);
+	Vector2 UR_(1, 0);
+	Vector2 BL_(0, 1);
+	Vector2 BR_(1, 1); 
 
 	std::vector<Vector3> verts;
 
 	std::vector<std::vector<int>> trii;
-	std::vector<Vector2> uv({UL, UR, BL, BR});
+	std::vector<Vector2> uv({UL_, UR_, BL_, BR_});
 	std::vector<std::vector<int>> texco;
 
 	int NP = N + 1;
