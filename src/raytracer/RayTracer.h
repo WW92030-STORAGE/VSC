@@ -66,8 +66,17 @@ class RayTracer : public Scene {
 	~RayTracer() {
 		if (bvh) delete bvh;
 		for (int i = 0; i < meshes.size(); i++) {
-			delete meshes[i];
-			delete materials[i];
+			Mesh* m = meshes[i];
+			MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
+			if (mm) delete mm;
+			else delete m; 
+		}
+		
+		for (int i = 0; i < materials.size(); i++) {
+			BaseMaterial* bm = materials[i];
+			ImageTexture* im = dynamic_cast<ImageTexture*>(bm);
+			if (im) delete im;
+			else delete bm;
 		}
 	}
 	

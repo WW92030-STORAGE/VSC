@@ -274,9 +274,7 @@ inline void RTexTest() {
 }
 
 // TEST 9.3 WHEEZIE (Raytracer Textures + Morphed Mesh + BVH)
-inline void RTexBVH() {
-
-	int N = 512;
+inline void RTexBVH(int N = 512, bool OUT = true) {
 	int D = 0;
 
 	RayTracer s(D, N, N);
@@ -303,8 +301,6 @@ inline void RTexBVH() {
 
 	MorphedMesh wheezie(test);
 	wheezie.copyTo(test2);
-
-	// Mesh zak(test2);
 
 	Mesh cube1 = cube(0.5);
 	Mesh cube2 = cube(0.5);
@@ -351,7 +347,7 @@ inline void RTexBVH() {
 
 	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
 
-	s.outputBuffer(BUFFER_PATH);
+	if (OUT) s.outputBuffer(BUFFER_PATH);
 
 	std::cout << "Stored\n";
 
@@ -382,6 +378,13 @@ inline void RTexBVH() {
 	std::ofstream len(VIDEO_PATH + "/LEN");
 	len << LEN;
 	len.close();
+}
+
+inline void memtest() {
+	for (int i = 0; i < 4; i++) {
+		std::cout << "> " << i << "\n";
+		RTexBVH(64, false);
+	}
 }
 
 // Bounding Box Test
@@ -738,8 +741,6 @@ inline void Subdiv2() {
 	delete imgtex;
 }
 
-
-
 #include <chrono>
 
 int main() {
@@ -760,7 +761,7 @@ int main() {
 
 	// RTexTest();
 
-	RTexBVH(); // TODO - RTexBVH in progress for MORPHED MESHES.
+	memtest();
 
 	// texmapref();
 
