@@ -274,7 +274,8 @@ inline void RTexTest() {
 }
 
 // TEST 9.3 WHEEZIE (Raytracer Textures + Morphed Mesh + BVH)
-inline void RTexBVH(int N = 512, bool OUT = true) {
+inline void RTexBVH() {
+	int N = 512;
 	int D = 0;
 
 	RayTracer s(D, N, N);
@@ -348,12 +349,12 @@ inline void RTexBVH(int N = 512, bool OUT = true) {
 
 	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
 
-	if (OUT) s.outputBuffer(BUFFER_PATH);
+	s.outputBuffer(BUFFER_PATH);
 
 	std::cout << "Stored\n";
 
 	// Animation example
-	return;
+	return; // REMOVE ME IF YOU WANT ANIMATIONS.
 
 	int LEN = 24;
 
@@ -379,13 +380,6 @@ inline void RTexBVH(int N = 512, bool OUT = true) {
 	std::ofstream len(VIDEO_PATH + "/LEN");
 	len << LEN;
 	len.close();
-}
-
-inline void memtest() {
-	for (int i = 0; i < 4; i++) {
-		std::cout << "> " << i << "\n";
-		RTexBVH(64, false);
-	}
 }
 
 // Bounding Box Test
@@ -762,7 +756,7 @@ int main() {
 
 	// RTexTest();
 
-	memtest();
+	RTexBVH();
 
 	// texmapref();
 
