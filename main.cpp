@@ -344,6 +344,7 @@ inline void RTexBVH(int N = 512, bool OUT = true) {
 	s.UseBVH = true; // feel free to toggle this if uncertain
 
 	s.render(true);
+	s.render(true);
 
 	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
 
