@@ -4,30 +4,30 @@
 
 # RASTERIZATION
 
-- 1. Basic Mesh (Kulde)
+- 1.0 Basic Mesh (Kulde)
 - 1.1. Object File Test
-- 2. Rotating Cube (Omina)
-- 3. Depth Sorting (Andam)
-- 4. Camera Controls (Haley)
+- 2.0 Rotating Cube (Omina)
+- 3.0 Depth Sorting (Andam)
+- 4.0 Camera Controls (Haley)
 
 # LIGHTING AND SHADING
 
-- 5. Lighting System (Lao)
+- 5.0 Lighting System (Lao)
 - 5.5. Smooth Shading
 - 5.75. Phong Shading
 - 5.875. Specular Highlights
 - 5.9375. Mesh Revamps i.e. memory reduction
-- 6. ESP32 Rasterization (Long)
+- 6.0 ESP32 Rasterization (Long)
 
 # TEXTURES AND ANIMATION
 
-- 7. Texture Mapping (Fu)
+- 7.0 Texture Mapping (Fu)
 - 7.5. Object Texmap
-- 8. Morph Animation (Dark Dragon)
+- 8.0 Morph Animation (Dark Dragon)
 
 # RAY TRACING
 
-- 9. Ray Tracing I (Ord)
+- 9.0 Ray Tracing I (Ord)
 - 9.1. Reflection (Cassie)
 - 9.2. Raytracing Texmap (Zak)
 - 9.3. Raytracing MorphMesh Texmap (Wheezie)
