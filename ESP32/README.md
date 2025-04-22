@@ -12,3 +12,4 @@ In the `Libraries` directory of the Arduino IDE sketchbook location place a fold
 - `icosphere` is memory intensive. Going above two subdivision levels is not recommended.
 - Each subdirectory of this one is a separate sketch.
 - Be aware of any outdated API.
+- Make sure to enable RTTI as dynamic casting is used.

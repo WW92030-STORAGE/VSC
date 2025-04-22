@@ -345,7 +345,6 @@ inline void RTexBVH() {
 	s.UseBVH = true; // feel free to toggle this if uncertain
 
 	s.render(true);
-	s.render(true);
 
 	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
 
@@ -688,7 +687,7 @@ inline void Subdiv1() {
 	delete mat;
 }
 
-// TEST 9.5B NEXIE (Subdivision I)
+// TEST 9.5B NEXIE (Subdivision III)
 inline void Subdiv2() {
 
 	int N = 512;
@@ -736,6 +735,166 @@ inline void Subdiv2() {
 	delete imgtex;
 }
 
+// TEST 9.5C AZION (Bezier Curves)
+inline void BezierMeshTest() {
+	
+	int N = 512;
+
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+
+
+	PointLight PL(Vector3(1, 1, 1), 0);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	// s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0.25);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	s.lights.push_back(P2);
+
+	std::vector<std::vector<Vector3>> controls({
+		{Vector3(0, -1.5, 0), Vector3(1, 0, 0), Vector3(2, 0, 0), Vector3(3, 0, 0)},
+		{Vector3(0, -1, 1), Vector3(1, 0, 1), Vector3(2, 0, 1), Vector3(3, 0.5, 1)},
+		{Vector3(0, -0.5, 2), Vector3(1, 0, 2), Vector3(2, 0, 2), Vector3(3, 1, 2)},
+		{Vector3(0, 0, 3), Vector3(1, 0, 3), Vector3(2, 0, 3), Vector3(3, 1.5, 3)}
+	});
+
+	for (int i = 0; i < controls.size(); i++) {
+		for (int j = 0; j < controls[i].size(); j++) controls[i][j] = controls[i][j] - Vector3(1.5, 0, 1.5);
+	}
+	BezierSurface surface(controls);
+
+	int I = 32;
+	Mesh azion = surface.render(I, I);
+	Mesh azion2 = surface.ctrlmesh();
+
+	azion.flipNormals();
+
+	Transform back(Vector3(0, -1.5, -5), Rotation3(Vector3(0, 1, 0), -M_PI));
+
+	s.clearBuffer();
+
+	azion.Trans(back);
+	azion2.Trans(back);
+
+	Vector3 col(0, 0.7, 1);
+
+	BaseMaterial mat = BaseMaterial(col);
+	mat.specular = 64;
+
+	BaseMaterial white(BASEMAT_WHITE);
+	white.specular = 64;
+
+	int TD = 8;
+	std::vector<std::vector<uint32_t>> checkerboard(TD, std::vector<uint32_t>(TD));
+	for (int i = 0; i < TD; i++) {
+		for (int j = 0; j < TD; j++) {
+			checkerboard[i][j] = 0x000000FF;
+			if ((i + j) % 2 == 0) checkerboard[i][j] = rgb(col);
+		}
+	}
+	ImageTexture imgtex = ImageTexture(checkerboard);
+	imgtex.baseColor = Vector3(col); // in case you want to use drawMesh instead of fillMesh
+	imgtex.specular = 64;
+
+	s.fillMesh(azion, &imgtex, true, true, true);
+	s.drawMesh(azion2, &white, true, true, true);
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
+// TEST 9.5C AZION (Bezier Curves) - RayTracing
+inline void BezierMeshRTX() {
+	
+	int N = 512;
+	int D = 2;
+
+	RayTracer s(D, N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+	float A = 0.2;
+
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), A);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	s.lights.push_back(P2);
+
+	std::vector<std::vector<Vector3>> controls({
+		{Vector3(0, -1.5, 0), Vector3(1, 0, 0), Vector3(2, 0, 0), Vector3(3, 0, 0)},
+		{Vector3(0, -1, 1), Vector3(1, 0, 1), Vector3(2, 0, 1), Vector3(3, 0.5, 1)},
+		{Vector3(0, -0.5, 2), Vector3(1, 0, 2), Vector3(2, 0, 2), Vector3(3, 1, 2)},
+		{Vector3(0, 0, 3), Vector3(1, 0, 3), Vector3(2, 0, 3), Vector3(3, 1.5, 3)}
+	});
+
+	for (int i = 0; i < controls.size(); i++) {
+		for (int j = 0; j < controls[i].size(); j++) controls[i][j] = controls[i][j] - Vector3(1.5, 0, 1.5);
+	}
+	BezierSurface surface(controls);
+
+	int I = 16;
+	Mesh azion = surface.render(I, I);
+	
+	Mesh azion2(azion);
+	azion.flipNormals();
+
+	Transform back(Vector3(0, -1.5, -5), Rotation3(Vector3(0, 1, 0), M_PI));
+
+
+	s.clearBuffer();
+
+	azion.Trans(back);
+	azion2.Trans(Transform(Vector3(0, -0.1, 0)) * back);
+
+	Vector3 col(0, 0.7, 1);
+
+	float SP = 64;
+	BaseMaterial mat = BaseMaterial(col, SP, 1);
+	BaseMaterial grey(0x808080FF, SP, 1);
+
+	int TD = 8;
+	std::vector<std::vector<uint32_t>> checkerboard(TD, std::vector<uint32_t>(TD));
+	for (int i = 0; i < TD; i++) {
+		for (int j = 0; j < TD; j++) {
+			checkerboard[i][j] = 0x000000FF;
+			if ((i + j) % 2 == 0) checkerboard[i][j] = rgb(col);
+		}
+	}
+	ImageTexture imgtex = ImageTexture(checkerboard);
+	imgtex.baseColor = Vector3(col); // in case you want to use drawMesh instead of fillMesh
+	imgtex.specular = 64;
+
+
+
+	Mesh floor = GridSquare(64, 1);
+	floor.Trans(Transform(Vector3(0, -4, 0)));
+
+	s.addMesh(&azion, &imgtex, true);
+	s.addMesh(&azion2, &imgtex, true);
+	s.addMesh(&floor, &grey, false);
+
+
+	s.UseBVH = true;
+	s.DEPTH = 3;
+
+	s.render(true, 0);
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
 #include <chrono>
 
 int main() {
@@ -756,9 +915,12 @@ int main() {
 
 	// RTexTest();
 
-	RTexBVH();
+	// RTexBVH();
 
 	// texmapref();
+
+	BezierMeshTest();
+	// BezierMeshRTX();
 
 	std::cout << "End\n";
 

@@ -1,6 +1,6 @@
 # .utils/curves/Bezier
 
-`class Bezier : BaseCurve`
+`class BezierCurve : BaseCurve`
 
 ## Description
 
@@ -13,8 +13,8 @@ Bezier spline.
 
 ## Constructors
 
-- `Bezier() : BaseCurve()` = 4 control points: the origin and three unit basis vectors.
-- `Bezier(std::vector<Vector3> v) : BaseCurve(v)`
+- `BezierCurve() : BaseCurve()` = 4 control points: the origin and three unit basis vectors.
+- `BezierCurve(std::vector<Vector3> v) : BaseCurve(v)`
 
 ## Functions
 

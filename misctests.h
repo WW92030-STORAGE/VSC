@@ -48,7 +48,7 @@ inline void FracNoiseTest() {
 // Bezier Curve Test
 inline void BezierTest() {
 	std::vector<Vector3> ctrls({Vector3(1, 0, 0), Vector3(1, 1, 0), Vector3(0, 1, 0), Vector3(0, 0, 0)});
-	Bezier b(ctrls);
+	BezierCurve b(ctrls);
 
 	for (float i = 0; i < 1; i += 0.05) std::cout << i << " " << b.query(i).to_string() << "\n";
 } 

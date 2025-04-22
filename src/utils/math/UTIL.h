@@ -62,4 +62,11 @@ inline Vector3 max(Vector3 a, Vector3 b) {
 	return Vector3(fmax(a.x, b.x), fmax(a.y, b.y), fmax(a.z, b.z));
 }
 
+// Linear Interpolation (Yes this also exists as several predefined functions for common types. But here it is in the most general form)
+
+template <typename T>
+inline T lerp(T a, T b, float t) {
+	return (a * (1 - t)) + (b * t);
+}
+
 #endif
