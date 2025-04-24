@@ -21,6 +21,8 @@
 #include "objects/Mesh.h"
 #include "objects/MorphedMesh.h"
 
+#include "objects/QuadMesh.h"
+
 
 #include "utils/geometry/Fragment.h"
 

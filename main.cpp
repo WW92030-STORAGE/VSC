@@ -895,6 +895,65 @@ inline void BezierMeshRTX() {
 	std::cout << "Stored\n";
 }
 
+// TEST 9.6A QUADMESH
+inline void QuadMeshTest() {
+	
+	int N = 512;
+
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+
+
+	PointLight PL(Vector3(1, 1, 1), 0);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	s.lights.push_back(P2);
+
+	int I = 32;
+	QuadMesh qm = QuadMesh::fromOBJ(MESHES + "/simplequad.obj");
+	Mesh quadmesh = qm.convertfiner();
+
+	// quadmesh = cube(2);
+
+	Transform back(Vector3(0, -3, -7), Rotation3(Vector3(0, 1, 0), -M_PI * 0.75));
+	s.clearBuffer();
+
+	quadmesh.Trans(back);
+
+	Vector3 col(1, 1, 1);
+
+	BaseMaterial mat = BaseMaterial(col);
+	mat.specular = 64;
+
+	BaseMaterial white(BASEMAT_WHITE);
+	white.specular = 64;
+
+	int TD = 16;
+	std::vector<std::vector<uint32_t>> checkerboard(TD, std::vector<uint32_t>(TD));
+	for (int i = 0; i < TD; i++) {
+		for (int j = 0; j < TD; j++) {
+			checkerboard[i][j] = 0x000000FF;
+			if ((i + j) % 2 == 0) checkerboard[i][j] = rgb(col);
+		}
+	}
+	ImageTexture imgtex = ImageTexture(checkerboard);
+	imgtex.baseColor = Vector3(col); // in case you want to use drawMesh instead of fillMesh
+	imgtex.specular = 64;
+
+	s.fillMesh(quadmesh, &imgtex, true, true, false);
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
 #include <chrono>
 
 int main() {
@@ -919,8 +978,10 @@ int main() {
 
 	// texmapref();
 
-	BezierMeshTest();
+	// BezierMeshTest();
 	// BezierMeshRTX();
+
+	QuadMeshTest();
 
 	std::cout << "End\n";
 
