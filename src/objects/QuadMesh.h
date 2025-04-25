@@ -240,6 +240,20 @@ class QuadMesh : public Object {
 		}
 	}
 
+	// Centroid of a face
+
+	inline Vector3 centroid(int i) {
+		Vector3 res(0, 0, 0);
+		for (int s = 0; s < 4; s++) res = res + verts[quadindices[i][s]];
+		return (res * 0.25);
+	}
+
+	// Get point
+
+	inline Vector3 get(int face, int id) {
+		return Vector3(verts[quadindices[face][id]]);
+	}
+
 	// CONVERT FROM A QUADMESH TO A MESH
 
 	inline Mesh convert() {
@@ -275,16 +289,6 @@ class QuadMesh : public Object {
 		return Mesh(verts, triindices, uv, uvs);
 	}
 
-	
-	template <typename T>
-	inline int pog(std::vector<T>& arr, std::map<T, int>& inv, T object) {
-		if (inv.find(object) == inv.end()) {
-			inv.insert({object, arr.size()});
-			arr.push_back(object);
-		}
-		return inv.at(object);
-	};
-
 	inline Mesh convertfiner() {
 		std::vector<Vector3> trueverts;
 		std::map<Vector3, int> trueverts_inv;
@@ -294,8 +298,6 @@ class QuadMesh : public Object {
 
 		std::vector<std::vector<int>> triindices;
 		std::vector<std::vector<int>> uvindices;
-
-		// Push to vector or get the existing index (push or get = pog)
 
 		for (int face = 0; face < size; face++) {
 			auto quad = quadindices[face];
@@ -397,10 +399,7 @@ class QuadMesh : public Object {
 					if (uvs[i] > 0) uvs[i]--;
 					else uvs[i] = uv.size() - uvs[i];
 				}
-
-				// std::cout << "TRIANGLE ";
-				// for (int i = 0; i < uvs.size(); i++) std::cout << uv[uvs[i]].to_string() << " ";
-				// std::cout << "\n";
+				
 				texco.push_back(uvs);
 
 			}

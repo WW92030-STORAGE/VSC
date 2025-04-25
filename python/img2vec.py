@@ -1,11 +1,19 @@
 from PIL import Image
 import sys
 
+# EDIT ME
+
 INPUT = "img"
 NAME = ""
-INFILE = "rgbcube2.png"
+INFILE = "simplequadRGB2.png"
 OUTPUT = "misc"
 OUTSUF = "_texture.dat"
+
+'''
+
+WARNING - PLEASE FLIP THE IMAGE VERTICALLY (ABOUT THE HORIZONTAL AXIS) AFTER EXPORTING FROM BLENDER
+
+'''
 
 def rgba(tup):
 	THEINT = 69420

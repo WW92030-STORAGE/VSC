@@ -131,7 +131,7 @@ Material.h
 # ACT III - RECONVENE  
   
 ImageTexture.h  
-- Image texture format to store images as 2-dimensional color matrices  
+- Image texture format to store images as 2-dimensional color matrices.  
   
 Mesh.h  
 - Meshes now store texture data in uvs.

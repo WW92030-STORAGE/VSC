@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "Mesh.h"
 #include "Triangle.h"
+#include "QuadMesh.h"
 
 #include "../utils/Math.h"
 
@@ -314,6 +315,155 @@ inline Mesh subdivideLoop(Mesh m, int k = 1) {
 
     }
     return Mesh(verts, triindices, uv, texindices);
+}
+
+inline QuadMesh subdivideCC(QuadMesh m, int k = 1) {
+    if (k <= 0) return m;
+    if (k > 1) m = subdivideCC(m, k - 1);
+
+    int nverts = m.nverts;
+    int nuv = m.nuv;
+    int size = m.size;
+
+    // Everything applied to a vertex must also be applied to a uv
+
+    // 1. For each face add a FACE POINT
+
+    std::vector<Vector3> facepoints(size);
+    std::vector<Vector2> faceuv(size);
+    for (int i = 0; i < size; i++) {
+        facepoints[i] = m.centroid(i);
+        Vector2 u(0, 0);
+        for (int id = 0; id < 4; id++) u = u + m.getVertexUV(i, id);
+        faceuv[i] = u * 0.25;
+    }
+
+    // For each edge add an EDGE POINT that is weighted based on the neighboring FACE POINTS and the endpoints
+    // Each edge that goes from verts[quadindices[i][x]] to verts[quadindices[i][x + 1]] has the edge point edgepoints[i][x]
+
+    std::vector<std::vector<Vector3>> edgepoints(size, std::vector<Vector3>(4));
+    std::vector<std::vector<Vector2>> edgeuvs(size, std::vector<Vector2>(4));
+    // std::vector<std::vector<Vector3>> edgemids(size, std::vector<Vector3>(4)); // These are EDGE MIDPOINTS used later.
+
+    for (int face = 0; face < size; face++) {
+        for (int id = 0; id < 4; id++) {
+            Vector3 end0 = m.get(face, id);
+            Vector3 end1 = m.get(face, (id + 1) % 4);
+
+            Vector2 ue0 = m.getVertexUV(face, id);
+            Vector2 ue1 = m.getVertexUV(face, (id + 1) % 4);
+
+            // edgemids[face][id] = (end0 + end1) * 0.5;
+
+            // Find neighboring faces
+
+            int nNF = 0;
+            Vector3 facesum(0, 0, 0);
+            Vector2 faceuvsum(0, 0);
+
+            for (int fp = 0; fp < size; fp++) {
+                bool hasface = false;
+                for (int idp = 0; idp < 4; idp++) {
+                    if (m.get(fp, idp) == end0 && m.get(fp, (idp + 1) % 4) == end1) hasface = true;
+                    if (m.get(fp, idp) == end1 && m.get(fp, (idp + 1) % 4) == end0) hasface = true;
+                }
+                if (hasface) {
+                    nNF++;
+                    facesum = facesum + facepoints[fp];
+                    faceuvsum = faceuvsum + faceuv[fp];
+                }
+            }
+
+            edgepoints[face][id] = (facesum + end0 + end1) * (1.0 / (nNF + 2.0));
+            // edgeuvs[face][id] = (faceuvsum + ue0 + ue1) * (1.0 / (nNF + 2.0));
+            edgeuvs[face][id] = (ue0 + ue1) * 0.5;
+        }
+    }
+
+    // For each original vertex point P, take the average (F) of all neighboring face points, and then the average (R) of all neighboring edge MIDpoints. 
+    // Then set P' = 1/n * (F + 2R + (n - 3)P) where n is the number of neighboring face points.
+
+    std::vector<Vector3> vertpts(nverts);
+    for (int v = 0; v < nverts; v++) {
+        Vector3 original(m.verts[v]);
+        vertpts[v] = Vector3(original);
+        int nNF = 0;
+
+        Vector3 F(0, 0, 0);
+        Vector3 R(0, 0, 0);
+
+        std::set<Vector3> neighbors;
+        // Find the faces and neighboring vertices
+        for (int face = 0; face < size; face++) {
+            bool hasface = 0;
+            for (int id = 0; id < 4; id++) {
+                if (m.get(face, id) == original) hasface = true;
+            }
+            if (hasface) {
+                nNF++;
+                F = F + facepoints[face];
+                for (int id = 0; id < 4; id++) {
+                    if (m.get(face, id) == original) {
+                        neighbors.insert(m.get(face, (id + 1) % 4));
+                        neighbors.insert(m.get(face, (id + 3) % 4));
+                    }
+                }
+            }
+        }
+
+        // Average the neighboring edges
+        int nNE = 0;
+        for (auto i : neighbors) {
+            if (i == original) continue;
+            nNE++;
+            Vector3 mid = (original + i) * 0.5;
+            R = R + mid;
+        }
+
+        F = F / nNF;
+        R = R / nNE;
+
+        // Now to calculate the new point
+        vertpts[v] = (F + R + R + original * (nNF - 3)) * (1.0 / nNF);
+    }
+
+    // Create the final mesh using faces
+    // Remember each original face quadindices[F] is represented by the four original points verts[quadindices[F][id]]
+    // those corner points are now vertpts[quadindices[F][0 ... 3]]
+    // There are also four edge points edgepoints[F][id] that lies between vertpts[quadindices[F][id]] and vertpts[quadindices[F][id + 1]]
+    // And finally one face point facepoints[F]
+    // The four subfaces created are thus of the form
+    // (facepoints[F], edgepoints[F][id - 1], vertpts[quadindices[F][id]], edgepoints[F][id])
+    // UV Mappings are similar, except using (original corner uvs, edge uvs, face uvs)
+
+    std::vector<Vector3> vp;
+    std::map<Vector3, int> vp_inv;
+    std::vector<Vector2> uvp;
+    std::map<Vector2, int> uvp_inv;
+
+    std::vector<std::vector<int>> qip; // faces
+    std::vector<std::vector<int>> qup; // uvs
+
+    for (int face = 0; face < size; face++) {
+        int center = pog<Vector3>(vp, vp_inv, facepoints[face]);
+        int cenuv = pog<Vector2>(uvp, uvp_inv, faceuv[face]);
+        for (int id = 0; id < 4; id++) {
+            int corner = pog<Vector3>(vp, vp_inv, vertpts[m.quadindices[face][id]]);
+            int e0 = pog<Vector3>(vp, vp_inv, edgepoints[face][(id + 3) % 4]);
+            int e1 = pog<Vector3>(vp, vp_inv, edgepoints[face][id]);
+            
+            int cuv = pog<Vector2>(uvp, uvp_inv, m.getVertexUV(face, id));
+            int eu0 = pog<Vector2>(uvp, uvp_inv, edgeuvs[face][(id + 3) % 4]);
+            int eu1 = pog<Vector2>(uvp, uvp_inv, edgeuvs[face][id]);
+
+            qip.push_back(std::vector<int>({center, e0, corner, e1}));
+            qup.push_back(std::vector<int>({cenuv, eu0, cuv, eu1}));
+        }
+    }
+
+    return QuadMesh(vp, qip, uvp, qup);
+
+
 }
 
 #endif

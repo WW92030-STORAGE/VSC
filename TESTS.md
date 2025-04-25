@@ -38,5 +38,8 @@
 - 9.5A. Linear Subdivision (PRI)
 - 9.5B. Loop Subdivision (NEX)
 - 9.5C. Bezier Splines (AZI)
+- 9.6A. Simple Quadmesh (PIXEL)
+- 9.6B. Catmull-Clark Subdivision (PLUSH)
 
 # MISCELLANEOUS TOPICS
+
