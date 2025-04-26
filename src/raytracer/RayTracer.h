@@ -273,7 +273,7 @@ class RayTracer : public Scene {
 	}
 
 	// Remember: pixels go from BOTTOM LEFT TO TOP RIGHT. This means you will have to reverse the Y direction when outputting.
-	inline void render(bool LIT = true, int depth = 0) {
+	virtual inline void render(bool LIT = true, int depth = 0) {
 		if (UseBVH) {
 			delete bvh;
 			bvh = create(meshes, materials, NormInterps);

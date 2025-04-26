@@ -5,7 +5,7 @@ import sys
 
 INPUT = "img"
 NAME = ""
-INFILE = "simplequadRGB2.png"
+INFILE = "rgbcubesmall.png"
 OUTPUT = "misc"
 OUTSUF = "_texture.dat"
 
