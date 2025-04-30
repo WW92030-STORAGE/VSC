@@ -50,7 +50,7 @@ class Camera : public Object {
 		N = Plane(0, 0, -1, -n);
 		F = Plane(0, 0, 1, f);
 
-		U = Plane(-1, -epsilon / ss, -1 / ss, 0);
+		U = Plane(0, -epsilon / ss, -1 / ss, 0);
 		L = Plane(epsilon / ss, 0, -1 / ss, 0);
 		D = Plane(0, epsilon / ss, -1 / ss, 0);
 		R = Plane(0, -epsilon / ss, -1 / ss, 0);

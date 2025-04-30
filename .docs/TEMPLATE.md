@@ -26,6 +26,6 @@ Template for documentation
 
 - Member functions that are either deprecated or very seldom used.
 
-# Static instances
+# Static Instances
 
 - Static instances of the objects and static functions that generate objects, intended for convenience or as special values.

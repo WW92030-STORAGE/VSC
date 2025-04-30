@@ -463,7 +463,6 @@ inline QuadMesh subdivideCC(QuadMesh m, int k = 1) {
 
     return QuadMesh(vp, qip, uvp, qup);
 
-
 }
 
 #endif

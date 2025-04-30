@@ -1083,6 +1083,107 @@ inline void QuadRTX() {
 	std::cout << "Stored\n";
 }
 
+// Triangle Clipping Test
+inline void TriClip() {
+	Triangle3 t(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0));
+	Plane p(2, -1, 0, -1);
+
+	auto res = TriSplit(t, p);
+
+	std::cout << "POSITIVE SIDE\n";
+	for (auto i : res.first) std::cout << i.to_string() << "\n";
+
+	std::cout << "NEGATIVE SIDE\n";
+	for (auto i : res.second) std::cout << i.to_string() << "\n";
+}
+
+// Attribute Clipping Test
+inline void TriClipAttr() {
+	Triangle3 t(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0));
+	std::vector<Vector2> uv({Vector2(0, 0), Vector2(1, 0), Vector2(0, 1)});
+	Plane p(2, -1, 0, -1);
+
+	auto res = TriSplitAttr(t, p, uv);
+
+	std::cout << "POSITIVE SIDE\n";
+	for (auto i : res.first) {
+		std::cout << "[ ";
+		for (auto j : i) std::cout << j.to_string() << " ";
+		std::cout << "]\n";
+	}
+
+	std::cout << "NEGATIVE SIDE\n";
+	for (auto i : res.second) {
+		std::cout << "[ ";
+		for (auto j : i) std::cout << j.to_string() << " ";
+		std::cout << "]\n";
+	}
+}
+
+// TEST 9.7 VALLEY (Clipping. In addition to edge clipping i.e. off the view frustum we also artificially clip a plane through the model.)
+inline void ClipTest() {
+
+	int N = 512;
+
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0, 0.5, 1024);
+
+
+
+	PointLight PL(Vector3(1, 1, 1), 0);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	// s.lights.push_back(P2);
+	
+	BaseMaterial mat(BASEMAT_WHITE);
+
+	int LEN = 4;
+	int R = 2;
+
+	// Remember that a Menger sponge is a collection of models.
+	auto valley = MengerSponge(LEN, R);
+	auto v2 = MengerSponge(LEN, R);
+	for (auto i : v2) {
+		Mesh m(i);
+		m.flipNormals();
+		valley.push_back(m); // This allows us to see inside cubes that are cut open
+	}
+
+	std::vector<Triangle3> valley2;
+
+	Vector3 po(0, -LEN * 0.25, -LEN * 1.5);
+	Transform back(po, Rotation3(Vector3(0, 1, 0), -M_PI * 0.25));
+
+	for (int i = 0; i < valley.size(); i++) valley[i].Trans(back);
+
+	Plane plane(po, Vector3(0, 1, 1) * -1);
+
+	for (auto mesh : valley) {
+		for (int i = 0; i < mesh.size; i++) {
+			Triangle3 tri = mesh.makeTriangle(i); 
+			for (auto p : TriSplit(tri, plane).first) valley2.push_back(Triangle3(p)); // Add all triangles on the positive side of the splitting plane.
+		}
+	}
+
+	Mesh m2(valley2);
+
+	s.clearBuffer();
+
+	// for (auto i : valley) s.fillMesh(i, &mat, true, true);
+	s.fillMesh(m2, &mat, true, true);
+
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
 #include <chrono>
 
 int main() {
@@ -1113,7 +1214,11 @@ int main() {
 
 	// QuadMeshTest();
 	// SubdivideCCTest();
-	QuadRTX();
+	// QuadRTX();
+
+	// TriClip();
+	// TriClipAttr();
+	ClipTest();
 
 	std::cout << "End\n";
 

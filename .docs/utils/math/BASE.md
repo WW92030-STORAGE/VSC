@@ -31,7 +31,7 @@ Mathematical methods that only use native C++ and not custom data types in VSC.
 - `float deriv(float (*f)(float), float x)` = Approximates the derivative of a function `f(float x)` at a point `x`.
 - `float newton(float (*f)(float))` = Uses Newton's Method to approximate a root of `f(float x)` within a bound on `x` values.
 
-# Static instances
+# Static Instances
 
 - `#define M_PI 3.14159265358979323846`
 - `#define INF FLT_MAX` = `std::FLT_MAX` from `<climits>` and `<cfloat>`

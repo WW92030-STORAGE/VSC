@@ -48,7 +48,7 @@ Quaternion class for rotations.
 - `Vector3 operator()(const Vector3& p)` = `on(p)`.
 - `std::string to_string()`
 
-# Static instances
+# Static Instances
 
 - `Quaternion QuaternionAA(Vector3 A, float t)` = Generate a quaternion for an axis `A` and angle `t`.
 - `Quaternion lerp(Quaternion a, Quaternion b, float t)` = Naive linear interpolation and normalization.

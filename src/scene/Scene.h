@@ -13,6 +13,7 @@
 #include "../objects/Mesh.h"
 #include "../objects/Triangle.h"
 #include "../objects/Object.h"
+#include "../objects/Clip.h"
 
 #include "../camera/Camera.h"
 #include "../utils/geometry/Fragment.h"
@@ -128,6 +129,8 @@ class Scene { // CENA!
 	// LIT = debug
 
 	inline virtual Vector3 shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
+		// std::cout << pRay.to_string() << " " << position.to_string() << " " << normal.to_string() << "\n";
+		
 		Vector3 col = rgb(getColor(material, uv));
 		if (!LIT) return col;
 		
@@ -375,10 +378,13 @@ class Scene { // CENA!
 		// std::cout << finaluv.to_string() << " " << c << " " << (s.material.TYPE == BaseMaterial::IMAGE) << "\n";
 		if (PHONGSHADE) {
 			Vector3 point;
-			for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * b.get(ss));
-			point.z = 0;
-			for (int ss = 0; ss < 3; ss++) point.z += (1.0 / t.p[ss].z);
-			point.z = 1.0 / point.z;
+			// for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * b.get(ss));
+			for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] / s.p[ss].ndc.w) * b.get(ss);
+			point = point * wc;
+
+			// std::cout << t.p[0].to_string() << " " << t.p[1].to_string() << " " << t.p[2].to_string() << " + " << b.to_string() << " = " << point.to_string() << "\n";
+
+
 
 			Vector3 interpnormal;
 			for (int ss = 0; ss < 3; ss++) interpnormal = interpnormal + s.p[ss].normal * b.get(ss);
@@ -649,7 +655,43 @@ class Scene { // CENA!
 		drawTriangle(p, rgb(material->baseColor));
 	}
 
-	inline void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false) {
+	inline void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false, bool edgeclip = true) {
+		if (edgeclip) {
+			std::vector<Triangle3> tt = TriSplit(s, camera.F).first;
+
+			Plane arr[5] = {camera.N, camera.U, camera.L, camera.D, camera.R};
+			for (int ii = 0; ii < 5; ii++) {
+
+			std::vector<Triangle3> vv;
+			for (auto i : tt) {
+				auto uu = TriSplit(i, arr[ii]).first;
+				for (auto j : uu) vv.push_back(j);
+			}
+			std::swap(tt, vv);
+			vv.clear();
+
+			}
+			Vector3* i_vn = nullptr;
+			Vector2* i_uv = nullptr;
+			if (vn) i_vn = new Vector3[3];
+			if (uv) i_uv = new Vector2[3];
+
+			for (auto ii : tt) {
+
+				for (int i = 0; i < 3; i++) {
+					Vector3 point = ii.p[i];
+					if (vn) i_vn[i] = s.interp<Vector3>(point, vn[0], vn[1], vn[2]);
+					if (uv) i_uv[i] = s.interp<Vector2>(point, uv[0], uv[1], uv[2]);
+				}
+				fillTriangle(ii, material, i_vn, i_uv, BACKFACECULL, PHONGSHADE, INTERPNORM, false);
+			}
+
+			delete[] i_vn;
+			delete[] i_uv;
+
+
+			return;
+		}
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		TRIANGLE_COUNT++;

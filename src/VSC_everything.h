@@ -23,6 +23,8 @@
 
 #include "objects/QuadMesh.h"
 
+#include "objects/Clip.h"
+
 
 #include "utils/geometry/Fragment.h"
 

@@ -153,7 +153,7 @@ Indices of rows and columns are zero-indexed.
 
 ---
 
-# Static instances
+# Static Instances
 
 - `Matrix2 NILMAT2 = Matrix2(NAN, NAN, NAN, NAN);`
 - `Matrix3 NILMAT3 = Matrix3(NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN);`

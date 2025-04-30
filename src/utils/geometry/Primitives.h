@@ -26,7 +26,7 @@ class Line {
 
 	Line(Vector3 p, Vector3 s) {
 		point = Vector3(p);
-		slope = Vector3(s);
+		slope = Vector3(s).normalized();
 	}
 
 	Line(const Line& other) {

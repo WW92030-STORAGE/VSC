@@ -149,7 +149,7 @@ Elements are zero-indexed.
 
 ---
 
-# Static instances
+# Static Instances
 
 - `Vector2 NILVEC2 = Vector2(NAN, NAN)`
 - `Vector3 NILVEC3 = Vector3(NAN, NAN, NAN)`

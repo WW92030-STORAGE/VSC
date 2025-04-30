@@ -29,7 +29,8 @@ Triangle mesh class. Stores vertices and triangles as indices of vertices, uvs, 
 - `Mesh(Vector3* v, int** t, Vector2* tex, int** texco, int nv, int sz, int nuuv)`
 - `Mesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t)`
 - `Mesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t,std::vector<Vector2> tex, std::vector<std::vector<int>>& texco)`
-- `Mesh(Triangle3* tt, int sz)`
+- `Mesh(Triangle3* tt, int sz)` = No material support.
+- `Mesh(std::vector<Triangle3> tt)` = No material support.
 
 ## Functions
 

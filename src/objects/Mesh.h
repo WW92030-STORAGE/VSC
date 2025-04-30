@@ -239,6 +239,33 @@ class Mesh : public Object {
 		setupvns();
 	}
 
+	Mesh(std::vector<Triangle3> tt) {
+		int sz = tt.size();
+		size = sz;
+		triindices = std::vector<std::vector<int>>(size, std::vector<int>(3));
+		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3));
+		std::map<Vector3, int> indices;
+		for (int i = 0; i < sz; i++) {
+			for (int j = 0; j < 3; j++) {
+				Vector3 v = Vector3(tt[i].p[j]);
+				if (indices.find(v) == indices.end()) {
+					indices.insert({v, verts.size()});
+					verts.push_back(v);
+				}
+				triindices[i][j] = indices.at(v);
+			}
+		}
+
+		nverts = verts.size();
+		nuv = nverts;
+
+		uv = std::vector<Vector2>(nuv, Vector2(0, 0));
+		texcoords = std::vector<std::vector<int>>(size, std::vector<int>(3, 0));
+
+
+		setupvns();
+	}
+
 	Mesh(const Mesh& other) : Object(other) {
 		size = other.size;
 		nverts = other.nverts;

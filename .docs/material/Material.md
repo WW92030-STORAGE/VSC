@@ -31,6 +31,6 @@ Base material class. Supports parameters such as color, specular, and reflectivi
 - `bool operator==(BaseMaterial& other)` = returns if the two materials have identical stats.
 - `std::string to_string()` = returns a string representation
 
-# Static instances
+# Static Instances
 
 - `BASEMAT_WHITE(Vector3(1, 1, 1), 0, 0, 0)`

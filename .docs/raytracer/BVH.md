@@ -94,7 +94,7 @@ There is no copy constructor.
 - `std::vector<BVHNode*> traverse()` = Get the inorder traversal of all nodes.
 - `IntersectionPoint IntersectRay(Ray r)` = Gets the first intersection point of a ray with any stored Triangle3 in its nodes.
 
-# Static instances
+# Static Instances
 
 - `void awaken(BVHNode* node, std::vector<TriangleData> v)` = Create a subtree rooted at `node` representing all the `TriangleData` i.e. `Triangle3` in `v`.
 - `BVH* create(std::vector<Mesh*> meshes, std::vector<BaseMaterial*> materials, std::vector<bool> NormInterps)` = Create a BVH with `TriangleData` representing the `Triangle3` objects in the meshes of `meshes`, using the `materials` and `NormInterps` vectors for additional configuration. These vectors are readily available in a `RayTracer` scene instance.

@@ -29,7 +29,7 @@ Transform class, representing a coordinate system.
 - `std::string to_string()`
 - `std::string sprintf()`
 
-# Static instances
+# Static Instances
 
 - `Transform RotationAroundPoint(Vector3 p, Vector3 a, float t)` = Rotate around the point `p` with axis `a` and angle `t`.
 - `Transform NormalTransform(Transform M)` = Equivalent transform for normal vector.
