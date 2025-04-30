@@ -73,5 +73,12 @@ struct BaseMaterial {
 };
 
 BaseMaterial BASEMAT_WHITE(Vector3(1, 1, 1), 0);
+BaseMaterial BASEMAT_RED(Vector3(1, 0, 0), 0);
+BaseMaterial BASEMAT_YELLOW(Vector3(1, 1, 0), 0);
+BaseMaterial BASEMAT_GREEN(Vector3(0, 1, 0), 0);
+BaseMaterial BASEMAT_CYAN(Vector3(0, 1, 1), 0);
+BaseMaterial BASEMAT_BLUE(Vector3(0, 0, 1), 0);
+BaseMaterial BASEMAT_MAGENTA(Vector3(1, 0, 1), 0);
+BaseMaterial BASEMAT_BLACK(Vector3(0, 0, 0), 0);
 
 #endif

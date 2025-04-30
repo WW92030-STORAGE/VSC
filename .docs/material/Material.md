@@ -34,3 +34,10 @@ Base material class. Supports parameters such as color, specular, and reflectivi
 # Static Instances
 
 - `BASEMAT_WHITE(Vector3(1, 1, 1), 0, 0, 0)`
+- `BASEMAT_RED(Vector3(1, 0, 0), 0);`
+- `BASEMAT_YELLOW(Vector3(1, 1, 0), 0);`
+- `BASEMAT_GREEN(Vector3(0, 1, 0), 0);`
+- `BASEMAT_CYAN(Vector3(0, 1, 1), 0);`
+- `BASEMAT_BLUE(Vector3(0, 0, 1), 0);`
+- `BASEMAT_MAGENTA(Vector3(1, 0, 1), 0);`
+- `BASEMAT_BLACK(Vector3(0, 0, 0), 0);`

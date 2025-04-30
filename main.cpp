@@ -1120,7 +1120,7 @@ inline void TriClipAttr() {
 	}
 }
 
-// TEST 9.7 VALLEY (Clipping. In addition to edge clipping i.e. off the view frustum we also artificially clip a plane through the model.)
+// TEST 9.7A VALLEY (Clipping. In addition to edge clipping i.e. off the view frustum we also artificially clip a plane through the model.)
 inline void ClipTest() {
 
 	int N = 512;
@@ -1184,6 +1184,112 @@ inline void ClipTest() {
 	std::cout << "Stored\n";
 }
 
+// TEST 9.7B LUNAR ABYSS (Better clipping showcase.)
+inline void MengerSpongeDual() {
+
+	int N = 512;
+
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0, 0.5, 1024);
+
+
+
+	PointLight PL(Vector3(1, 1, 1), 0);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	// s.lights.push_back(P2);
+	
+	BaseMaterial mat(BASEMAT_WHITE);
+
+	int LEN = 4;
+	int R = 3;
+
+	// Remember that a Menger sponge is a collection of models.
+	auto sponge = MengerSponge(LEN, R);
+
+	Plane plane(Vector3(0, 0, 0), Vector3(3, 1, 0));
+	Plane plan2(Vector3(0, 0, 0), Vector3(1, -3, 0));
+
+	std::vector<Triangle3> a, b, c, d, pos, neg;
+	
+	// Two way split
+	for (auto mesh : sponge) {
+		for (int i = 0; i < mesh.size; i++) {
+			Triangle3 tri = mesh.makeTriangle(i); 
+			auto split = TriSplit(tri, plane);
+			for (auto p : split.first) pos.push_back(Triangle3(p)); // Add all triangles on the positive side of the splitting plane.
+			for (auto p : split.second) neg.push_back(Triangle3(p)); // Add all triangles on the positive side of the splitting plane.
+		}
+	}
+
+	// Four way split
+	for (auto mesh : sponge) {
+		for (int i = 0; i < mesh.size; i++) {
+			Triangle3 tri = mesh.makeTriangle(i); 
+			auto split = TriSplit(tri, plane);
+			for (auto p : split.first) {
+				auto sp2 = TriSplit(p, plan2);
+				for (auto pp : sp2.first) a.push_back(Triangle3(pp));	
+				for (auto pp : sp2.second) b.push_back(Triangle3(pp));	
+			}
+			for (auto p : split.second) {
+				auto sp2 = TriSplit(p, plan2);
+				for (auto pp : sp2.first) c.push_back(Triangle3(pp));	
+				for (auto pp : sp2.second) d.push_back(Triangle3(pp));	
+			}
+		}
+	}
+
+	BaseMaterial CYAN(BASEMAT_CYAN);
+	BaseMaterial WHITE(BASEMAT_WHITE);
+
+	Mesh abyss(pos);
+	Mesh irrid(neg);
+
+	Mesh A(a);
+	Mesh B(b);
+	Mesh C(c);
+	Mesh D(d);
+
+	Vector3 po(0, -LEN * 0.25, -LEN * 1.5);
+	Transform back(po, Rotation3(Vector3(0, 1, 0), -M_PI * 0.1));
+
+	abyss.Trans(back);
+	irrid.Trans(back);
+
+	A.Trans(back);
+	B.Trans(back);
+	C.Trans(back);
+	D.Trans(back);
+
+	s.clearBuffer();
+
+	
+	// for (auto i : valley) s.fillMesh(i, &mat, true, true);
+
+	const bool twoway = true;
+	if (twoway) {
+		s.fillMesh(abyss, &CYAN, true, true);
+		s.fillMesh(irrid, &WHITE, true, true);
+	} else {
+		s.fillMesh(A, &CYAN, true, true);
+		s.fillMesh(B, &WHITE, true, true);
+		s.fillMesh(C, &WHITE, true, true);
+		s.fillMesh(D, &CYAN, true, true);
+	}
+
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
 #include <chrono>
 
 int main() {
@@ -1218,7 +1324,8 @@ int main() {
 
 	// TriClip();
 	// TriClipAttr();
-	ClipTest();
+	// ClipTest();
+	MengerSpongeDual();
 
 	std::cout << "End\n";
 
