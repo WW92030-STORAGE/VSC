@@ -12,6 +12,7 @@
 
 #include "utils/curves/BaseCurve.h"
 #include "utils/curves/Bezier.h"
+#include "utils/curves/BSpline.h"
 
 // Geometry and objects
 

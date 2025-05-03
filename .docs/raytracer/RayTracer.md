@@ -15,7 +15,7 @@ Scene that supports ray tracing
 
 - `RAY_EPSILON: const float = 0.01` = Margin of error for some calculations.
 - `bvh: BVH` = Bounding Volume Hierarchy used for acceleration.
-- `UseBVH: bool` = Do we use the BVH?
+- `UseBVH: bool` = Do we use the BVH? (WARNING: THIS IS TURNED OFF BY DEFAULT. YOU MUST SET IT TO BE TURNED ON.)
 
 ## Constructors
 

@@ -227,9 +227,20 @@ class Triangle3 : public Object {
 	
 	// Barycentric coordinates of a point. **Undefined behavior for points outside the triangle plane
 
+	inline float area() {
+		return 0.5 * (p[1] - p[0]).cross(p[2] - p[0]).length();
+	}
+
 	inline Vector3 bary(Vector3 pos) {
-		Matrix3 A(p[0], p[1], p[2]);
-		return A.solve(pos);
+
+		float ss[3];
+		for (int i = 0; i < 3; i++) ss[i] = Triangle3(pos, p[(i + 1) % 3], p[(i + 2) % 3]).area();
+		float sum = ss[0] + ss[1] + ss[2];
+		if (!BASE::fzero(sum)) {
+			for (int i = 0; i < 3; i++) ss[i] /= sum;
+		}
+
+		return Vector3(ss[0], ss[1], ss[2]);
 	}	
 
 	// Interpolate on the vertices

@@ -687,7 +687,7 @@ inline void Subdiv1() {
 	delete mat;
 }
 
-// TEST 9.5B NEXIE (Subdivision III)
+// TEST 9.5B NEXIE (Subdivision II)
 inline void Subdiv2() {
 
 	int N = 512;
@@ -981,7 +981,7 @@ inline void SubdivideCCTest() {
 
 	int I = 32;
 	QuadMesh qm = QuadMesh::fromOBJ(MESHES + "/simplequad.obj");
-	qm = subdivideCC(qm, 2);
+	qm = subdivideCC(qm, 4);
 	Mesh plush = qm.convert();
 
 	Transform back(Vector3(0, -3, -7), Rotation3(Vector3(0, 1, 0), -M_PI * 0.75));
@@ -1007,7 +1007,7 @@ inline void SubdivideCCTest() {
 	imgtex.baseColor = Vector3(col); // in case you want to use drawMesh instead of fillMesh
 	imgtex.specular = 64;
 
-	s.fillMesh(plush, &imgtex, true, true, true);
+	s.fillMesh(plush, &imgtex, true, true, false);
 
 	std::cout << "Drawn\n";
 
@@ -1290,6 +1290,164 @@ inline void MengerSpongeDual() {
 	std::cout << "Stored\n";
 }
 
+// Cubic B-Spline
+inline void BSPTest() {
+	CubicBSpline spline(std::vector<Vector3>{Vector3(0, 0, 0), Vector3(0, 1, 0), Vector3(1, 1, 0), Vector3(1, 0, 0), Vector3(2, 0, 0)});
+
+	for (float i = 0; i <= 1; i += 0.01) std::cout << i << " " << spline.query(i).to_string() << "\n";
+
+	std::cout << spline.to_string() << "\n";
+}
+
+// TEST 9.8A AZION II (B-Spline Patch)
+inline void BSPMeshTest() {
+	
+	int N = 512;
+
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+	PointLight PL(Vector3(1, 1, 1), 0);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	// s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0.25);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	s.lights.push_back(P2);
+
+	std::vector<std::vector<Vector3>> controls({
+		{Vector3(0, -2, 0), Vector3(1, -1.5, 0), Vector3(2, -1, 0), Vector3(3, -0.5, 0), Vector3(4, 0, 0)},
+		{Vector3(0, -1.5, 1), Vector3(1, 0, 1), Vector3(2, 0, 1), Vector3(3, 0, 1), Vector3(4, 0.5, 1)},
+		{Vector3(0, -1, 2), Vector3(1, 0, 2), Vector3(2, -1, 2), Vector3(3, 0, 2), Vector3(4, 1, 2)},
+		{Vector3(0, -0.5, 3), Vector3(1, 0, 3), Vector3(2, 0, 3), Vector3(3, 0, 3), Vector3(4, 1.5, 3)},
+		{Vector3(0, 0, 4), Vector3(1, 0.5, 4), Vector3(2, 1, 4), Vector3(3, 1.5, 4), Vector3(4, 2, 4)}
+		
+	});
+
+	float thing = (controls[0].size() - 1) * 0.5;
+	for (int i = 0; i < controls.size(); i++) {
+		for (int j = 0; j < controls[i].size(); j++) controls[i][j] = controls[i][j] - Vector3(thing, 0, thing);
+	}
+	CubicBSplineSurface surface(controls);
+
+	int I = 32;
+	Mesh azion = surface.render(I, I);
+	Mesh azion2 = surface.ctrlmesh();
+
+	azion.flipNormals();
+
+	Transform back(Vector3(0, -1.5, -5), Rotation3(Vector3(0, 1, 0), -M_PI));
+
+	s.clearBuffer();
+
+	azion.Trans(back);
+	azion2.Trans(back);
+
+	Vector3 col(0, 0.7, 1);
+
+	BaseMaterial mat = BaseMaterial(col);
+	mat.specular = 64;
+
+	BaseMaterial white(BASEMAT_WHITE);
+	white.specular = 64;
+
+	int TD = 8;
+	std::vector<std::vector<uint32_t>> checkerboard(TD, std::vector<uint32_t>(TD));
+	for (int i = 0; i < TD; i++) {
+		for (int j = 0; j < TD; j++) {
+			checkerboard[i][j] = 0x000000FF;
+			if ((i + j) % 2 == 0) checkerboard[i][j] = rgb(col);
+		}
+	}
+	ImageTexture imgtex = ImageTexture(checkerboard);
+	imgtex.baseColor = Vector3(col); // in case you want to use drawMesh instead of fillMesh
+	imgtex.specular = 64;
+
+	s.fillMesh(azion, &imgtex, true, true, true);
+	s.drawMesh(azion2, &white, true, true, true);
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
+// TEST 9.8B PLUSH II (Subdivision with Sharpness)
+inline void SubdivideCCSharp() {
+	
+	int N = 512;
+
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+
+	PointLight PL(Vector3(1, 1, 1), 0);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), 0);
+	P2.Trans(Transform(Vector3(2, 2, -2)));
+	s.lights.push_back(P2);
+
+
+
+	// Notice the sharp mesh designation
+	SharpQuadMesh qm(QuadMesh::fromOBJ(MESHES + "/simplequad.obj"));
+
+	Vector3 panel[4] = {Vector3(1, 3, 1), Vector3(-1, 3, 1), Vector3(-1, 3, -1), Vector3(1, 3, -1)};
+	Vector3 panel2[4] = {Vector3(3, 1, 1), Vector3(3, -1, 1), Vector3(3, -1, -1), Vector3(3, 1, -1)};
+	Vector3 panel3[4] = {Vector3(1, 1, 3), Vector3(-1, 1, 3), Vector3(-1, -1, 3), Vector3(1, -1, 3)};
+
+	for (int i = 0; i < 4; i++) { // Mark certain edges and vertices as sharp. These get transformed with the mesh when you transform it.
+
+		// x axis: sharp edges only
+		qm.shedges.insert({panel2[i], panel2[(i + 1) % 4]});
+
+		// y axis: sharp vertices only
+		qm.shverts.insert(panel[i]);
+
+		// z axis: sharp edges and vertices
+		qm.shverts.insert(panel3[i]);
+		qm.shedges.insert({panel3[i], panel3[(i + 1) % 4]});
+	}
+
+	qm = subdivideCC(qm, 4); // Subdivide
+	Mesh plush = qm.convert();
+
+	Transform back(Vector3(0, -3, -7), Rotation3(Vector3(0, 1, 0), -M_PI * 0.75));
+	s.clearBuffer();
+
+	plush.Trans(back);
+
+	Vector3 col(1, 1, 1);
+
+	BaseMaterial mat = BaseMaterial(col);
+	mat.specular = 64;
+
+	BaseMaterial white(BASEMAT_WHITE);
+	white.specular = 64;
+
+	uint32_t R = 0xFF0000FF;
+	uint32_t G = 0x00FF00FF;
+	uint32_t B = 0x0000FFFF;
+	uint32_t K = 0x000000FF;
+
+
+	ImageTexture imgtex = ImageTexture(simplequadRGB2);
+	imgtex.baseColor = Vector3(col); // in case you want to use drawMesh instead of fillMesh
+	imgtex.specular = 64;
+
+	s.fillMesh(plush, &imgtex, true, true, false);
+
+	std::cout << "Drawn\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
 #include <chrono>
 
 int main() {
@@ -1325,7 +1483,12 @@ int main() {
 	// TriClip();
 	// TriClipAttr();
 	// ClipTest();
-	MengerSpongeDual();
+	// MengerSpongeDual();
+
+	// BSPTest();
+	// BSPMeshTest();
+
+	SubdivideCCSharp();
 
 	std::cout << "End\n";
 

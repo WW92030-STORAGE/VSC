@@ -26,6 +26,7 @@
 #include "../lighting/PointLight.h"
 #include "../lighting/DirectionalLight.h"
 
+
 class Scene { // CENA!
 	public:
 	// std::vector<Object> objs;
@@ -679,7 +680,7 @@ class Scene { // CENA!
 			for (auto ii : tt) {
 
 				for (int i = 0; i < 3; i++) {
-					Vector3 point = ii.p[i];
+					Vector3 point(ii.p[i]);
 					if (vn) i_vn[i] = s.interp<Vector3>(point, vn[0], vn[1], vn[2]);
 					if (uv) i_uv[i] = s.interp<Vector2>(point, uv[0], uv[1], uv[2]);
 				}

@@ -266,7 +266,7 @@ class QuadMesh : public Object {
 
 			bool use02diag = true;
 
-			float d02 = (verts[q[0]] - verts[q[1]]).normsquared();
+			float d02 = (verts[q[0]] - verts[q[2]]).normsquared();
 			float d13 = (verts[q[1]] - verts[q[3]]).normsquared();
 			if (d02 > d13) use02diag = false;
 
@@ -431,6 +431,75 @@ class QuadMesh : public Object {
 		QuadMesh mesh(verts, tris, uv, texco);
 		return mesh;
 	}
+};
+
+class SharpQuadMesh : public QuadMesh {
+	public:
+	std::set<Vector3> shverts;
+	std::set<std::pair<Vector3, Vector3>> shedges;
+
+	inline bool isSharp(Vector3 v) {
+		return shverts.find(v) != shverts.end();
+	}
+
+	inline bool isSharp(std::pair<Vector3, Vector3> v) {
+		std::pair<Vector3, Vector3> u = {v.second, v.first};
+		return shedges.find(v) != shedges.end() || shedges.find(u) != shedges.end();
+	}
+
+	
+	SharpQuadMesh(int sz) : QuadMesh(sz) {
+	}
+
+	SharpQuadMesh(Vector3* v, int** t, int nv, int sz) : QuadMesh(v, t, nv, sz) {
+	}
+
+	SharpQuadMesh(Vector3* v, int** t, Vector2* tex, int** texco, int nv, int sz, int nuuv) : QuadMesh(v, t, tex, texco, nv, sz, nuuv) {
+	}
+
+	SharpQuadMesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t) : QuadMesh(v, t) {
+		
+	}
+
+	SharpQuadMesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t,std::vector<Vector2> tex, std::vector<std::vector<int>>& texco) : QuadMesh(v, t, tex, texco) {
+	}
+
+	SharpQuadMesh(const SharpQuadMesh& other) : QuadMesh(other) {
+		shedges = other.shedges;
+		shverts = other.shverts;
+	}
+
+	SharpQuadMesh(const QuadMesh& other) : QuadMesh(other) {
+		
+	}
+
+	void Trans(Transform t) override {
+		transform = t * transform;
+		Matrix4 trans = t.matrix();
+		for (int i = 0; i < nverts; i++) verts[i] = vec3(trans * fromPoint(verts[i]));
+		std::set<Vector3> shv;
+		for (auto i : shverts) shv.insert(vec3(trans * fromPoint(i)));
+		std::set<std::pair<Vector3, Vector3>> she;
+		for (auto i : shedges) she.insert({vec3(trans * fromPoint(i.first)), vec3(trans * fromPoint(i.second))});
+
+		shedges = she;
+		shverts = shv;
+	}
+
+	void ForceTrans(Transform t) override {
+		Matrix4 trans = t.matrix();
+		for (int i = 0; i < nverts; i++) verts[i] = vec3(trans * fromPoint(verts[i]));
+
+
+		std::set<Vector3> shv;
+		for (auto i : shverts) shv.insert(vec3(trans * fromPoint(i)));
+		std::set<std::pair<Vector3, Vector3>> she;
+		for (auto i : shedges) she.insert({vec3(trans * fromPoint(i.first)), vec3(trans * fromPoint(i.second))});
+
+		shedges = she;
+		shverts = shv;
+	}
+
 };
 
 #endif
