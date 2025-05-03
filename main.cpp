@@ -707,7 +707,7 @@ inline void Subdiv2() {
 	s.lights.push_back(P2);
 
 	Mesh nexie = Mesh::fromOBJ(MESHES + "/cubemorph.obj");
-	nexie = subdivideLoop(nexie, 0);
+	nexie = subdivideLoop(nexie, 1);
 
 	Transform back(Vector3(0, -2, -4), Rotation3(Vector3(0, 1, 0), -M_PI * 0.9));
 
@@ -1398,7 +1398,7 @@ inline void SubdivideCCSharp() {
 
 	Vector3 panel[4] = {Vector3(1, 3, 1), Vector3(-1, 3, 1), Vector3(-1, 3, -1), Vector3(1, 3, -1)};
 	Vector3 panel2[4] = {Vector3(3, 1, 1), Vector3(3, -1, 1), Vector3(3, -1, -1), Vector3(3, 1, -1)};
-	Vector3 panel3[4] = {Vector3(1, 1, 3), Vector3(-1, 1, 3), Vector3(-1, -1, 3), Vector3(1, -1, 3)};
+	Vector3 panel3[4] = {Vector3(1, 1, -3), Vector3(-1, 1, -3), Vector3(-1, -1, -3), Vector3(1, -1, -3)};
 
 	for (int i = 0; i < 4; i++) { // Mark certain edges and vertices as sharp. These get transformed with the mesh when you transform it.
 
