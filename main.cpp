@@ -22,6 +22,68 @@ std::string VIDEO_PATH = "video";
 
 Transform rotatecam(Vector3(0, 1, 0), Rotation3(Vector3(1, 0, 0), M_PI * -0.2));
 
+// Updated version of test 6
+inline void phongtest() {
+	int SUB = 2;
+	Mesh lao = icosphere(1, SUB);
+
+
+	float SSS = 1;
+
+	Transform offset(Vector3(0, -2, -4) * SSS, Rotation3(Vector3(1, 1, 1), M_PI / 8));
+	lao.Trans(offset);
+
+	Mesh shi(lao);
+	
+
+	shi.Trans(Transform(Vector3(2, 2, -1)));
+	
+
+	Mesh proto = icosphere(1, SUB);
+	// proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
+	proto = icosphere(1, SUB);
+	proto.Trans(Transform(Vector3(-1, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 1.2)));
+	
+	int N = 1024;
+
+	Scene s(N, N / 2);
+
+	float A = 0.3;
+
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-4, 2, 2)));
+	// s.lights.push_back(PL);
+
+	PointLight PL2(Vector3(1, 1, 1), A);
+	PL2.Trans(Transform(Vector3(4, 4, 0)));
+	s.lights.push_back(PL2);
+
+	s.clearBuffer();
+
+	auto start = std::chrono::high_resolution_clock::now();
+
+	int SPE = 16;
+
+	
+
+	s.fillMesh(lao, new BaseMaterial(0xFF0000FF, SPE), true, true, false);
+	s.fillMesh(shi, new BaseMaterial(0x00FF00FF, SPE), true, true, true);
+	s.fillMesh(proto, new BaseMaterial(0x0000FFFF, SPE), false, false, false);
+
+	std::cout << "THING\n";
+
+	s.drawQueue();
+
+	std::cout << "CNT " << s.TRIANGLE_COUNT << "\n";
+
+	auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << double(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count()) / 1000000 << "ns\n";
+
+	// s.outputFrags("OUT");
+
+	s.outputBuffer(BUFFER_PATH);
+}
+
 // TEST 8.2 CASSIE I (Texture map of the cube6)
 inline void texmapref() {
 
@@ -1413,7 +1475,7 @@ inline void SubdivideCCSharp() {
 		qm.shedges.insert({panel3[i], panel3[(i + 1) % 4]});
 	}
 
-	qm = subdivideCC(qm, 4); // Subdivide
+	qm = subdivideCC(qm, 4); // Subdivide <-- THIS IS TO BE CHANGED DURING DEMO
 	Mesh plush = qm.convert();
 
 	Transform back(Vector3(0, -3, -7), Rotation3(Vector3(0, 1, 0), -M_PI * 0.75));
@@ -1453,6 +1515,8 @@ inline void SubdivideCCSharp() {
 int main() {
 	std::cout << "BEGIN\n";
 	auto start = std::chrono::high_resolution_clock::now();
+
+	// phongtest();
 
 	// BVHStanford();
 	// BVHSponge();

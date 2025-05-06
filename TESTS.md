@@ -39,9 +39,11 @@
 - 9.5B. Loop Subdivision (NEX)
 - 9.5C. Bezier Splines (AZI)
 - 9.6A. Simple Quadmesh (PIXEL)
-- 9.6B. Catmull-Clark Subdivision (PLUSH)
+- 9.6B. Catmull-Clark (CC) Subdivision (PLUSH)
 - 9.7A. Edge and Plane Clipping (VALLEY)
 - 9.7B. Menger Sponge Dual (LUNAR ABYSS)
+- 9.8A. B-Spline Patch (AZI II)
+- 9.8B. CC with Sharp Edges (PLUSH II)
 
 # MISCELLANEOUS TOPICS
 
