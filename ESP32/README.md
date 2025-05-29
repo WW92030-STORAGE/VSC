@@ -16,4 +16,4 @@ In the `Libraries` directory of the Arduino IDE sketchbook location place a fold
 - Make sure to enable RTTI as dynamic casting is used.
 - Raytracing is very slow. Rasterization is a lot faster.
 
-![Example!](example_outputs/esp32rtx.png?raw=true)
+![Example!](../example_outputs/esp32rtx.png?raw=true)
