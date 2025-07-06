@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -O3 -w
+CXXFLAGS = -O3 -w -fcompare-debug-second
 
 TARGET = main
 FILE = main.cpp

@@ -45,5 +45,12 @@
 - 9.8A. B-Spline Patch (AZI II)
 - 9.8B. CC with Sharp Edges (PLUSH II)
 
+# ANIMATION
+
+- 9.81. Migrating the addMesh etc. functionality to Scene and placing the old Scene in a LegacyScene class (??????????? I)
+- 9.82. Setting up the Animation system, first with only linear movement (??????????? II)
+- 9.83A. Quaternion Fixes
+- 9.83B. Animating Rotations (??????????? III)
+
 # MISCELLANEOUS TOPICS
 

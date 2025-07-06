@@ -15,7 +15,7 @@ def render(INPUT):
 	W = dims[0]
 	H = dims[1]
 	
-	im = Image.new(mode = "RGB", size = (W, H))
+	im = Image.new(mode = "RGBA", size = (W, H))
 
 	restofdat = "".join(bufdat[ket+1:].splitlines())
 	restofdat = [int(i) for i in restofdat.split(",")[:-1]]
@@ -56,6 +56,6 @@ if __name__ == "__main__":
 	lenfile = open(INPUT_DIR + "/LEN", 'r')
 
 	LEN = int(lenfile.read())
-	# generate_video(INPUT_DIR, OUTPUT + ".avi", LEN)
+	# generate_video(INPUT_DIR, OUTPUT + ".mov", LEN)
 	generate_video(INPUT_DIR, OUTPUT + ".mp4", LEN)
 	# generate_video(INPUT_DIR, OUTPUT + ".mpeg", LEN)

@@ -9,6 +9,7 @@
 #include <utility>
 #include <cfloat>
 #include <climits>
+#include <unordered_map>
 
 #include "../objects/Mesh.h"
 #include "../objects/Triangle.h"
@@ -26,10 +27,20 @@
 #include "../lighting/PointLight.h"
 #include "../lighting/DirectionalLight.h"
 
+/*
+
+Base scene class. Supports the rendering of individual meshes, but also the bulk storage and rendering of meshes.
+
+*/
 
 class Scene { // CENA!
 	public:
-	// std::vector<Object> objs;
+	std::vector<Mesh*> meshes;
+	std::vector<BaseMaterial*> materials;
+	std::vector<bool> NormInterps;
+
+	std::vector<std::string> names;
+	std::unordered_map<std::string, uint64_t> names_inv;
 	// int numObjs;
 
 	int W, H;
@@ -44,13 +55,86 @@ class Scene { // CENA!
 	Camera camera;
 
 	ReducedFrag** buffer; // Coordinates are (x, y) where x goes right and y up. This is to align with the projection matrix.
-
 	Vector3 ambientLight = Vector3(0.1, 0.1, 0.1);
 
 	std::vector<Light> lights;
 
 	// Functions
 
+	/*
+	
+	WHAT IS HERE IS ORITINALLY TAKEN FROM RAYTRACER AND GENERALIZED
+	
+	*/
+
+	// Add a mesh to the system. WARNING - This copies the mesh in question.
+	inline void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false, std::string name = "") {
+		if (name == "") name = "Mesh" + std::to_string(meshes.size());
+
+		names.push_back(name);
+		names_inv[name] = meshes.size();
+
+		MorphedMesh* morphed = dynamic_cast<MorphedMesh*>(mesh);
+		if (morphed != nullptr) meshes.push_back(new MorphedMesh(*morphed));
+		else meshes.push_back(new Mesh(*mesh));
+
+		if (mat != nullptr) {
+			ImageTexture* imgtex = dynamic_cast<ImageTexture*>(mat);
+			if (imgtex != nullptr) materials.push_back(new ImageTexture(*imgtex));
+			else materials.push_back(new BaseMaterial(*mat));
+		}
+		else materials.push_back(new BaseMaterial(BASEMAT_WHITE));
+		NormInterps.push_back(INTERPNORM);
+	}
+
+	// Get the mesh of a name
+	inline int getMesh(std::string name) {
+		if (names_inv.find(name) == names_inv.end()) return -1;
+		return names_inv[name];
+	}
+
+	// Render the scene, assuming what is stored in meshes, etc. are the desired objects
+	virtual inline void render(bool LIT = true, int depth = 0) {
+		clearBuffer();
+		for (int index = 0; index < meshes.size(); index++) {
+			fillMesh(*(meshes[index]), materials[index], true, LIT, NormInterps[index], true);
+		}
+	}
+
+		// Object Modification
+
+	inline void morph(int index, std::vector<float> states) {
+		if (index < 0 || index >= meshes.size()) return;
+
+		Mesh* m = meshes[index];
+		MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
+		if (mm == nullptr) return;
+		mm->morph(states);
+	}
+
+	inline void morphToState(int index, int state) {
+		if (index < 0 || index >= meshes.size()) return;
+
+		Mesh* m = meshes[index];
+		MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
+		if (mm == nullptr) return;
+		mm->morphToState(state);
+	}
+
+	inline uint64_t countTriangles() {
+		uint64_t res = 0;
+		for (auto i : meshes) res += i->triindices.size();
+		return res;
+	}
+
+
+
+	/*
+	
+	EVERYTHING ELSE HERE IS BASICALLY COPIED FROM THE LEGACY SCENE
+	
+	*/
+	
 	inline void initBuffer() {
 		SIDE = H > W ? H : W;
 		buffer = new ReducedFrag*[W];
@@ -83,6 +167,28 @@ class Scene { // CENA!
 		SIDE = H > W ? H : W;
 
 		initBuffer();
+	}
+
+	void kill() {
+		for (int i = 0; i < W; i++) delete[] buffer[i];
+		delete[] buffer;
+		for (int i = 0; i < meshes.size(); i++) {
+			Mesh* m = meshes[i];
+			MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
+			if (mm) delete mm;
+			else delete m; 
+		}
+		
+		for (int i = 0; i < materials.size(); i++) {
+			BaseMaterial* bm = materials[i];
+			ImageTexture* im = dynamic_cast<ImageTexture*>(bm);
+			if (im) delete im;
+			else delete bm;
+		}
+	}
+
+	virtual ~Scene() {
+		kill();
 	}
 
 	inline void clearBuffer() {
@@ -405,179 +511,35 @@ class Scene { // CENA!
 	// Originally a method using three cross products, now using a variation on Bresenham's method.
 	// https://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
 
-	// Fill a triangle with a flat bottom: draw the lines (t, b1) and (t, b2) and scan along the way
-	// s is the ORIGINAL triangle we reference.
-	inline void fillBotFlat(TriangleF s, Triangle3 t, int bx1, int bx2, int by, int tx, int ty, bool PHONGSHADE = false) {
+	inline void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
-		int dx1 = tx - bx1;
-		int dx2 = tx - bx2;
-		int dy = ty - by; // always positive
+		float m1 = float(bx1 - ax) / float(by - ay);
+		float m2 = float(bx2 - ax) / float(by - ay);
 
-		int D1 = 2 * dy - abs(dx1);
-		int D2 = 2 * dy - abs(dx2);
-
-		if (abs(dx1) < dy) D1 = 2 * abs(dx1) - dy;
-		if (abs(dx2) < dy) D2 = 2 * abs(dx2) - dy;
-
-		int x1 = bx1;
-		int y1 = by;
-		int y2 = by;
-		int x2 = bx2;
-
-		int Rx1 = (dx1 > 0) ? 1 : -1;
-		int Rx2 = (dx2 > 0) ? 1 : -1;
-		int Ry = 1;
-
-		while (y1 < ty) {
-			// FIRST LINE
-			while (true) {
-				// Line is shallow
-				bool f = false;
-				if (abs(dx1) >= dy) {
-					DrawTriFrag(s, t, x1, y1, PHONGSHADE);
-					if (D1 > 0) {
-						y1 = y1 + 1;
-						D1 += 2 * (dy - abs(dx1));
-						f = true;
-					}
-					else D1 += 2 * dy;
-					x1 += Rx1;
-					if (f) break;
-				}
-				// Line is steep
-				else {
-					DrawTriFrag(s, t, x1, y1, PHONGSHADE);
-					if (D1 > 0) {
-						x1 += Rx1;
-						D1 += 2 * (abs(dx1) - dy);
-					}
-					else D1 += 2 * abs(dx1);
-					y1 += Ry;
-					break;
-				}
-			}
-			// SECOND LINE
-			while (true) {
-				bool f = false;
-				if (abs(dx2) >= dy) {
-					DrawTriFrag(s, t, x2, y2, PHONGSHADE);
-					if (D2 > 0) {
-						y2 = y2 + 1;
-						D2 += 2 * (dy - abs(dx2));
-						f = true;
-					}
-					else D2 += 2 * dy;
-					x2 += Rx2;
-					if (f) break;
-				}
-				else {
-					DrawTriFrag(s, t, x2, y2);
-					if (D2 > 0) {
-						x2 += Rx2;
-						D2 += 2 * (abs(dx2) - dy);
-					}
-					else D2 += 2 * abs(dx2);
-					y2 += Ry;
-					break;
-				}
-			}
-
-			for (int xx = x1 - 1; xx <= x2 + 1; xx++) {
-				DrawTriFrag(s, t, xx, y1, PHONGSHADE);
-			}
+		float cx1 = ax;
+		float cx2 = ax;
+		for (int sy = ay; sy <= by; sy++) {
+			for (int sx = BASE::ifloor(cx1); sx <= BASE::iceil(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE);
+			cx1 += m1;
+			cx2 += m2;
 		}
 	}
 
-	inline void fillTopFlat(TriangleF s, Triangle3 t, int bx1, int bx2, int by, int tx, int ty, bool PHONGSHADE = false) {
+	inline void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
-		int dx1 = bx1 - tx;
-		int dx2 = bx2 - tx;
-		int dy = by - ty;
+		float m1 = float(bx1 - ax) / float(by - ay);
+		float m2 = float(bx2 - ax) / float(by - ay);
 
-		int D1 = 2 * dy - dx1;
-		int D2 = 2 * dy - dx2;
-
-		if (abs(dx1) < dy) D1 = 2 * dx1 - dy;
-		if (abs(dx2) < dy) D2 = 2 * dx2 - dy;
-
-		int x1 = tx;
-		int y1 = ty;
-		int y2 = ty;
-		int x2 = tx;
-
-		int Rx1 = (dx1 > 0) ? 1 : -1;
-		int Rx2 = (dx2 > 0) ? 1 : -1;
-		int Ry = 1;
-
-		while (y1 < by) {
-			// FIRST LINE
-			while (true) {
-				// Line is shallow
-				bool f = false;
-				if (abs(dx1) >= dy) {
-					DrawTriFrag(s, t, x1, y1, PHONGSHADE);
-					if (D1 > 0) {
-						y1 = y1 + Ry;
-						D1 += 2 * (dy - abs(dx1));
-						f = true;
-					}
-					else D1 += 2 * dy;
-					x1 += Rx1;
-					if (f) break;
-				}
-				// Line is steep
-				else {
-					DrawTriFrag(s, t, x1, y1, PHONGSHADE);
-					if (D1 > 0) {
-						x1 += Rx1;
-						D1 += 2 * (abs(dx1) - dy);
-					}
-					else D1 += 2 * abs(dx1);
-					y1 += Ry;
-					break;
-				}
-			}
-			// SECOND LINE
-			while (true) {
-				bool f = false;
-				if (abs(dx2) >= dy) {
-					DrawTriFrag(s, t, x2, y2, PHONGSHADE);
-					if (D2 > 0) {
-						y2 = y2 + Ry;
-						D2 += 2 * (dy - abs(dx2));
-						f = true;
-					}
-					else D2 += 2 * dy;
-					x2 += Rx2;
-					if (f) break;
-				}
-				else {
-					DrawTriFrag(s, t, x2, y2, PHONGSHADE);
-					if (D2 > 0) {
-						x2 += Rx2;
-						D2 += 2 * (abs(dx2) - dy);
-					}
-					else D2 += 2 * abs(dx2);
-					y2 += Ry;
-					break;
-				}
-			}
-
-			for (int xx = x1 - 1; xx <= x2 + 1; xx++) {
-				DrawTriFrag(s, t, xx, y1, PHONGSHADE);
-			}
+		float cx1 = ax;
+		float cx2 = ax;
+		for (int sy = ay; sy >= by; sy--) {
+			for (int sx = BASE::ifloor(cx1); sx <= BASE::iceil(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE);
+			cx1 -= m1;
+			cx2 -= m2;
 		}
 	}
 
-	inline void fillTopFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false) {
-		fillTopFlat(s, t, BASE::ifloor(fmin(bx1, bx2)), BASE::iceil(fmax(bx1, bx2)), BASE::iceil(by), BASE::iround(tx), BASE::ifloor(ty), PHONGSHADE);
-	}
-
-	inline void fillBotFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false) {
-		fillBotFlat(s, t, BASE::ifloor(fmin(bx1, bx2)), BASE::iceil(fmax(bx1, bx2)), BASE::ifloor(by), BASE::iround(tx), BASE::iceil(ty), PHONGSHADE);
-	}
 	inline void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false) {
-		// drawTriangle(t);
 		if (s.p[1].ndc.y < s.p[0].ndc.y) {
 			std::swap(s.p[0], s.p[1]);
 			std::swap(T.p[0], T.p[1]);
@@ -591,13 +553,13 @@ class Scene { // CENA!
 			std::swap(T.p[2], T.p[1]);
 		}
 
-		if (BASE::fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTopFlat(s, T, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
-		else if (BASE::fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillBotFlat(s, T, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
+		if (BASE::fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTriangleFlatTop(s, T, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
+		else if (BASE::fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillTriangleFlatBottom(s, T, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
 	
 		else {
 			float divx = s.p[0].ndc.x + (s.p[2].ndc.x - s.p[0].ndc.x) * (s.p[1].ndc.y - s.p[0].ndc.y) / (s.p[2].ndc.y - s.p[0].ndc.y);
-			fillBotFlat(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
-			fillTopFlat(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
+			fillTriangleFlatBottom(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
+			fillTriangleFlatTop(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
 		}
 	}
 
@@ -942,12 +904,6 @@ class Scene { // CENA!
 			for (int j = 0; j < H; j++) res[i][j] = buffer[i][j].color;
 		}
 		return res;
-	}
-
-
-	~Scene() {
-		for (int i = 0; i < W; i++) delete[] buffer[i];
-		delete[] buffer;
 	}
 };
 

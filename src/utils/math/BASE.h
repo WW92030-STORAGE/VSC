@@ -16,6 +16,7 @@ namespace BASE {
 
 // Is it zero?
 inline bool fzero(float f) {
+    if (f == 0.0) return true;
 	float E = 0.000001;
 	return (-E < f && f < E);
 }
@@ -43,6 +44,11 @@ inline int iceil(float f) {
 
 inline int iround(float f) {
     return (int)(round(f));
+}
+
+inline float ReLU(float f) {
+    if (f > 0) return f;
+    return 0;
 }
 
 // LERP

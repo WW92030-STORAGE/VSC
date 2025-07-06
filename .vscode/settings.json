@@ -82,6 +82,8 @@
 		"numbers": "cpp",
 		"variant": "cpp",
 		"cstdarg": "cpp",
-		"set": "cpp"
+		"set": "cpp",
+		"scanline": "cpp",
+		"cinttypes": "cpp"
 	}
 }

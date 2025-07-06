@@ -24,4 +24,25 @@ inline int pog(std::vector<T>& arr, std::map<T, int>& inv, T object) {
 	return inv.at(object);
 };
 
+// Addition and scalar multiplication of std::vector
+
+std::vector<float> operator+(std::vector<float> const &a, std::vector<float> const & b) {
+    std::vector<float> res;
+    for (int i = 0; i < a.size() && i < b.size(); i++) res.push_back(a[i] + b[i]);
+    return res;
+}
+
+std::vector<float> operator*(std::vector<float> const &a, float b) {
+    std::vector<float> res;
+    for (int i = 0; i < a.size(); i++) res.push_back(a[i] * b);
+    return res;
+}
+
+// Make a one hot encoded vector
+std::vector<float> ket(int n, int k) {
+	std::vector<float> res(n, 0);
+	if (k >= 0 && k < n) res[k] = 1;
+	return res;
+}
+
 #endif

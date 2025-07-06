@@ -16,6 +16,7 @@ Class that stores a list of meshes with the same topological structure (same num
 
 - `nstates: int` = Number of states in the MorphedMesh.
 - `mverts: std::vector<std::vector<Vector3>>` = Lists of vertices for each state. States are indexed.
+- `coeffs: std::vector<float>` = Coefficients for current morph.
 - `std::vector<std::vector<Vector3>>` = Lists of vertex normals for each state.
 
 Remember that uvs, texture coordinates, and triangle indices are to be preserved across states.

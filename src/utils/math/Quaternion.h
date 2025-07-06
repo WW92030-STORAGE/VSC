@@ -32,11 +32,57 @@ class Quaternion {
 		v = Vector3(x, y, z);
 	}
 
+	static Quaternion eye() {
+		return Quaternion(1, Vector3(0, 0, 0));
+	}
+
 	// WARNING - The Vector4 import of a quaternion has the scalar (w) component LAST.
 	Quaternion(Vector4 u) {
 		w = u.w;
 		v = Vector3(u.x, u.y, u.z);
 	} 
+
+	// https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+	Quaternion(Matrix3 m) {
+		float T = m.get(0, 0) + m.get(1, 1) + m.get(2, 2);
+		v = Vector3();
+
+		
+		if (T > 0) {
+			float S = sqrtf(T + 1.0) * 2.0;
+			float SI = 1.0 / S;
+			w = 0.25 * S;
+			v = Vector3(m.get(2, 1) - m.get(1, 2), m.get(0, 2) - m.get(2, 0), m.get(1, 0) - m.get(0, 1));
+			v = v * SI;
+		} else if (m.get(0, 0) > m.get(1, 1) && m.get(0, 0) > m.get(2, 2)) {
+			float S = 2.0 * sqrtf(1.0 + m.get(0, 0) - m.get(1, 1) - m.get(2, 2));
+			float SI = 1.0 / S;
+			w = (m.get(2, 1) - m.get(1, 2)) * SI;
+			v.x = 0.25 * S;
+      		v.y = (m.get(0, 1) + m.get(1, 0)) * SI;
+      		v.z = (m.get(0, 2) + m.get(2, 0)) * SI;
+		} else if (m.get(1, 1) > m.get(2, 2)) {
+			float S = 2.0 * sqrtf(1.0 + m.get(1, 1) - m.get(0, 0) - m.get(2, 2));
+			float SI = 1.0 / S;
+			w = (m.get(0, 2) - m.get(2, 0)) * SI;
+			v.x = (m.get(0, 1) + m.get(1, 0)) * SI;
+			v.y = 0.25 * S;
+			v.z = (m.get(1, 2) + m.get(2, 1)) * SI;
+		} else {
+			float S = 2.0 * sqrtf(1.0 + m.get(2, 2) - m.get(0, 0) - m.get(1, 1));
+			float SI = 1.0 / S;
+			w = (m.get(1, 0) - m.get(0, 1)) * SI;
+			v.x = (m.get(0, 2) + m.get(2, 0)) * SI;
+			v.y = (m.get(1, 2) + m.get(2, 1)) * SI;
+			v.z = 0.25 * S;
+		}
+
+		float ss = w * w + v.normsquared();
+		if (!BASE::fzero(ss)) {
+			w /= sqrtf(ss);
+			v = v / sqrtf(ss);
+		}
+	}
 
 	// WARNING - The Vector4 export of a quaternion has the scalar (w) component LAST.
 	inline Vector4 toVec4() {
@@ -101,10 +147,9 @@ class Quaternion {
 
 	inline Matrix3 toRotation() {
 		Quaternion q = normalized();
-
-		Vector3 x(1 - 2 * (v.y * v.y + v.z * v.z), 2 * (v.x + v.y + w * v.z), 2 * (v.x * v.z - w * v.y));
+		Vector3 x(1 - 2 * (v.y * v.y + v.z * v.z), 2 * (v.x * v.y + w * v.z), 2 * (v.x * v.z - w * v.y));
 		Vector3 y(2 * (v.x * v.y - w * v.z), 1 - 2 * (v.x * v.x + v.z * v.z), 2 * (v.y * v.z + w * v.x));
-		Vector3 z(2 * (v.x * v.z + w * v.y), 2 * (v.y * v.z - w * v.z), 1 - 2 * (v.x * v.x + v.y * v.y));
+		Vector3 z(2 * (v.x * v.z + w * v.y), 2 * (v.y * v.z - w * v.x), 1 - 2 * (v.x * v.x + v.y * v.y));
 		return Matrix3(x, y, z);
 	}
 
@@ -154,6 +199,10 @@ class Quaternion {
 	inline std::string to_string() {
 		return "<" + std::to_string(w) + " | " + v.to_string() + ">";
 	}
+
+	inline std::string sprintf() {
+		return to_string();
+	}
 };
 
 inline Quaternion QuaternionAA(Vector3 A, float t) {
@@ -171,6 +220,11 @@ inline Quaternion spherp(Quaternion a, Quaternion b, float t) {
 	a = a.normalized();
 	b = b.normalized();
 	float c = a.dot(b);
+
+	if (c < 0) {
+		a = a * -1;
+		c = a.dot(b);
+	}
 	float s = sqrtf(1 - c * c);
 	float theta = acosf(a.dot(b));
 

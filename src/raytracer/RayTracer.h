@@ -45,13 +45,11 @@ Reflections are also supported but not refractions/translucent objects yet.
 
 class RayTracer : public Scene {
 	public:
-	std::vector<Mesh*> meshes;
-	std::vector<BaseMaterial*> materials;
-	std::vector<bool> NormInterps;
+
 	int DEPTH = 0;
 
 	BVH* bvh = nullptr;
-	bool UseBVH = false;
+	bool UseBVH = true; // Since VSC 9.81 this is always on by default.
 
 	const float RAY_EPSILON = 0.01;
 
@@ -63,38 +61,10 @@ class RayTracer : public Scene {
 		DEPTH = depth;
 	}
 
-	~RayTracer() {
+	virtual ~RayTracer() {
 		if (bvh) delete bvh;
-		for (int i = 0; i < meshes.size(); i++) {
-			Mesh* m = meshes[i];
-			MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
-			if (mm) delete mm;
-			else delete m; 
-		}
-		
-		for (int i = 0; i < materials.size(); i++) {
-			BaseMaterial* bm = materials[i];
-			ImageTexture* im = dynamic_cast<ImageTexture*>(bm);
-			if (im) delete im;
-			else delete bm;
-		}
 	}
 	
-	// Add a mesh to the system. WARNING - This copies the mesh in question.
-	inline void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false) {
-		MorphedMesh* morphed = dynamic_cast<MorphedMesh*>(mesh);
-		if (morphed != nullptr) meshes.push_back(new MorphedMesh(*morphed));
-		else meshes.push_back(new Mesh(*mesh));
-
-		if (mat != nullptr) {
-			ImageTexture* imgtex = dynamic_cast<ImageTexture*>(mat);
-			if (imgtex != nullptr) materials.push_back(new ImageTexture(*imgtex));
-			else materials.push_back(new BaseMaterial(*mat));
-		}
-		else materials.push_back(new BaseMaterial(BASEMAT_WHITE));
-		NormInterps.push_back(INTERPNORM);
-	}
-
 	// Lighting and Shading
 
 	inline Vector3 shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) override {
@@ -284,32 +254,6 @@ class RayTracer : public Scene {
 				buffer[x][y] = ReducedFrag(0, tracePixel(x, y, LIT, depth));
 			}
 		}
-	}
-
-	// Object Modification
-
-	inline void morph(int index, std::vector<float> states) {
-		if (index < 0 || index >= meshes.size()) return;
-
-		Mesh* m = meshes[index];
-		MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
-		if (mm == nullptr) return;
-		mm->morph(states);
-	}
-
-	inline void morphToState(int index, int state) {
-		if (index < 0 || index >= meshes.size()) return;
-
-		Mesh* m = meshes[index];
-		MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
-		if (mm == nullptr) return;
-		mm->morphToState(state);
-	}
-
-	inline uint64_t countTriangles() {
-		uint64_t res = 0;
-		for (auto i : meshes) res += i->triindices.size();
-		return res;
 	}
 };
 

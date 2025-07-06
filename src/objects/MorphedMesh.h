@@ -36,6 +36,8 @@ class MorphedMesh : public Mesh {
 	std::vector<std::vector<Vector3>> mverts;
 	std::vector<std::vector<Vector3>> mvn;
 
+	std::vector<float> coeffs;
+
 	// Other stuff from base Mesh
 
 	/*
@@ -86,6 +88,7 @@ class MorphedMesh : public Mesh {
 		nstates = BASE::max(state + 1, nstates);
 		while (mvn.size() <= state) mvn.push_back(std::vector<Vector3>(vn));
 		while (mverts.size() <= state) mverts.push_back(std::vector<Vector3>(verts));
+		while (coeffs.size() <= state) coeffs.push_back(0);
 
 		mvn[state] = std::vector<Vector3>(vn);
 		mverts[state] = std::vector<Vector3>(verts);
@@ -96,6 +99,7 @@ class MorphedMesh : public Mesh {
 		nstates = BASE::max(state + 1, nstates);
 		while (mvn.size() <= state) mvn.push_back(std::vector<Vector3>(nv));
 		while (mverts.size() <= state) mverts.push_back(std::vector<Vector3>(ve));
+		while (coeffs.size() <= state) coeffs.push_back(0);
 
 		mvn[state] = std::vector<Vector3>(nv);
 		mverts[state] = std::vector<Vector3>(ve);
@@ -125,6 +129,8 @@ class MorphedMesh : public Mesh {
 		setupvns();
 		copyTo(0);
 		m_setupvns();	
+
+		coeffs = std::vector<float>(1, 1);
 	}
 
 	MorphedMesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t,std::vector<Vector2> tex, std::vector<std::vector<int>>& texco) {
@@ -150,6 +156,8 @@ class MorphedMesh : public Mesh {
 		setupvns();
 		copyTo(0);
 		m_setupvns();
+
+		coeffs = std::vector<float>(1, 1);
 	}
 
 	MorphedMesh(const MorphedMesh& other) : Mesh(other) {
@@ -169,6 +177,7 @@ class MorphedMesh : public Mesh {
 
 		nstates = other.nstates;
 		mverts = std::vector<std::vector<Vector3>>(nstates);
+		coeffs = std::vector<float>(other.coeffs);
 
 		for (int i = 0; i < nstates; i++) mverts[i] = std::vector<Vector3>(other.mverts[i]);
 
@@ -205,6 +214,7 @@ class MorphedMesh : public Mesh {
 	*/
 
 	inline void morph(std::vector<float> coeff, bool interpnorms = true) {
+		coeffs = std::vector<float>(coeff);
 		float sum = 0;
 		for (auto i : coeff) sum += i;
 
@@ -224,6 +234,7 @@ class MorphedMesh : public Mesh {
 	}
 
 	inline void morph(float* coeff, int n, bool interpnorms = true) {
+		coeffs = std::vector<float>(coeff, coeff + n);
 		float sum = 0;
 		for (int i = 0; i < n; i++) sum += coeff[i];
 

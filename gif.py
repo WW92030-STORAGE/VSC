@@ -40,7 +40,9 @@ def make_gif(INPUT_DIR, OUTPUT, LEN):
 
 	output = frames[0]
 
-	output.save(OUTPUT, format="GIF", append_images = frames[1:], save_all = True, duration = 0.1, loop = 0)
+	PERIOD = 0.05
+
+	output.save(OUTPUT, format="GIF", append_images = frames[1:], save_all = True, duration = PERIOD, loop = 0)
 
 if __name__ == "__main__":
 	

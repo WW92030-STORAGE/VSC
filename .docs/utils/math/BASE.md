@@ -1,6 +1,6 @@
 # utils/math/BASE
 
-
+`namespace BASE`
 
 ## Description
 

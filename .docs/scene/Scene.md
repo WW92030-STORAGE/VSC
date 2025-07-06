@@ -23,6 +23,12 @@ Scene class for rasterization
 - `ambientLight: Vector3` = Ambient light influence
 - `lights: std::vector<Light>` = Lights in the scene
 
+- `meshes: std::vector<Mesh*>` = List of meshes
+- `materials: std::vector<BaseMaterial*>` = List of materials for each mesh
+- `norminterps: std::vector<bool>` = Whether we interpolate normals for each mesh
+- `names: std::vector<std::string>` = Assigned names of the meshes in `meshes`
+- `names_inv: std::unordered_map<std::string, uint64_t>` = Maps the names to indices (This means that you must have unique names for meshes)
+
 ## Constructors
 
 - `Scene()` = Dimensions (256, 256)
@@ -30,6 +36,11 @@ Scene class for rasterization
 
 ## Functions
 
+- `void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false)` = Adds a mesh, material, and interpnorm status to the scene.
+- `int getMesh(std::string name)` = Get the index of a mesh from its name (or -1 if null)
+- `virtual void render(bool LIT = true, int depth = 0)` = Render a scene using the meshes in `meshes`. You can also draw meshes independent of `meshes` et al. however this will render all meshes in `meshes`
+- `void morph(int index, std::vector<float> states)` = Morph a mesh at the `index` (nothing happens if the mesh cannot be morphed)
+- `void morphToState(int index, int state)` = Morph a mesh at the `index`
 - `void initBuffer()` = Initialize buffer (called in constructors)
 - `void clearBuffer()` = Set buffer to black
 - `void fillScreen(int32_t c)` = Fill buffer with color

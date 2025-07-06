@@ -61,4 +61,8 @@
 #include "raytracer/aabb.h"
 #include "raytracer/BVH.h"
 
+// Animation
+
+#include "animation/Animation.h"
+
 #endif
