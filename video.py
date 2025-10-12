@@ -58,6 +58,6 @@ if __name__ == "__main__":
 	lenfile = open(INPUT_DIR + "/LEN", 'r')
 
 	LEN = int(lenfile.read())
-	# generate_video(INPUT_DIR, OUTPUT + ".mov", LEN)
-	generate_video(INPUT_DIR, OUTPUT + ".mp4", LEN)
+	generate_video(INPUT_DIR, OUTPUT + ".mov", LEN)
+	# generate_video(INPUT_DIR, OUTPUT + ".mp4", LEN)
 	# generate_video(INPUT_DIR, OUTPUT + ".mpeg", LEN)

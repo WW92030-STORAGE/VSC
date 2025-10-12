@@ -1977,9 +1977,16 @@ inline void MulticamTest() {
 	animation.setMorph(0, 48, ket(2, 0), ANIMI::SINE_OUT);
 	}
 
+	// First camera moves inwards, second camera rotates a bit. Second camera also swaps in after 30 frames.
+	if (true) {
+		animation.setCamOrigin(0, 60, Vector3(0, 0, -2));
+		animation.setCamOrigin(1, 60, Vector3(4, 1, 0), ANIMI::SINE);
+		animation.setCamBasis(1, 60, Rotation3(Vector3(0, 1, 0), M_PI / 4) * Rotation3(Vector3(1, 0, 0), -M_PI / 6), ANIMI::SINE);
+		animation.setCamActive(30, 1);
+	}
+
 	for (int i = 0; i < animation.getLength(); i++) {
 		animation.animate(i);
-		if (i >= animation.getLength() / 2) s.setActiveCamera(1);
 		s.render();
 		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
 		std::cout << "FRAME " << i << "DONE\n";

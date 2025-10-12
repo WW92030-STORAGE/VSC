@@ -32,7 +32,7 @@
 #include "../raytracer/aabb.h"
 #include "../raytracer/BVH.h"
 
-#include <iostream>
+// #include <iostream>
 
 namespace ANIMI {
     // A set of almost entirely continuous and almost differentiable functions that operate on [0, 1], with F(0) = 0 and F(1) = 1.
@@ -75,6 +75,17 @@ class Animation {
     std::vector<std::map<int, std::pair<ANIMI::INTERP, Quaternion> >> rotation;
     std::vector<std::map<int, std::pair<ANIMI::INTERP, std::vector<float>> >> morphs;
 
+    /*
+    
+    Keyframes representing active cameras. 
+    While the transform and whatever components can be freely interpolated, there is no interpolation for the active camera: once a keyframe is reached the camera is swapped.
+    We will have keyframes for all cameras not just the active one.
+    
+    */
+    std::vector<std::map<int, std::pair<ANIMI::INTERP, Vector3> >> cam_origin;
+    std::vector<std::map<int, std::pair<ANIMI::INTERP, Quaternion> >> cam_basis;
+    std::map<int, int> cam_active;
+
     
     Animation() {
 
@@ -88,6 +99,10 @@ class Animation {
         translation = std::vector<std::map<int, std::pair<ANIMI::INTERP, Vector3> >>(other.translation);
         rotation = std::vector<std::map<int, std::pair<ANIMI::INTERP, Quaternion> >>(other.rotation);
         morphs = std::vector<std::map<int, std::pair<ANIMI::INTERP, std::vector<float>> >>(other.morphs);
+
+        cam_origin = std::vector<std::map<int, std::pair<ANIMI::INTERP, Vector3> >>(other.cam_origin);
+        cam_basis = std::vector<std::map<int, std::pair<ANIMI::INTERP, Quaternion> >>(other.cam_basis);
+        cam_active = std::map<int, int>(other.cam_active);
     }
 
     inline bool isMorph(Mesh* m) {
@@ -117,6 +132,23 @@ class Animation {
                 MorphedMesh* mm = asMorph(m);
                 setMorph(i, 0, mm->coeffs);
             }
+        }
+
+        // Init the cameras
+        N_CAM = s->cameras.size();
+        while (cam_basis.size() < N_CAM) {
+            cam_origin.push_back(std::map<int, std::pair<ANIMI::INTERP, Vector3>>());
+            cam_basis.push_back(std::map<int, std::pair<ANIMI::INTERP, Quaternion>>());
+        }
+
+        cam_active.clear();
+        cam_active.insert({0, 0}); // Camera at time 0 is camera 0, the default camera
+
+        for (int i = 0; i < N_CAM; i++) {
+            Camera c = scene->cameras[i];
+            cam_origin[i].clear();
+            setCamOrigin(i, 0, c.transform.origin, ANIMI::LERP);
+            setCamBasis(i, 0, c.transform.basis, ANIMI::LERP);
         }
     }
 
@@ -148,6 +180,36 @@ class Animation {
 
     inline void deleteMorph(int i, int frame) {
         if (morphs[i].find(frame) != morphs[i].end()) morphs[i].erase(morphs[i].find(frame));
+    }
+
+    // Camera methods
+
+    inline void setCamOrigin(int i, int frame, Vector3 position, ANIMI::INTERP interp = ANIMI::LERP) {
+        cam_origin[i][frame] = {interp, position};
+    }
+
+    inline void deleteCamOrigin(int i, int frame) {
+        if (cam_origin[i].find(frame) != cam_origin[i].end()) cam_origin[i].erase(cam_origin[i].find(frame));
+    }
+
+    inline void setCamBasis(int i, int frame, Quaternion q, ANIMI::INTERP interp = ANIMI::LERP) {
+        cam_basis[i][frame] = {interp, q};
+    }
+
+    inline void setCamBasis(int i, int frame, Matrix3 q, ANIMI::INTERP interp = ANIMI::LERP) {
+        cam_basis[i][frame] = {interp, Quaternion(q)};
+    }
+
+    inline void deleteCamBasis(int i, int frame, Matrix3 q, ANIMI::INTERP interp = ANIMI::LERP) {
+        if (cam_basis[i].find(frame) != cam_basis[i].end()) cam_basis[i].erase(cam_basis[i].find(frame));
+    }
+
+    inline void setCamActive(int frame, int i) {
+        cam_active[frame] = i;
+    }
+
+    inline void deleteCamActive(int frame) {
+        if (cam_active.find(frame) != cam_active.end()) cam_active.erase(cam_active.find(frame));
     }
 
     /*
@@ -224,12 +286,35 @@ class Animation {
             std::vector<float> coeffs = PERP<std::vector<float>>(morphs[i], frame);
             mm->morph(coeffs);
         }
+    }
+
+    void animateCamera(int i, int frame) {
+        Camera c = Camera(scene->cameras[i]);
+        Transform initial(c.transform);
+        Transform inverse = initial.inv();
 
 
+        Vector3 pos = PERP<Vector3>(cam_origin[i], frame);
+        Quaternion rot = SLERP(cam_basis[i], frame);
+
+        Transform finaltransform(pos, rot.toRotation());
+        Transform displacement = finaltransform * inverse;
+
+        c.Trans(displacement);
+        scene->cameras[i] = c;
     }
 
     inline void animate(int frame) {
         for (int i = 0; i < N; i++) animateMesh(i, frame);
+        for (int i = 0; i < N_CAM; i++) animateCamera(i, frame);
+
+        auto index = cam_active.upper_bound(frame);
+        if (index == cam_active.begin()) {
+            scene->setActiveCamera(0);
+        } else {
+            index--;
+            scene->setActiveCamera(index->second);
+        }
     }
 
     // Get the total length in frames
