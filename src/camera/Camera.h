@@ -18,7 +18,7 @@ class Camera : public Object {
 
 	float n, f; // Distance to the near and far planes
 
-	Plane N, F, U, L, D, R;
+	Plane N, F, U, L, D, R;  // Rubik's cube notation, except F is Far and N is Near.
 
 	Matrix4 frustum;
 
@@ -45,7 +45,7 @@ class Camera : public Object {
 
 
 	// Initialize the planes
-	inline void init() {
+	void init() {
 		float ss = sqrtf(1 + epsilon * epsilon);
 		N = Plane(0, 0, -1, -n);
 		F = Plane(0, 0, 1, f);
@@ -61,7 +61,7 @@ class Camera : public Object {
 	}
 
 	Camera() {
-		alpha = 90;
+		alpha = M_PI * 0.5;
 		
 		n = 0.5;
 		f = 64;
@@ -92,12 +92,14 @@ class Camera : public Object {
 		init();
 	}
 
-	Camera(Camera& other) : Object(other) {
+	Camera(const Camera& other) : Object(other) {
 		alpha = other.alpha;
 		n = other.n;
 		f = other.f;
 		epsilon = 1.0 / tanf(alpha * 0.5);
 		init();
+
+		Trans(other.transform);
 	}
 
 	// From a projection matrix. Start with clip space planes and then reverse the frustum matrix to get the end result.
@@ -137,6 +139,12 @@ class Camera : public Object {
 
 	inline void Trans(Transform t) {
 		transform = t * transform;
+		F.Trans(t);
+		U.Trans(t);
+		N.Trans(t);
+		L.Trans(t);
+		R.Trans(t);
+		D.Trans(t);
 	}
 
 	// Measurements
@@ -179,7 +187,7 @@ class Camera : public Object {
 	// How do we do this? Define another interp function to handle this, so the z = 1/(RHS)
 
 	// Get the z value
-	inline float perserpz(Vector3 p, Vector3 q, float t) {
+	float perserpz(Vector3 p, Vector3 q, float t) {
 		if (BASE::fequal(p.z, q.z)) return p.z;
 		if (BASE::fzero(p.z) || BASE::fzero(q.z)) return 0;
 		float zrep = (1 - t) / p.z + t / q.z;
@@ -191,7 +199,7 @@ class Camera : public Object {
 	}
 
 	// Returns the value of t in the projection plane corresponding to the given t value in the line.
-	inline float perserp(Vector3 p, Vector3 q, float t) {
+	float perserp(Vector3 p, Vector3 q, float t) {
 		if (BASE::fequal(p.z, q.z)) return t;
 		if (BASE::fzero(p.z) || BASE::fzero(q.z)) return 0;
 		float zrep = (1 - t) / p.z + t / q.z;
@@ -235,7 +243,7 @@ class Camera : public Object {
 
 	// Isolating a common denominator and further manipulation gives us the following transform:
 
-	inline Matrix4 Frustum() {
+	Matrix4 Frustum() {
 		float R = n / epsilon;
 		float L = -n / epsilon;
 		float U = n / epsilon;
@@ -261,7 +269,7 @@ class Camera : public Object {
 
 	// You can generalize this matrix to when the far plane is infinitely distant:
 
-	inline Matrix4 FrustumNoBack() {
+	Matrix4 FrustumNoBack() {
 		float R = n / epsilon;
 		float L = -n / epsilon;
 		float U = n / epsilon;
@@ -304,7 +312,7 @@ class Camera : public Object {
 
 	// Orthographic projections are simpler: simply draw a ray in the z direction to get the projected points
 
-	inline Matrix4 Ortho() {
+	Matrix4 Ortho() {
 		float R = n / epsilon;
 		float L = -n / epsilon;
 		float U = n / epsilon;

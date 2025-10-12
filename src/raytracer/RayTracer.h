@@ -67,7 +67,7 @@ class RayTracer : public Scene {
 	
 	// Lighting and Shading
 
-	inline Vector3 shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) override {
+	Vector3 shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) override {
 		Vector3 col = rgb(getColor(material, uv));
 		if (material->TYPE == BaseMaterial::IMAGE) {
 			ImageTexture* ii = dynamic_cast<ImageTexture*>(material);
@@ -129,7 +129,7 @@ class RayTracer : public Scene {
 	
 	// Ray Tracing
 
-	inline IntersectionPoint intersectRayNaive(Ray r) {
+	IntersectionPoint intersectRayNaive(Ray r) {
 
 		Triangle3 t;
 		float minTime = INF;
@@ -167,7 +167,7 @@ class RayTracer : public Scene {
 		return IntersectionPoint{mat, minTime, N, uv};
 	}
 
-	inline IntersectionPoint intersectRay(Ray r) {
+	IntersectionPoint intersectRay(Ray r) {
 		if (!UseBVH) return intersectRayNaive(r);
 
 		auto i = bvh->IntersectRay(r);
@@ -175,7 +175,7 @@ class RayTracer : public Scene {
 		return i;
 	}
 
-	inline Ray castRay(Vector2 NDC) {
+	Ray castRay(Vector2 NDC) {
 		Vector3 right = camera.right();
 		Vector3 up = camera.up();
 		Vector3 negz = camera.look() * -1; // similar to OpenGL the look actually goes backwards.
@@ -191,7 +191,7 @@ class RayTracer : public Scene {
 		return Ray(camera.transform.origin, dir);
 	}
 
-	inline Vector3 traceRay(Ray r, bool LIT = false, int depth = 0) {
+	Vector3 traceRay(Ray r, bool LIT = false, int depth = 0) {
 		if (depth > DEPTH) return Vector3(0, 0, 0);
 		IntersectionPoint ip = intersectRay(r);
 
@@ -220,7 +220,7 @@ class RayTracer : public Scene {
 		return color;
 	}
 
-	inline uint32_t tracePixel(Vector2 NDC, bool LIT = false, int depth = 0) {
+	uint32_t tracePixel(Vector2 NDC, bool LIT = false, int depth = 0) {
 		Ray r = castRay(NDC);
 		Vector3 color = traceRay(r, LIT, depth);
 
@@ -228,7 +228,7 @@ class RayTracer : public Scene {
 	}
 
 	// Remember: pixels go from BOTTOM LEFT TO TOP RIGHT. This means you will have to reverse the Y direction when outputting.
-	inline uint32_t tracePixel(int x, int y, bool LIT = true, int depth = 0) {
+	uint32_t tracePixel(int x, int y, bool LIT = true, int depth = 0) {
 		// In this engine the screen is centered on the center of the NDC space. 
 		// If the screen is rectangular then we chop off the sides instead of distorting.
 		float Nx = float(2 * x - W) / SIDE;
@@ -242,12 +242,14 @@ class RayTracer : public Scene {
 		return tracePixel(Vector2(Nx, Ny), LIT, depth);
 	}
 
+	void createBVH() {
+		delete bvh;
+		bvh = create(meshes, materials, NormInterps);
+	}
+
 	// Remember: pixels go from BOTTOM LEFT TO TOP RIGHT. This means you will have to reverse the Y direction when outputting.
-	virtual inline void render(bool LIT = true, int depth = 0) {
-		if (UseBVH) {
-			delete bvh;
-			bvh = create(meshes, materials, NormInterps);
-		}
+	virtual void render(bool LIT = true, int depth = 0) {
+		if (UseBVH) createBVH();
 		for (int x = 0; x < W; x++) {
 			// std::cout << x << "\n";
 			for (int y = 0; y < H; y++) {

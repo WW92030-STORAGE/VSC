@@ -17,7 +17,7 @@ Some generators for basic shapes.
 
 */
 
-inline Mesh cube(float X = 16) {
+Mesh cube(float X = 16) {
 
 	Vector3 OFFSET(-X, -X, -X);
 	OFFSET = OFFSET * 0.5;
@@ -104,7 +104,7 @@ inline Mesh cube(float X = 16) {
 	return res;
 }
 
-inline Mesh cube6(float X = 16) {
+Mesh cube6(float X = 16) {
 
 	Vector3 OFFSET(-X, -X, -X);
 	OFFSET = OFFSET * 0.5;
@@ -185,7 +185,7 @@ inline Mesh cube6(float X = 16) {
 // Generates a square grid parallel to the XZ plane composed of triangles facing in the positive Y. The diagonals run parallel to z = x.
 // Texture mappings go (u, v) --> (x, z). You can set the size of the plane and how many times the texture is repeated.
 
-inline Mesh GridSquare(float X = 16, int N = 1) {
+Mesh GridSquare(float X = 16, int N = 1) {
 	X = fabs(X);
 	N = BASE::max(N, 1);
 
@@ -233,7 +233,7 @@ inline Mesh GridSquare(float X = 16, int N = 1) {
 // BELOW - ICOSPHERE GENERATOR
 
 // Methods for subdividing triangles
-inline int VFE_sphere(std::vector<Vector3>& vertices, std::map<std::pair<int, int>, int>& lookup, int f, int s) {
+int VFE_sphere(std::vector<Vector3>& vertices, std::map<std::pair<int, int>, int>& lookup, int f, int s) {
 	std::pair<int, int> p = {f, s};
 	if (f > s) p = {s, f};
 
@@ -248,7 +248,7 @@ inline int VFE_sphere(std::vector<Vector3>& vertices, std::map<std::pair<int, in
 	return inserted.first->second;
 }
 
-inline std::vector<std::vector<int>> subdivide_sphere(std::vector<Vector3>& verts, std::vector<std::vector<int>>& tris) {
+std::vector<std::vector<int>> subdivide_sphere(std::vector<Vector3>& verts, std::vector<std::vector<int>>& tris) {
 	std::map<std::pair<int, int>, int> lookup;
 	std::vector<std::vector<int>> result;
 
@@ -267,7 +267,7 @@ inline std::vector<std::vector<int>> subdivide_sphere(std::vector<Vector3>& vert
 }
 
 // // https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
-inline Mesh icosphere(float R = 1, int S = 1) {
+Mesh icosphere(float R = 1, int S = 1) {
 	// Failsafe
 	S = BASE::min(S, 5);
 

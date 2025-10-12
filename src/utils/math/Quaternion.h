@@ -216,7 +216,7 @@ inline Quaternion lerp(Quaternion a, Quaternion b, float t) {
 	return ( (a * (1 - t)) + (b * t) ).normalized();
 }
 
-inline Quaternion spherp(Quaternion a, Quaternion b, float t) {
+Quaternion spherp(Quaternion a, Quaternion b, float t) {
 	a = a.normalized();
 	b = b.normalized();
 	float c = a.dot(b);

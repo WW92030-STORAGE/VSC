@@ -52,7 +52,7 @@ class MorphedMesh : public Mesh {
 	*/
 
 	// Initialize vertex normals
-	inline void setupvns() {
+	void setupvns() {
 
 		vn = std::vector<Vector3>(nverts);
 		for (int i = 0; i < nverts; i++) vn[i] = Vector3();
@@ -65,7 +65,7 @@ class MorphedMesh : public Mesh {
 		for (int i = 0; i < nverts; i++) vn[i] = vn[i].normalized();
 	}
 
-	inline void m_setupvns() {
+	void m_setupvns() {
 		mvn = std::vector<std::vector<Vector3>>(nstates, std::vector<Vector3>(nverts));
 		for (int index = 0; index < nstates; index++) {
 			
@@ -83,7 +83,7 @@ class MorphedMesh : public Mesh {
 	// The following three methods copy a given mesh's vertex positions and normals to a state.
 	// Precondition: the input mesh is appropriate to copy here, with the same topology of vertices and faces (including triangle corner indices).
 
-	inline void copyTo(int state = -1) {
+	void copyTo(int state = -1) {
 		if (state < 0) state = nstates;
 		nstates = BASE::max(state + 1, nstates);
 		while (mvn.size() <= state) mvn.push_back(std::vector<Vector3>(vn));
@@ -94,7 +94,7 @@ class MorphedMesh : public Mesh {
 		mverts[state] = std::vector<Vector3>(verts);
 	}
 
-	inline void copyTo(std::vector<Vector3> ve, std::vector<Vector3> nv, int state = -1) {
+	void copyTo(std::vector<Vector3> ve, std::vector<Vector3> nv, int state = -1) {
 		if (state < 0) state = nstates;
 		nstates = BASE::max(state + 1, nstates);
 		while (mvn.size() <= state) mvn.push_back(std::vector<Vector3>(nv));
@@ -105,7 +105,7 @@ class MorphedMesh : public Mesh {
 		mverts[state] = std::vector<Vector3>(ve);
 	}
 
-	inline void copyTo(Mesh& other, int state = -1) {
+	void copyTo(Mesh& other, int state = -1) {
 		copyTo(other.verts, other.vn, state);
 	}
 
@@ -213,7 +213,7 @@ class MorphedMesh : public Mesh {
 	
 	*/
 
-	inline void morph(std::vector<float> coeff, bool interpnorms = true) {
+	void morph(std::vector<float> coeff, bool interpnorms = true) {
 		coeffs = std::vector<float>(coeff);
 		float sum = 0;
 		for (auto i : coeff) sum += i;
@@ -233,7 +233,7 @@ class MorphedMesh : public Mesh {
 		} else setupvns();
 	}
 
-	inline void morph(float* coeff, int n, bool interpnorms = true) {
+	void morph(float* coeff, int n, bool interpnorms = true) {
 		coeffs = std::vector<float>(coeff, coeff + n);
 		float sum = 0;
 		for (int i = 0; i < n; i++) sum += coeff[i];
@@ -253,7 +253,7 @@ class MorphedMesh : public Mesh {
 		} else setupvns();
 	}
 
-	inline void morphToState(int state, bool interpnorms = true) {
+	void morphToState(int state, bool interpnorms = true) {
 		std::vector<float> things(nstates, 0);
 		if (state < things.size() && state >= 0) things[state] = 1;
 		morph(things, interpnorms);

@@ -13,7 +13,7 @@
 		return Vector3(v[n - i]);
 	}
 
-	inline static std::vector<Triangle3> TriangulateConvex(std::vector<int> vertices, std::vector<Vector3> verts) {
+	static std::vector<Triangle3> TriangulateConvex(std::vector<int> vertices, std::vector<Vector3> verts) {
 		std::vector<Triangle3> tris;
 		
 		Vector3 v0 = vindex(verts, vertices[0]);
@@ -28,7 +28,7 @@
 
 // Algorithm: until there aRe N - 2 triangles: find 3 consecutive verticEs that are counterclockwise and contain no vertices in the interior.
 	// The three vertices form a triangle, and the middle vertex is clipped.
-	inline static std::vector<Triangle3> Triangulate(std::vector<int> vertices, std::vector<Vector3> verts) {
+	static std::vector<Triangle3> Triangulate(std::vector<int> vertices, std::vector<Vector3> verts) {
 
 		std::vector<Triangle3> tris;
 		int N = vertices.size();

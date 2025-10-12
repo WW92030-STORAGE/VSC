@@ -14,7 +14,7 @@ class AABB {
 	Vector3 inferior;
 	Vector3 superior;
 
-	Vector3 MARGIN = Vector3(1, 1, 1) * 0.05;
+	Vector3 MARGIN = Vector3(1, 1, 1) * 0.02;
 
 	AABB() {
 		inferior = Vector3();
@@ -50,6 +50,19 @@ class AABB {
 	}
 	inline std::string to_string() {
 		return "AABB[" + inferior.to_string() + ", " + superior.to_string() + "]";
+	}
+
+	inline float volume() {
+		return (superior.x - inferior.x) * (superior.y - inferior.y) * (superior.z - inferior.z);
+	}
+
+	inline float area() {
+		float dx = superior.x - inferior.x;
+		float dy = superior.y - inferior.y;
+		float dz = superior.z - inferior.z;
+
+		float res = (dx * dy + dy * dz + dz * dx); 
+		return res + res;
 	}
 
 	inline float IntersectRay(Ray r) {

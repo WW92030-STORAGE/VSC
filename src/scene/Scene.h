@@ -52,7 +52,9 @@ class Scene { // CENA!
 
 	std::queue<std::pair<Triangle3, std::pair<BaseMaterial*, bool>>> triqueue;
 
-	Camera camera;
+	std::vector<Camera> cameras; // camera vector 
+	Camera camera; // active camera
+	int active_camera = 0; // camera active
 
 	ReducedFrag** buffer; // Coordinates are (x, y) where x goes right and y up. This is to align with the projection matrix.
 	Vector3 ambientLight = Vector3(0.1, 0.1, 0.1);
@@ -68,7 +70,7 @@ class Scene { // CENA!
 	*/
 
 	// Add a mesh to the system. WARNING - This copies the mesh in question.
-	inline void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false, std::string name = "") {
+	void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false, std::string name = "") {
 		if (name == "") name = "Mesh" + std::to_string(meshes.size());
 
 		names.push_back(name);
@@ -94,7 +96,7 @@ class Scene { // CENA!
 	}
 
 	// Render the scene, assuming what is stored in meshes, etc. are the desired objects
-	virtual inline void render(bool LIT = true, int depth = 0) {
+	virtual void render(bool LIT = true, int depth = 0) {
 		clearBuffer();
 		for (int index = 0; index < meshes.size(); index++) {
 			fillMesh(*(meshes[index]), materials[index], true, LIT, NormInterps[index], true);
@@ -103,7 +105,7 @@ class Scene { // CENA!
 
 		// Object Modification
 
-	inline void morph(int index, std::vector<float> states) {
+	void morph(int index, std::vector<float> states) {
 		if (index < 0 || index >= meshes.size()) return;
 
 		Mesh* m = meshes[index];
@@ -112,7 +114,7 @@ class Scene { // CENA!
 		mm->morph(states);
 	}
 
-	inline void morphToState(int index, int state) {
+	void morphToState(int index, int state) {
 		if (index < 0 || index >= meshes.size()) return;
 
 		Mesh* m = meshes[index];
@@ -121,7 +123,7 @@ class Scene { // CENA!
 		mm->morphToState(state);
 	}
 
-	inline uint64_t countTriangles() {
+	uint64_t countTriangles() {
 		uint64_t res = 0;
 		for (auto i : meshes) res += i->triindices.size();
 		return res;
@@ -147,6 +149,7 @@ class Scene { // CENA!
 	// Sorry but you're only getting these 2 constructors. Do the rest of it yourself.
 	Scene() {
 		camera = Camera();
+		cameras.push_back(camera);
 		// numObjs = 0;
 
 		W = 256;
@@ -159,6 +162,7 @@ class Scene { // CENA!
 
 	Scene(int w, int h) {
 		camera = Camera();
+		cameras.push_back(camera);
 		// numObjs = 0;
 
 		W = w;
@@ -167,6 +171,11 @@ class Scene { // CENA!
 		SIDE = H > W ? H : W;
 
 		initBuffer();
+	}
+
+	inline void setActiveCamera(int x) {
+		active_camera = x;
+		camera = cameras[x];
 	}
 
 	void kill() {
@@ -195,7 +204,7 @@ class Scene { // CENA!
 		fillScreen(0x000000FF);
 	}
 
-	inline void fillScreen(int32_t c) {
+	void fillScreen(int32_t c) {
 		for (int i = 0; i < W; i++) {
 			for (int j = 0; j < H; j++) {
 				buffer[i][j] = ReducedFrag();
@@ -235,7 +244,7 @@ class Scene { // CENA!
 	// material = Material used to do the calcs
 	// LIT = debug
 
-	inline virtual Vector3 shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
+	virtual Vector3 shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT = true) {
 		// std::cout << pRay.to_string() << " " << position.to_string() << " " << normal.to_string() << "\n";
 		
 		Vector3 col = rgb(getColor(material, uv));
@@ -304,7 +313,7 @@ class Scene { // CENA!
 	// Bresanham's method
 
 	// Draw a line going right at a shallow slope
-	inline void LineLow(int x0, int y0, int x1, int y1, uint32_t c) {
+	void LineLow(int x0, int y0, int x1, int y1, uint32_t c) {
 		int dx = x1 - x0;
 		int dy = y1 - y0;
 
@@ -332,7 +341,7 @@ class Scene { // CENA!
 	}
 
 	// Draw a line going up at a steep slope
-	inline void LineHigh(int x0, int y0, int x1, int y1, uint32_t c) {
+	void LineHigh(int x0, int y0, int x1, int y1, uint32_t c) {
 		int dx = x1 - x0;
 		int dy = y1 - y0;
 
@@ -359,7 +368,7 @@ class Scene { // CENA!
 		}
 	}
 
-	inline void drawLine(int x0, int y0, int x1, int y1, uint32_t c)  {
+	void drawLine(int x0, int y0, int x1, int y1, uint32_t c)  {
 		if (x0 == x1) {
 			for (int y = BASE::min(y0, y1); y <= BASE::max(y0, y1); y++) drawPixel(x0, y, c);
 			return;
@@ -389,7 +398,7 @@ class Scene { // CENA!
 
 	// Draw a TRIANGLE with the insides colored in
 	
-	inline void fillTriangle(Triangle2& s, uint32_t c) {
+	void fillTriangle(Triangle2& s, uint32_t c) {
 		int x0 = s.p[0].x;
 		int x1 = x0;
 		int y0 = s.p[0].y;
@@ -420,7 +429,7 @@ class Scene { // CENA!
 	// The fragments for now only have normalized device coordinates, the original triangle normal, the color, and teh uvs of the original triangle.
 	// The triangle is returned with the coordinates as they are represented in NDC. However
 	// However the x and y coordinates are transformed to fit in the buffer.
-	inline TriangleF project(Triangle3 s, uint32_t c = 0xFFFFFFFF) {
+	TriangleF project(Triangle3 s, uint32_t c = 0xFFFFFFFF) {
 		
 		Vector4 res[3];
 
@@ -451,7 +460,7 @@ class Scene { // CENA!
 		drawTriangle(t, c);
 	}
 
-	inline void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false) {
+	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false) {
 		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
 		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
 
@@ -511,7 +520,7 @@ class Scene { // CENA!
 	// Originally a method using three cross products, now using a variation on Bresenham's method.
 	// https://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
 
-	inline void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false) {
+	void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		float m1 = float(bx1 - ax) / float(by - ay);
 		float m2 = float(bx2 - ax) / float(by - ay);
@@ -525,7 +534,7 @@ class Scene { // CENA!
 		}
 	}
 
-	inline void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false) {
+	void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		float m1 = float(bx1 - ax) / float(by - ay);
 		float m2 = float(bx2 - ax) / float(by - ay);
@@ -539,7 +548,7 @@ class Scene { // CENA!
 		}
 	}
 
-	inline void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false) {
+	void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false) {
 		if (s.p[1].ndc.y < s.p[0].ndc.y) {
 			std::swap(s.p[0], s.p[1]);
 			std::swap(T.p[0], T.p[1]);
@@ -563,7 +572,7 @@ class Scene { // CENA!
 		}
 	}
 
-	inline void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, bool SCAN = false) {
+	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, bool SCAN = false) {
 		if (SCAN) {
 			fillTriangleFScan(s, T, PHONGSHADE);
 			return;
@@ -601,7 +610,7 @@ class Scene { // CENA!
 	}
 
 	// Right now this always draws triangles using the base color.
-	inline void drawTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false, bool INTERPNORM = false) {
+	void drawTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false, bool INTERPNORM = false) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		TRIANGLE_COUNT++;
@@ -618,7 +627,7 @@ class Scene { // CENA!
 		drawTriangle(p, rgb(material->baseColor));
 	}
 
-	inline void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false, bool edgeclip = true) {
+	void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false, bool edgeclip = true) {
 		if (edgeclip) {
 			std::vector<Triangle3> tt = TriSplit(s, camera.F).first;
 
@@ -681,7 +690,7 @@ class Scene { // CENA!
 
 	// draw a MESH
 
-	inline void drawMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
+	void drawMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		for (int i = 0; i < m.size; i++) {
@@ -709,7 +718,7 @@ class Scene { // CENA!
 		}
 	}
 
-	inline void drawMesh(MorphedMesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
+	void drawMesh(MorphedMesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		for (int i = 0; i < m.size; i++) {
@@ -737,7 +746,7 @@ class Scene { // CENA!
 		}
 	}
 
-	inline void fillMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
+	void fillMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
@@ -773,7 +782,7 @@ class Scene { // CENA!
 		}
 	}
 
-	inline void fillMesh(MorphedMesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
+	void fillMesh(MorphedMesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
@@ -872,7 +881,7 @@ class Scene { // CENA!
 		return res;
 	}
 
-	inline void outputFrags(std::string OUTPUT__) {
+	void outputFrags(std::string OUTPUT__) {
 		std::ofstream output(OUTPUT__);
 		for (int y = H - 1; y >= 0; y--) {
 			for (int x = 0; x < W; x++) {
@@ -884,7 +893,7 @@ class Scene { // CENA!
 		output.close();
 	}
 
-	inline void outputBuffer(std::string OUTPUT__) {
+	void outputBuffer(std::string OUTPUT__) {
 		std::ofstream output(OUTPUT__);
 		output << "[" << std::to_string(W) << ", " << std::to_string(H) << "]\n";
 
@@ -898,7 +907,7 @@ class Scene { // CENA!
 		output.close();
 	}
 
-	inline std::vector<std::vector<uint32_t>> bufferMatrix() {
+	std::vector<std::vector<uint32_t>> bufferMatrix() {
 		std::vector<std::vector<uint32_t>> res(W, std::vector<uint32_t>(H, 0));
 		for (int i = 0; i < W; i++) {
 			for (int j = 0; j < H; j++) res[i][j] = buffer[i][j].color;

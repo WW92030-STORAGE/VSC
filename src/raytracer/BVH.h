@@ -186,6 +186,7 @@ class BVHNode {
 
 struct BVH {
     BVHNode* root = nullptr;
+    int N;
 
     BVH() {
     }
@@ -193,7 +194,6 @@ struct BVH {
     BVH(BVHNode* n) { 
         root = n; 
     }
-
     inline void inorder(std::vector<BVHNode*>& v, BVHNode* x) {
         if (!x) return;
         inorder(v, x->L);
@@ -217,6 +217,11 @@ struct BVH {
         return ip;
     }
 };
+
+// Find the SA heuristic value for the ddv array (sorted by centroid coordinate), the AABBs of the left and right splits, and the index splitting to [0 ... i] [i + 1 ... N]
+inline float heuristic(int N, AABB left, AABB right, int index) {
+    return left.area() * index + right.area() * (N - index);
+}
 
 inline void awaken(BVHNode* node, std::vector<TriangleData> v) {
     // std::cout << " SIZE " << v.size() << "\n";
@@ -242,60 +247,79 @@ inline void awaken(BVHNode* node, std::vector<TriangleData> v) {
 
     int axis = 0;
     float md = 0;
+    float infp = aabb.inferior.get(0);
 
     for (int d = 0; d < 3; d++) {
         float minp = -INF;
         float maxp = INF;
+
+        minp = aabb.inferior.get(d);
+        maxp = aabb.superior.get(d);
+        /*
         for (int i = 0; i < n; i++) {
             AABB box(v[i].get());
             minp = fmin(box.inferior.get(d), minp);
             maxp = fmax(box.superior.get(d), maxp);
         }
+        */
         if (maxp - minp > md) {
             md = maxp - minp;
+            infp = minp;
             axis = d;
         }
     }
 
     std::map<std::pair<float, int>, TriangleData> dds;
+    std::vector<std::pair<float, TriangleData>> ddv;
     int index = 0;
     for (auto data : v) dds.insert({{data.get().centroid().get(axis), index++}, data});
+    for (auto data : v) ddv.push_back({data.get().centroid().get(axis), data});
+    int N = ddv.size();
+
+    const bool SAH = false;
+
+    if (SAH) {
+    // Surface area partition
+
+    std::vector<AABB> prefix(N + 1);
+    prefix[0 ] = AABB(ddv[0].second.get());
+    std::vector<AABB> suffix(N + 1);
+    suffix[N] = AABB(ddv[N - 1].second.get());
+
+    for (int i = 0; i < N; i++) {
+        prefix[i + 1] = prefix[i].merge(AABB(ddv[i].second.get()));
+        suffix[N - i - 1] = suffix[N - i].merge(AABB(ddv[N - i - 1].second.get()));
+    }
+
+    int mindex = 0;
+    float SA = heuristic(N, prefix[mindex], suffix[mindex], 0);
+
+    for (int index = 1; index < N - 1; index++) {
+        float test = heuristic(N, prefix[index], suffix[index], index);
+        if (test < SA) {
+            SA = test;
+            mindex = index;
+        }
+    }
+
+    for (int index = 0; index < N; index++) {
+        auto data = ddv[index];
+        if (index <= mindex) LEFT.push_back(data.second);
+        else RIGHT.push_back(data.second);
+    }
+
+    } else {
+
+    // Median index partition
 
     index = 0;
-    for (auto data : dds) {
+    for (auto data : ddv) {
         if (index < n / 2) LEFT.push_back(data.second);
         else RIGHT.push_back(data.second);
         index++;
     }
 
-    /*
-
-    // Simpler but less effective partitioning
-
-    std::sort(v.begin(), v.end());
-
-    for (int i = 0; i < n; i++) {
-        if (i < n / 2) LEFT.push_back(v[i]);
-        else RIGHT.push_back(v[i]);
     }
-
-    */
-
-    // Recursion step
-
-    /*
-
-    std::cout << "BVHNODE ";
-    for (auto i : v) std::cout << i.to_string(true) << " ";
-
-    std::cout << "\nLEFT ";
-    for (auto i : LEFT) std::cout << i.to_string(true) << " ";
-    std::cout << "\nRIGHT ";
-    for (auto i : RIGHT) std::cout << i.to_string(true) << " ";
-
-    std::cout << "\n\n";
-
-    */
 
     BVHNode* L = new BVHNode();
     BVHNode* R = new BVHNode();

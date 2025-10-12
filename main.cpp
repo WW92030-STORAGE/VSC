@@ -652,8 +652,8 @@ inline void BVHSponge() {
 // TEST 9.4C Stanford Models (BVH Test With More Triangles)
 inline void BVHStanford() {
 	
-	int N = 512;
-	int D = 0;
+	int N = 128;
+	int D = 1;
 
 	RayTracer s(D, N, N);
 
@@ -698,6 +698,15 @@ inline void BVHStanford() {
 	s.DEPTH = 0;
 
 	std::cout << "Prepared " << s.countTriangles() << " Triangles\n";
+
+	auto start = std::chrono::high_resolution_clock::now();
+
+	s.createBVH();
+
+	auto end = std::chrono::high_resolution_clock::now();
+	auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+	std::cout << dur.count() << " uS TO CREATE BVH\n";
 
 	s.render(true);
 
@@ -1724,11 +1733,11 @@ inline void FullAnimation() {
 	int N = 512;
 	int D = 1;
 
-	RayTracer s(D, N, N);
-	// Scene s(N, N);
+	// RayTracer s(D, N, N);
+	Scene s(N, N);
 
 	s.camera = Camera(M_PI / 2.0);
-	s.camera.Trans(Transform(Vector3(0, 0, -1)));
+	s.camera.Trans(Transform(Vector3(1, 0, -1), Rotation3(Vector3(0, 1, 0), M_PI / 4)));
 
 	float A = 0.1;
 
@@ -1844,7 +1853,139 @@ inline void FullAnimation() {
 	}
 	animation.encodeLength(VIDEO_PATH + "/LEN");
 	std::cout << "Stored\n";
+}
 
+// TEST 9.83C PROTOTRACER IV (Multiple cameras)
+inline void MulticamTest() {
+	int N = 512;
+	int D = 1;
+
+	// RayTracer s(D, N, N);
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+	s.camera.Trans(Transform(Vector3(0, 0, -1)));
+	s.cameras[0] = s.camera;
+
+	Camera camera2(M_PI / 2.0);
+	camera2.Trans(Transform(Vector3(4, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 0.5)));
+	s.cameras.push_back(camera2);
+
+	float A = 0.1;
+
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	// s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), A);
+	P2.Trans(Transform(Vector3(0, 2, 0)));
+	s.lights.push_back(P2);
+
+	int S = 2;
+
+	Mesh test = Mesh::fromOBJ(MESHES + "/cubenomorph.obj");
+	Mesh test2 = Mesh::fromOBJ(MESHES + "/cubemorph.obj");
+
+	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
+
+	MorphedMesh dragon(test);
+	dragon.copyTo(test2);
+
+	Mesh cube1 = cube(0.5);
+	Mesh cube2 = cube(0.5);
+
+	Transform back(Vector3(0, -1, -5), Rotation3(Vector3(0, 1, 0), -0.4 + M_PI));
+	dragon.Trans(back);
+
+	Transform back2(Vector3(-0.5, -0.5, -3), Rotation3(Vector3(0, 1, 0), -0.4));
+	cube1.Trans(back2);
+
+	Transform back3(Vector3(1, -1, -3), Rotation3(Vector3(0, 1, 0), -0.4));
+	cube2.Trans(back3);
+
+	Transform back4(Vector3(0, 0, -5), Rotation3(Vector3(0, 1, 0), M_PI * 0.9)); // Start from the noncompressed state
+	proto.Trans(back4);
+
+	Mesh floor = GridSquare(64, 1);
+	floor.Trans(Transform(Vector3(0, -2.5, 0)));
+
+	float SP = 64;
+	ImageTexture mat(cubemap);
+	ImageTexture texproto(mcrproto); // use this on the proto mesh
+	BaseMaterial red(0xFF000000, SP, 1);
+	BaseMaterial green(0x00FF0000, SP, 1);
+	BaseMaterial blue(0x0000FF00, SP, 1);
+	BaseMaterial cyan(0x00FFFF00, SP, 1);
+	BaseMaterial white(0x80808000, SP, 1);
+
+	s.addMesh(&dragon, &mat, false, "CubeMorphed");
+	s.addMesh(&cube1, &red, false, "CubeRed");
+	s.addMesh(&cube2, &cyan, false, "CubeCyan");
+	s.addMesh(&floor, &white, false, "Floor");
+	s.addMesh(&proto, &texproto, false, "Protogen");
+	s.morph(0, std::vector<float>{0, 1});
+
+	std::cout << "Prepared\n";
+	for (auto i : s.names) std::cout << i << " ";
+	std::cout << "\n";
+	// Animation example
+	Animation animation(&s);
+
+	// Red cube moves in a square and spins
+	animation.setTranslation(1, 12, Vector3(-1.5, -0.5, -3), ANIMI::SINE);
+	animation.setRotation(1, 12, QuaternionAA(Vector3(0, 1, 0), -0.4 + M_PI / 2));
+	animation.setTranslation(1, 24, Vector3(-1.5, 0.5, -3));
+	animation.setRotation(1, 24, QuaternionAA(Vector3(0, 1, 0), -0.4 + M_PI));
+	animation.setTranslation(1, 36, Vector3(-0.5, 0.5, -3));
+	animation.setRotation(1, 36, QuaternionAA(Vector3(0, 1, 0), -0.4 + M_PI * 1.5));
+	animation.setTranslation(1, 48, Vector3(-0.5, -0.5, -3));
+	animation.setRotation(1, 48, QuaternionAA(Vector3(0, 1, 0), -0.4));
+
+	// Protogen standing on the cube moves up and down, and swings
+	animation.setTranslation(4, 24, Vector3(0, -0.4, -5), ANIMI::SINE_IN);
+	animation.setRotation(4, 24, QuaternionAA(Vector3(0, 1, 0), M_PI * 0.9 + 0.25));
+	animation.setTranslation(4, 48, Vector3(0, 0, -5), ANIMI::SINE_OUT);
+	animation.setRotation(4, 48, QuaternionAA(Vector3(0, 1, 0), M_PI * 0.9));
+
+	// Large cube morphs up and down
+	animation.setMorph(0, 0, ket(2, 0));
+	animation.setMorph(0, 24, ket(2, 1), ANIMI::SINE_IN);
+	animation.setMorph(0, 48, ket(2, 0), ANIMI::SINE_OUT);
+
+	if (true) {
+			// Protogen standing on the cube moves up and down, and swings
+	animation.setTranslation(4, 8, Vector3(0, -0.4, -5), ANIMI::SINE_IN);
+	animation.setRotation(4, 8, QuaternionAA(Vector3(0, 1, 0), M_PI * 0.9 + 0.25));
+	animation.setTranslation(4, 16, Vector3(0, 0, -5), ANIMI::SINE_OUT);
+	animation.setRotation(4, 16, QuaternionAA(Vector3(0, 1, 0), M_PI * 0.9));
+	animation.setTranslation(4, 24, Vector3(0, -0.4, -5), ANIMI::SINE_IN);
+	animation.setRotation(4, 24, QuaternionAA(Vector3(0, 1, 0), M_PI * 0.9 + 0.25));
+	animation.setTranslation(4, 32, Vector3(0, 0, -5), ANIMI::SINE_OUT);
+	animation.setRotation(4, 32, QuaternionAA(Vector3(0, 1, 0), M_PI * 0.9));
+	animation.setTranslation(4, 40, Vector3(0, -0.4, -5), ANIMI::SINE_IN);
+	animation.setRotation(4, 40, QuaternionAA(Vector3(0, 1, 0), M_PI * 0.9 + 0.25));
+	animation.setTranslation(4, 48, Vector3(0, 0, -5), ANIMI::SINE_OUT);
+	animation.setRotation(4, 48, QuaternionAA(Vector3(0, 1, 0), M_PI * 0.9));
+
+	// Large cube morphs up and down
+	animation.setMorph(0, 0, ket(2, 0));
+	animation.setMorph(0, 8, ket(2, 1), ANIMI::SINE_IN);
+	animation.setMorph(0, 16, ket(2, 0), ANIMI::SINE_OUT);
+	animation.setMorph(0, 24, ket(2, 1), ANIMI::SINE_IN);
+	animation.setMorph(0, 32, ket(2, 0), ANIMI::SINE_OUT);
+	animation.setMorph(0, 40, ket(2, 1), ANIMI::SINE_IN);
+	animation.setMorph(0, 48, ket(2, 0), ANIMI::SINE_OUT);
+	}
+
+	for (int i = 0; i < animation.getLength(); i++) {
+		animation.animate(i);
+		if (i >= animation.getLength() / 2) s.setActiveCamera(1);
+		s.render();
+		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
+		std::cout << "FRAME " << i << "DONE\n";
+	}
+	animation.encodeLength(VIDEO_PATH + "/LEN");
+	std::cout << "Stored\n";
 }
 
 #include <chrono>
@@ -1896,7 +2037,9 @@ int main() {
 	// AnimSan();
 
 	// QuaternionTest();
-	FullAnimation();
+	// FullAnimation();
+
+	MulticamTest();
 	std::cout << "End\n";
 
 

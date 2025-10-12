@@ -193,7 +193,7 @@ class Plane : public Object {
 
 	
 	// 3 planes (gives one point of the intersection)
-	inline Vector3 intersection(Plane& A, Plane& B) {
+	Vector3 intersection(Plane& A, Plane& B) {
 		Matrix3 M(n.x, n.y, n.z, A.n.x, A.n.y, A.n.z, B.n.x, B.n.y, B.n.z);
 		Vector3 b(-distanceFromOrigin(), -A.distanceFromOrigin(), -B.distanceFromOrigin()); 
 
@@ -201,7 +201,7 @@ class Plane : public Object {
 	}
 
 	// 2 planes (gives one line of the intersection)
-	inline Line intersection(Plane& A) {
+	Line intersection(Plane& A) {
 		if (BASE::fzero(n * A.n)) { // Parallel planes
 			if (BASE::fzero(distanceFrom(A.p))) {
 				Vector3 test = proj(Vector3(1, 0, 0));
@@ -234,7 +234,7 @@ class Plane : public Object {
 	}
 
 	// Re-initialize this plane
-	inline void reinit(Vector4 s) {
+	void reinit(Vector4 s) {
 		n = Vector3(s.x, s.y, s.z);
 
 		if (!BASE::fzero(s.x)) p = Vector3(-s.w / s.x, 0, 0);

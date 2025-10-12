@@ -128,7 +128,7 @@ inline float deriv(float (*f)(float), float x) {
     return (f(x + d) - f(x - d)) / (d + d);
 }
 
-inline float newton(float (*f)(float)) {
+float newton(float (*f)(float)) {
     const float ITER = 256;
     const int BOUND = 1024;
     const float E = 0.0001;

@@ -40,7 +40,7 @@ class Mesh : public Object {
 	std::vector<Vector2> uv; // Texture coordinates
 
 	// Initialize vertex normals
-	inline void setupvns() {
+	void setupvns() {
 
 		vn = std::vector<Vector3>(nverts);
 		for (int i = 0; i < nverts; i++) vn[i] = Vector3();

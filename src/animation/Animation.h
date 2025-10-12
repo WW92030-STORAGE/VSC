@@ -60,17 +60,21 @@ class Animation {
     public:
     Scene* scene;
     int N = 0; // Number of meshes
+    int N_CAM = 1; // Number of cameras
 
     /*
     
     Keyframe system. Each keyframe has a frame number and maps to an interpolation (INTERP) and a control point.
     The interpolation of a keyframe represents how you get from the PRECEDING FRAME to the CURRENT FRAME.
-    This means 
+    This means the 0th ANIMI::INTERP value has no effects.
+
+    Each one is a vector representing a mesh. 
     
     */
     std::vector<std::map<int, std::pair<ANIMI::INTERP, Vector3> >> translation;
     std::vector<std::map<int, std::pair<ANIMI::INTERP, Quaternion> >> rotation;
     std::vector<std::map<int, std::pair<ANIMI::INTERP, std::vector<float>> >> morphs;
+
     
     Animation() {
 
@@ -193,7 +197,7 @@ class Animation {
     }
 
     // Animate meshes and scenes
-    inline void animateMesh(int i, int frame) {
+    void animateMesh(int i, int frame) {
         // Translate
         Mesh* m = scene->meshes[i];
         Transform initial(scene->meshes[i]->transform);

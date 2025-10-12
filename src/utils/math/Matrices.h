@@ -100,7 +100,7 @@ class Matrix2 {
 
 	// Solves the system Ax = b
 	// If there exist multiple solutions one is given.
-	inline Vector2 solve(Vector2 b) {
+	Vector2 solve(Vector2 b) {
 		// const bool DEBUG = false;
 
 
@@ -170,7 +170,7 @@ class Matrix2 {
 		return res;
 	}
 
-	inline Vector2 eigenvalues() {
+	Vector2 eigenvalues() {
 		// Let the values be (a, b; c, d)
 		// A - xI = (a - x, b; c, d - x)
 		// det = (a - x)(d - x) - bc = (ad - bc) - (a + d)x + x^2
@@ -185,7 +185,7 @@ class Matrix2 {
 		return quadratic(1, b, c);
 	}
 
-	inline Matrix2 eigenvectors() {
+	Matrix2 eigenvectors() {
 		Vector2 vals = eigenvalues();
 		if (vals == NILVEC2) return Matrix2(NAN, NAN, NAN, NAN);
 
@@ -273,7 +273,7 @@ class Matrix3 {
 	}
 
 	// get a (row, column)
-	inline float get(int a, int b) {
+	float get(int a, int b) {
 		if (b == 0) {
 			if (a == 0) return xAxis.x;
 			if (a == 1) return xAxis.y;
@@ -291,7 +291,7 @@ class Matrix3 {
 		}
 	}
 
-	inline void set(int a, int b, float v) {
+	void set(int a, int b, float v) {
 		if (b == 0) {
 			if (a == 0) xAxis.x = v;
 			else if (a == 1) xAxis.y = v;
@@ -309,13 +309,13 @@ class Matrix3 {
 		}
 	}
 
-	inline Vector3 getRow(int a) {
+	Vector3 getRow(int a) {
 		if (a == 0) return Vector3(xAxis.x, yAxis.x, zAxis.x);
 		if (a == 1) return Vector3(xAxis.y, yAxis.y, zAxis.y);
 		return Vector3(xAxis.z, yAxis.z, zAxis.z);
 	}
 
-	inline void setRow(int a, Vector3 v) {
+	void setRow(int a, Vector3 v) {
 		set(a, 0, v.x);
 		set(a, 1, v.y);
 		set(a, 2, v.z);
@@ -351,7 +351,7 @@ class Matrix3 {
 	}
 
 	// Inverse of a 3x3 matrix.
-	inline Matrix3 inv() {
+	Matrix3 inv() {
 		const int N = 3;
 		Matrix3 M(*this);
 		float d = det();
@@ -408,7 +408,7 @@ class Matrix3 {
 	// Solve a linear system using Elimination and backsub. 
 	// If the system has multiple solutions any of them are given. If no solution exists the NIL vector is returned.
 	// To use this elsewhere: copy, set N to the dimension, then replace each Matrix3 and Vector3 with MatrixN and VectorN.
-	inline Vector3 solve(Vector3 b) {
+	Vector3 solve(Vector3 b) {
 		// const bool DEBUG = false;
 		Matrix3 A(*this);
 		int N = 3;
@@ -589,7 +589,7 @@ class Matrix4 {
 	}
 
 	// get a (row, column)
-	inline float get(int a, int b) {
+	float get(int a, int b) {
 		if (b == 0) {
 			if (a == 0) return xAxis.x;
 			if (a == 1) return xAxis.y;
@@ -616,7 +616,7 @@ class Matrix4 {
 		}
 	}
 
-	inline void set(int a, int b, float v) {
+	void set(int a, int b, float v) {
 		if (b == 0) {
 			if (a == 0) xAxis.x = v;
 			else if (a == 1) xAxis.y = v;
@@ -643,14 +643,14 @@ class Matrix4 {
 		}
 	}
 
-	inline Vector4 getRow(int a) {
+	Vector4 getRow(int a) {
 		if (a == 0) return Vector4(xAxis.x, yAxis.x, zAxis.x, wAxis.x);
 		if (a == 1) return Vector4(xAxis.y, yAxis.y, zAxis.y, wAxis.y);
 		if (a == 2) return Vector4(xAxis.z, yAxis.z, zAxis.z, wAxis.z);
 		return Vector4(xAxis.w, yAxis.w, zAxis.w, wAxis.w);
 	}
 
-	inline void setRow(int a, Vector4 v) {
+	void setRow(int a, Vector4 v) {
 		set(a, 0, v.x);
 		set(a, 1, v.y);
 		set(a, 2, v.z);
@@ -675,7 +675,7 @@ class Matrix4 {
 
 	// Matrix specific operations
 
-	inline float det() {
+	float det() {
 		Matrix4 A(*this);
 		const int N = 4;
 		// const bool DEBUG = false;
@@ -719,7 +719,7 @@ class Matrix4 {
 		return res;
 	}
 
-	inline Matrix4 trans() {
+	Matrix4 trans() {
 		Matrix4 res;
 		const int N = 4;
 		for (int i = 0; i < N; i++) {
@@ -729,7 +729,7 @@ class Matrix4 {
 	}
 
 	// Inverse of a 4x4 matrix.
-	inline Matrix4 inv() {
+	Matrix4 inv() {
 		const int N = 4;
 		Matrix4 M(*this);
 		float d = det();
@@ -791,7 +791,7 @@ class Matrix4 {
 	// Solve a linear system using Elimination and backsub. 
 	// If the system has multiple solutions any of them are given. If no solution exists the NIL vector is returned.
 	// To use this elsewhere: copy, set N to the dimension, then replace each Matrix3 and Vector3 with MatrixN and VectorN.
-	inline Vector4 solve(Vector4 b) {
+	Vector4 solve(Vector4 b) {
 		// const bool DEBUG = false;
 		Matrix4 A(*this);
 		int N = 4;

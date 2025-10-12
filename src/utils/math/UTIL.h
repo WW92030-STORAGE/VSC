@@ -8,7 +8,7 @@
 
 // Solves the quadratic equation ax^2 + bx + c = 0
 // https://people.csail.mit.edu/bkph/articles/Quadratics.pdf
-inline Vector2 quadratic(float a, float b, float c) {
+Vector2 quadratic(float a, float b, float c) {
 	if (a == 0) {
 		if (b == 0) return NILVEC2;
 		return Vector2(-c/b, -c/b);
