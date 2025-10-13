@@ -19,6 +19,8 @@ class Fragment {
 	Vector2 uv = NILVEC2;
 	uint32_t color = 0;
 	uint32_t albedo = 0;
+	Vector2 screenUV = NILVEC2;
+	Vector3 wspos = Vector3(0, 0, 0);
 
 	Fragment() {
 		ndc = Vector4(0, 0, INF, INF);
@@ -46,26 +48,47 @@ class Fragment {
 		albedo = A;
 	}
 
+	Fragment(Vector4 V, Vector3 N, uint32_t C, Vector2 U, uint32_t A, Vector2 suv) {
+		ndc = Vector4(V);
+		normal = Vector3(N);
+		color = C;
+		uv = Vector2(U);
+		albedo = A;
+		screenUV = Vector2(suv);
+	}
+
+	Fragment(Vector4 V, Vector3 N, uint32_t C, Vector2 U, uint32_t A, Vector2 suv, Vector3 wsp) {
+		ndc = Vector4(V);
+		normal = Vector3(N);
+		color = C;
+		uv = Vector2(U);
+		albedo = A;
+		screenUV = Vector2(suv);
+		wspos = Vector3(wsp);
+	}
+
 	Fragment(const Fragment& o) {
 		ndc = Vector4(o.ndc);
 		normal = Vector3(o.normal);
 		color = o.color;
 		uv = Vector2(o.uv);
 		albedo = o.albedo;
+		screenUV = Vector2(o.screenUV);
+		wspos = Vector3(o.wspos);
 	}
 
 	inline bool operator==(Fragment& o) {
-		return (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv) && (albedo == o.albedo);
+		return (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv) && (albedo == o.albedo) && (screenUV == o.screenUV) && (wspos == o.wspos);
 	}
 
 	inline bool operator!=(Fragment& o) {
-		return !( (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv) && (albedo == o.albedo));
+		return !( (ndc == o.ndc) && (normal == o.normal) && (color == o.color) && (uv == o.uv) && (albedo == o.albedo) && (screenUV == o.screenUV) && (wspos == o.wspos));
 	}
 
 	// UTIL
 
 	inline std::string to_string() {
-		return "Fragment[ndc=" + ndc.to_string() + ", n=" + normal.to_string() + ", c=" + std::to_string(color) + ", uv=" + uv.to_string() + "]";
+		return "Fragment[ndc=" + ndc.to_string() + ", n=" + normal.to_string() + ", c=" + std::to_string(color) + ", uv=" + uv.to_string() + ", albedo=" + std::to_string(albedo) + ", suv=" + screenUV.to_string() + ", wspos=" + wspos.to_string() + "]";
 	}
 };
 

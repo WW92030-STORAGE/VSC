@@ -20,6 +20,9 @@ Each vector is indexed by mesh index (see `Scene.h` for how that works). Each in
 - `translation: std::vector<std::map<int, std::pair<ANIMI::INTERP, Vector3> >>` = Non-rotational translation (i.e. position or origin)
 - `rotation: std::vector<std::map<int, std::pair<ANIMI::INTERP, Quaternion> >>` = Rotational motion (i.e. rotation or basis) stored as quaternions
 - `morphs: std::vector<std::map<int, std::pair<ANIMI::INTERP, std::vector<float>> >>` = Morph coefficients (use `MorphedMesh::coeffs` to get coeffs) for morphable meshes
+- `cam_origin: std::vector<std::map<int, std::pair<ANIMI::INTERP, Vector3> >>` = CAMERA Non-rotational translation (i.e. position or origin)
+- `cam_basis: std::vector<std::map<int, std::pair<ANIMI::INTERP, Quaternion> >>` = CAMERA Rotational motion (i.e. rotation or basis) stored as quaternions
+- `cam_active: std::map<int, int>` = Active camera keyframe (no interpolation)
 
 ## Constructors
 
@@ -39,6 +42,15 @@ Each vector is indexed by mesh index (see `Scene.h` for how that works). Each in
 - `void deleteRotation(int i, int frame)`
 - `void setMorph(int i, int frame, std::vector<float> c, ANIMI::INTERP interp = ANIMI::LERP)`
 - `void deleteMorph(int i, int frame)`
+
+- `inline void setCamOrigin(int i, int frame, Vector3 position, ANIMI::INTERP interp = ANIMI::LERP)`
+- `inline void deleteCamOrigin(int i, int frame)`
+- `inline void setCamBasis(int i, int frame, Quaternion q, ANIMI::INTERP interp = ANIMI::LERP)`
+- `inline void setCamBasis(int i, int frame, Matrix3 q, ANIMI::INTERP interp = ANIMI::LERP)`
+- `inline void deleteCamBasis(int i, int frame, Matrix3 q, ANIMI::INTERP interp = ANIMI::LERP)`
+- `inline void setCamActive(int frame, int i)`
+- `inline void deleteCamActive(int frame)`
+
 - `template <typename T> T PERP(std::map<int, std::pair<ANIMI::INTERP, T> > c, int x)` = Piecewise interpolate to get the value of a thing at frame `x` given the keyframes `c`.
 - `Quaternion SLERP(std::map<int, std::pair<ANIMI::INTERP, Quaternion> > c, int x)` = Special case of `PERP` to do spherical interpolation on quaternions
 - `void animateMesh(int i, int frame)` = Animate a single mesh, the mesh at index `i` to the frame `frame`.

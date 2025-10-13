@@ -27,6 +27,8 @@
 #include "../lighting/PointLight.h"
 #include "../lighting/DirectionalLight.h"
 
+#include "Shader.h"
+
 /*
 
 Base scene class. Supports the rendering of individual meshes, but also the bulk storage and rendering of meshes.
@@ -36,6 +38,8 @@ Base scene class. Supports the rendering of individual meshes, but also the bulk
 class Scene { // CENA!
 	public:
 	std::vector<Mesh*> meshes;
+	std::vector<FRAG_SHADER> frag_shaders;
+	FRAG_SHADER global_shader = nullptr;
 	std::vector<BaseMaterial*> materials;
 	std::vector<bool> NormInterps;
 
@@ -70,8 +74,9 @@ class Scene { // CENA!
 	*/
 
 	// Add a mesh to the system. WARNING - This copies the mesh in question.
-	void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false, std::string name = "") {
+	void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false, std::string name = "", FRAG_SHADER frag_shader = nullptr) {
 		if (name == "") name = "Mesh" + std::to_string(meshes.size());
+		frag_shaders.push_back(frag_shader);
 
 		names.push_back(name);
 		names_inv[name] = meshes.size();
@@ -96,10 +101,11 @@ class Scene { // CENA!
 	}
 
 	// Render the scene, assuming what is stored in meshes, etc. are the desired objects
-	virtual void render(bool LIT = true, int depth = 0) {
+	virtual void render(bool LIT = true, int depth = 0, FRAG_SHADER shader = nullptr) {
 		clearBuffer();
+		global_shader = shader;
 		for (int index = 0; index < meshes.size(); index++) {
-			fillMesh(*(meshes[index]), materials[index], true, LIT, NormInterps[index], true);
+			fillMesh(*(meshes[index]), materials[index], frag_shaders[index], true, LIT, NormInterps[index], true); 
 		}
 	}
 
@@ -449,6 +455,7 @@ class Scene { // CENA!
 
 		for (int i = 0; i < 3; i++) {
 			tri.p[i] = Fragment(res[i], s.N, c, s.uv[i]);
+			tri.p[i].wspos = s.p[i];
 		}
 
 		return tri;
@@ -460,7 +467,7 @@ class Scene { // CENA!
 		drawTriangle(t, c);
 	}
 
-	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false) {
+	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr) {
 		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
 		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
 
@@ -488,6 +495,11 @@ class Scene { // CENA!
 		for (int i = 0; i < 3; i++) finaluv = finaluv + ((s.p[i].uv / s.p[i].ndc.w) * b.get(i));
 		finaluv = finaluv * wc;
 
+		// And same goes for world space position
+		Vector3 finalwsp(0, 0, 0);
+		for (int i = 0; i < 3; i++) finalwsp = finalwsp + ((s.p[i].wspos) / s.p[i].ndc.w) * b.get(i);
+		finalwsp = finalwsp * wc;
+
 
 		uint32_t c = getColor(s.material, finaluv);
 		uint32_t oc = c;
@@ -512,6 +524,18 @@ class Scene { // CENA!
 			c = rgb(illuminate(t.centroid(), t.centroid(), s.N, finaluv, s.material));
 		}
 		Fragment F__F(Vector4(x, y, zc, wc), Vector3(s.ON), c, finaluv, oc);
+		F__F.screenUV = Vector2((float)(x) / W, (float)(y) / H);
+		F__F.wspos = Vector3(finalwsp);
+
+		// std::cout << "DrawTriFrag " << (uint64_t)(shader) << "\n";
+
+		if (shader) {
+			// std::cout << "SHADER DETECTED " << F__F.to_string() << "\n";
+			F__F = shader(F__F);
+		}
+		if (global_shader) {
+			F__F = global_shader(F__F);
+		}
 
 		// std::cout << s.bary(x, y).to_string() << " " << F.ndc.z << " " << F.ndc.w << " = " << F.color << "\n";
 		drawFragment(F__F, x, y);
@@ -520,7 +544,7 @@ class Scene { // CENA!
 	// Originally a method using three cross products, now using a variation on Bresenham's method.
 	// https://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
 
-	void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false) {
+	void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		float m1 = float(bx1 - ax) / float(by - ay);
 		float m2 = float(bx2 - ax) / float(by - ay);
@@ -528,13 +552,13 @@ class Scene { // CENA!
 		float cx1 = ax;
 		float cx2 = ax;
 		for (int sy = ay; sy <= by; sy++) {
-			for (int sx = BASE::ifloor(cx1); sx <= BASE::iceil(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE);
+			for (int sx = BASE::ifloor(cx1); sx <= BASE::iceil(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE, shader);
 			cx1 += m1;
 			cx2 += m2;
 		}
 	}
 
-	void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false) {
+	void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		float m1 = float(bx1 - ax) / float(by - ay);
 		float m2 = float(bx2 - ax) / float(by - ay);
@@ -542,13 +566,13 @@ class Scene { // CENA!
 		float cx1 = ax;
 		float cx2 = ax;
 		for (int sy = ay; sy >= by; sy--) {
-			for (int sx = BASE::ifloor(cx1); sx <= BASE::iceil(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE);
+			for (int sx = BASE::ifloor(cx1); sx <= BASE::iceil(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE, shader);
 			cx1 -= m1;
 			cx2 -= m2;
 		}
 	}
 
-	void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false) {
+	void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr) {
 		if (s.p[1].ndc.y < s.p[0].ndc.y) {
 			std::swap(s.p[0], s.p[1]);
 			std::swap(T.p[0], T.p[1]);
@@ -562,19 +586,19 @@ class Scene { // CENA!
 			std::swap(T.p[2], T.p[1]);
 		}
 
-		if (BASE::fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTriangleFlatTop(s, T, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
-		else if (BASE::fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillTriangleFlatBottom(s, T, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
+		if (BASE::fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTriangleFlatTop(s, T, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE, shader);
+		else if (BASE::fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillTriangleFlatBottom(s, T, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE, shader);
 	
 		else {
 			float divx = s.p[0].ndc.x + (s.p[2].ndc.x - s.p[0].ndc.x) * (s.p[1].ndc.y - s.p[0].ndc.y) / (s.p[2].ndc.y - s.p[0].ndc.y);
-			fillTriangleFlatBottom(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE);
-			fillTriangleFlatTop(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE);
+			fillTriangleFlatBottom(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE, shader);
+			fillTriangleFlatTop(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE, shader);
 		}
 	}
 
-	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, bool SCAN = false) {
+	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr, bool SCAN = false) {
 		if (SCAN) {
-			fillTriangleFScan(s, T, PHONGSHADE);
+			fillTriangleFScan(s, T, PHONGSHADE, shader);
 			return;
 		}
 
@@ -590,10 +614,13 @@ class Scene { // CENA!
 			if (y1 < s.p[i].ndc.y) y1 = s.p[i].ndc.y;
 		}
 
+		// std::cout << "FillTriangleF " << (uint64_t)(shader ) << "\n";
+
 		for (int x = BASE::max(x0, 0); x <= x1 && x < W; x++) {
 			for (int y = BASE::max(y0, 0); y <= y1 && y < H; y++) {
 				if (!s.inside(Vector2(x, y))) continue;
-				DrawTriFrag(s, T, x, y, PHONGSHADE);
+				// std::cout << "FillTriangleF " << (uint64_t)(shader ) << "\n";
+				DrawTriFrag(s, T, x, y, PHONGSHADE, shader);
 			}
 		}
 	}
@@ -627,7 +654,7 @@ class Scene { // CENA!
 		drawTriangle(p, rgb(material->baseColor));
 	}
 
-	void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false, bool edgeclip = true) {
+	void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, FRAG_SHADER shader = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false, bool edgeclip = true) {
 		if (edgeclip) {
 			std::vector<Triangle3> tt = TriSplit(s, camera.F).first;
 
@@ -655,7 +682,7 @@ class Scene { // CENA!
 					if (vn) i_vn[i] = s.interp<Vector3>(point, vn[0], vn[1], vn[2]);
 					if (uv) i_uv[i] = s.interp<Vector2>(point, uv[0], uv[1], uv[2]);
 				}
-				fillTriangle(ii, material, i_vn, i_uv, BACKFACECULL, PHONGSHADE, INTERPNORM, false);
+				fillTriangle(ii, material, i_vn, i_uv, shader, BACKFACECULL, PHONGSHADE, INTERPNORM, false);
 			}
 
 			delete[] i_vn;
@@ -673,7 +700,7 @@ class Scene { // CENA!
 		}
 		Vector3 cen = s.centroid();
 
-		auto p = project(s);
+		TriangleF p = project(s);
 		p.material = material;
 		if (!uv) uv = new Vector2[3] {Vector2(), Vector2(), Vector2()};
 		if (!vn) PHONGSHADE = false;
@@ -683,7 +710,8 @@ class Scene { // CENA!
 		for (int i = 0; i < 3; i++) p.p[i].color = rgb(illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material));
 		
 		if (clip(p)) return;
-		fillTriangle(p, s, PHONGSHADE);
+		// std::cout << "FillTriangle3 " << (uint64_t)(shader) << "\n";
+		fillTriangle(p, s, PHONGSHADE, shader);
 	}
 
 
@@ -746,7 +774,7 @@ class Scene { // CENA!
 		}
 	}
 
-	void fillMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
+	void fillMesh(Mesh& m, BaseMaterial* material = nullptr, FRAG_SHADER shader = nullptr, bool SMOOTHSHADE = true, bool PHONGSHADE = true, bool INTERPNORM = false, bool BACKFACECULL = true) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
@@ -776,13 +804,13 @@ class Scene { // CENA!
 			for (int s = 0; s < 3; s++) {
 				if (vt[s] == NILVEC2) isnat = true;
 			}
-			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr : vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr : vt, shader, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
 			delete[] vt;
 		}
 	}
 
-	void fillMesh(MorphedMesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = true) {
+	void fillMesh(MorphedMesh& m, BaseMaterial* material = nullptr, FRAG_SHADER shader = nullptr, bool SMOOTHSHADE = true, bool PHONGSHADE = true, bool INTERPNORM = false, bool BACKFACECULL = true) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
@@ -811,7 +839,7 @@ class Scene { // CENA!
 			for (int s = 0; s < 3; s++) {
 				if (vt[s] == NILVEC2) isnat = true;
 			}
-			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr : vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr : vt, shader, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
 			delete[] vt;
 		}

@@ -48,6 +48,7 @@
 
 #include "scene/Color.h"
 #include "scene/Scene.h"
+#include "scene/Shader.h"
 
 // Material
 

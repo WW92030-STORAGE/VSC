@@ -1,3 +1,6 @@
+#ifndef MISCTESTS_EXT_
+#define MISCTESTS_EXT_
+
 #include <cmath>
 #include <fstream>
 
@@ -7,6 +10,8 @@
 #include <chrono>
 
 using namespace std;
+
+#include "main_utils.h"
 
 // Miscellaneous tests that do not fall into the main test suite. These are mostly math related things.
 
@@ -99,7 +104,7 @@ inline void noisetex() {
 	ImageTexture* mat = new ImageTexture(noisetex);
 	mat->specular = 64;
 
-	s.fillMesh(mesh, mat, true, true);
+	s.fillMesh(mesh, mat);
 
 	std::cout << "Drawn\n";
 
@@ -109,3 +114,6 @@ inline void noisetex() {
 
 	delete mat;
 }
+
+
+#endif
