@@ -83,7 +83,7 @@ Vector3 rgb2hsv(Vector3 rgb) {
 	if (!BASE::fzero(chroma)) {
 		if (BASE::fequal(chroma, r)) hue = BASE::frem((g - b) / chroma, 6.0) / 6.0;
 		else if (BASE::fequal(chroma, g)) hue = BASE::frem(2 + (b - r) / chroma, 6.0) / 6.0;
-		else if (BASE::fequal(chroma, b)) hue = BASE::frem(4 + (g - b) / chroma, 6.0) / 6.0;
+		else if (BASE::fequal(chroma, b)) hue = BASE::frem(4 + (r - g) / chroma, 6.0) / 6.0;
 	}
 
 	return Vector3(hue, saturation, value);

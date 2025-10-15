@@ -33,6 +33,14 @@ Fragment invert(Fragment f) {
     return res;
 }
 
+Fragment hue_offset(Fragment f, float offset = 0.5) {
+    Fragment res(f);
+    Vector3 hsv = rgb2hsv(rgb(f.color));
+    hsv.x = BASE::frem(hsv.x + offset, 1);
+    res.color = rgb(hsv2rgb(hsv));
+    return res;
+}
+
 Fragment rainbow_radial(Fragment f, Vector2 center = Vector2(0.5, 0.5)) {
     Vector2 polar = rect2polar(f.screenUV - center);
 

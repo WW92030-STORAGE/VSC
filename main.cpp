@@ -1828,6 +1828,7 @@ Fragment octant_shader(Fragment f) {
 	return FragShaders::invert(f);
 }
 
+// For shader functions that only use the fragment, simply constructing the shader with the function passed will do.
 FragShader exampleShader(example_shader);
 FragShader octantShader(octant_shader);
 
@@ -1836,14 +1837,119 @@ inline void ShaderTest() {
 	std::cout << "Prepared\n";
 
 	s.render(true, 0, FragShader([](Fragment f){
-		Fragment f2 = FragShaders::rainbow_concentric(f, Vector2(0.5, 0.55), 8); 
-		return octant_shader(f2);
-	}) ); // You need anonymous functions to use additional parameters. This one for instance overlays a rainbow filter that is moved.
+		int sx = (int)(f.screenUV.x * 8);
+		int sy = (int)(f.screenUV.y * 8);
+		Fragment f2(f);
+		if (sx == 4) f2 = FragShaders::hue_offset(f2, 1.0 / 3.0);
+		if (sy == 1) f2 = FragShaders::hue_offset(f2, 1.0 / 3.0);
+		return f2;
+	}) ); // You need anonymous functions to use additional parameters to the shader function, or to composite multiple shaders together. 
+	// In short, the anonymous function can serve as a playground for shader creation.
 
 	s.outputBuffer(BUFFER_PATH);
 
 	std::cout << "Stored\n";
 
+}
+
+inline void ShaderTest2() {
+	Scene s = scene_protocubes();
+	std::cout << "Prepared\n";
+
+	s.render(true, 0, FragShader([](Fragment f){
+		Fragment f2(f);
+		f2 = FragShaders::rainbow_concentric(f2, Vector2(0.5, 0.5), -8);
+		f2 = FragShaders::rainbow_concentric(f2, Vector2(0.5, 0.2), 8);
+		return f2;
+	}) ); 
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
+inline void ShaderTest3() {
+	int N = 512;
+	int D = 1;
+
+	// RayTracer s(D, N, N);
+	Scene s(N, N);
+
+	s.camera = Camera(M_PI / 2.0);
+	s.camera.Trans(Transform(Vector3(0, 0, -1)));
+	s.cameras[0] = s.camera;
+
+	Camera camera2(M_PI / 2.0);
+	camera2.Trans(Transform(Vector3(4, 0, -4), Rotation3(Vector3(0, 1, 0), M_PI * 0.5)));
+	s.cameras.push_back(camera2);
+
+	float A = 0.1;
+
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	// s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), A);
+	P2.Trans(Transform(Vector3(0, 2, 0)));
+	s.lights.push_back(P2);
+
+	int S = 2;
+
+	Mesh test = Mesh::fromOBJ(MESHES + "/cubenomorph.obj");
+	Mesh test2 = Mesh::fromOBJ(MESHES + "/cubemorph.obj");
+
+	Mesh proto = Mesh::fromOBJ(MESHES + "/mcrproto.obj");
+
+	MorphedMesh dragon(test);
+	dragon.copyTo(test2);
+
+	Mesh cube1 = cube(0.5);
+	Mesh cube2 = cube(0.5);
+
+	Transform back(Vector3(0, -1, -5), Rotation3(Vector3(0, 1, 0), -0.4 + M_PI));
+	dragon.Trans(back);
+
+	Transform back2(Vector3(-0.5, -0.5, -3), Rotation3(Vector3(0, 1, 0), -0.4));
+	cube1.Trans(back2);
+
+	Transform back3(Vector3(1, -1, -3), Rotation3(Vector3(0, 1, 0), -0.4));
+	cube2.Trans(back3);
+
+	Transform back4(Vector3(0, 0, -5), Rotation3(Vector3(0, 1, 0), M_PI * 0.9)); // Start from the noncompressed state
+	proto.Trans(back4);
+
+	Mesh floor = GridSquare(64, 1);
+	floor.Trans(Transform(Vector3(0, -2.5, 0)));
+
+	float SP = 64;
+	ImageTexture mat(cubemap);
+	ImageTexture texproto(mcrproto); // use this on the proto mesh
+	BaseMaterial red(0xFF000000, SP, 1);
+	BaseMaterial green(0x00FF0000, SP, 1);
+	BaseMaterial blue(0x0000FF00, SP, 1);
+	BaseMaterial cyan(0x00FFFF00, SP, 1);
+	BaseMaterial white(0x80808000, SP, 1);
+
+	s.addMesh(&dragon, &mat, false, "CubeMorphed", FragShader([](Fragment f) {
+		return FragShaders::rainbow_spiral(f, Vector2(0.5, 0.3), 16);
+	})); // !!!!
+	s.addMesh(&cube1, &red, false, "CubeRed");
+	s.addMesh(&cube2, &cyan, false, "CubeCyan");
+	s.addMesh(&floor, &white, false, "Floor", FragShader([](Fragment f){
+		float freq = 4;
+
+		if ((BASE::ifloor(f.wspos.x * freq) + BASE::ifloor(f.wspos.y * freq) + BASE::ifloor(f.wspos.z * freq)) & 1) return FragShaders::invert(f);
+		return Fragment(f);
+	}));
+	s.addMesh(&proto, &texproto, false, "Protogen");
+	s.morph(0, std::vector<float>{0, 1});
+	std::cout << "Prepared\n";
+
+	s.render(true, 0); 
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
 }
 
 // TEST 9.83E PROTOTRACER VI (Multiple cameras + shaders)
@@ -2040,7 +2146,7 @@ int main() {
 	// MulticamTest();
 
 	// ShaderTest();
-	ShaderTest();
+	ShaderTest3();
 	// AnimShader();
 	std::cout << "End\n";
 
