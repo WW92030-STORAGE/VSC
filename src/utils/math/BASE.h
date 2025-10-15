@@ -51,6 +51,14 @@ inline float ReLU(float f) {
     return 0;
 }
 
+// Mod
+
+inline float frem(float a, float m) {
+    float res = fmod(a, m);
+    while (res < 0) res += m;
+    return fmod(res, m);
+}
+
 // LERP
 
 inline float lerp(float f, float g, float t) {

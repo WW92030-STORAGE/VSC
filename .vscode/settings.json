@@ -84,6 +84,7 @@
 		"cstdarg": "cpp",
 		"set": "cpp",
 		"scanline": "cpp",
-		"cinttypes": "cpp"
+		"cinttypes": "cpp",
+		"any": "cpp"
 	}
 }

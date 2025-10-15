@@ -1810,7 +1810,7 @@ inline void MulticamTest() {
 
 
 // TEST 9.83D PROTOTRACER V (Shaders)
-Fragment exampleShader(Fragment f) {
+Fragment example_shader(Fragment f) {
 	Vector2 suv = f.screenUV;
 	Vector2 uv = f.uv;
 	int CZ = 8;
@@ -1820,18 +1820,25 @@ Fragment exampleShader(Fragment f) {
 	int uvx = int(uv.x * CZ);
 	int uvy = int(uv.y * CZ);
 
-	if ((uvx + uvy) & 1) return FragShader::invert(f);
-	return FragShader::identity(f);
+	if ((uvx + uvy) & 1) return FragShaders::invert(f);
+	return FragShaders::identity(f);
 }
-Fragment octantShader(Fragment f) {
+Fragment octant_shader(Fragment f) {
 	if (((f.wspos.x > 0) + (f.wspos.y > 0) + (f.wspos.z > 0)) & 1) return f;
-	return FragShader::invert(f);
+	return FragShaders::invert(f);
 }
+
+FragShader exampleShader(example_shader);
+FragShader octantShader(octant_shader);
+
 inline void ShaderTest() {
 	Scene s = scene_protocubes();
 	std::cout << "Prepared\n";
 
-	s.render(true, 0, exampleShader);
+	s.render(true, 0, FragShader([](Fragment f){
+		Fragment f2 = FragShaders::rainbow_concentric(f, Vector2(0.5, 0.55), 8); 
+		return octant_shader(f2);
+	}) ); // You need anonymous functions to use additional parameters. This one for instance overlays a rainbow filter that is moved.
 
 	s.outputBuffer(BUFFER_PATH);
 
@@ -2033,7 +2040,8 @@ int main() {
 	// MulticamTest();
 
 	// ShaderTest();
-	AnimShader();
+	ShaderTest();
+	// AnimShader();
 	std::cout << "End\n";
 
 

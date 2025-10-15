@@ -29,6 +29,8 @@
 
 #include "Shader.h"
 
+#include <optional>
+
 /*
 
 Base scene class. Supports the rendering of individual meshes, but also the bulk storage and rendering of meshes.
@@ -38,8 +40,8 @@ Base scene class. Supports the rendering of individual meshes, but also the bulk
 class Scene { // CENA!
 	public:
 	std::vector<Mesh*> meshes;
-	std::vector<FRAG_SHADER> frag_shaders;
-	FRAG_SHADER global_shader = nullptr;
+	std::vector<std::optional<FragShader>> frag_shaders;
+	std::optional<FragShader> global_shader = std::nullopt;
 	std::vector<BaseMaterial*> materials;
 	std::vector<bool> NormInterps;
 
@@ -74,7 +76,7 @@ class Scene { // CENA!
 	*/
 
 	// Add a mesh to the system. WARNING - This copies the mesh in question.
-	void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false, std::string name = "", FRAG_SHADER frag_shader = nullptr) {
+	void addMesh(Mesh* mesh, BaseMaterial* mat = nullptr, bool INTERPNORM = false, std::string name = "", std::optional<FragShader> frag_shader = std::nullopt) {
 		if (name == "") name = "Mesh" + std::to_string(meshes.size());
 		frag_shaders.push_back(frag_shader);
 
@@ -101,7 +103,7 @@ class Scene { // CENA!
 	}
 
 	// Render the scene, assuming what is stored in meshes, etc. are the desired objects
-	virtual void render(bool LIT = true, int depth = 0, FRAG_SHADER shader = nullptr) {
+	virtual void render(bool LIT = true, int depth = 0, std::optional<FragShader> shader = std::nullopt) {
 		clearBuffer();
 		global_shader = shader;
 		for (int index = 0; index < meshes.size(); index++) {
@@ -467,7 +469,7 @@ class Scene { // CENA!
 		drawTriangle(t, c);
 	}
 
-	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr) {
+	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
 		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
 		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
 
@@ -529,12 +531,12 @@ class Scene { // CENA!
 
 		// std::cout << "DrawTriFrag " << (uint64_t)(shader) << "\n";
 
-		if (shader) {
+		if (shader.has_value()) {
 			// std::cout << "SHADER DETECTED " << F__F.to_string() << "\n";
-			F__F = shader(F__F);
+			F__F = shader.value()(F__F);
 		}
-		if (global_shader) {
-			F__F = global_shader(F__F);
+		if (global_shader.has_value()) {
+			F__F = global_shader.value()(F__F);
 		}
 
 		// std::cout << s.bary(x, y).to_string() << " " << F.ndc.z << " " << F.ndc.w << " = " << F.color << "\n";
@@ -544,7 +546,7 @@ class Scene { // CENA!
 	// Originally a method using three cross products, now using a variation on Bresenham's method.
 	// https://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
 
-	void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr) {
+	void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		float m1 = float(bx1 - ax) / float(by - ay);
 		float m2 = float(bx2 - ax) / float(by - ay);
@@ -558,7 +560,7 @@ class Scene { // CENA!
 		}
 	}
 
-	void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr) {
+	void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
 		float m1 = float(bx1 - ax) / float(by - ay);
 		float m2 = float(bx2 - ax) / float(by - ay);
@@ -572,7 +574,7 @@ class Scene { // CENA!
 		}
 	}
 
-	void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr) {
+	void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
 		if (s.p[1].ndc.y < s.p[0].ndc.y) {
 			std::swap(s.p[0], s.p[1]);
 			std::swap(T.p[0], T.p[1]);
@@ -596,7 +598,7 @@ class Scene { // CENA!
 		}
 	}
 
-	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr, bool SCAN = false) {
+	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt, bool SCAN = false) {
 		if (SCAN) {
 			fillTriangleFScan(s, T, PHONGSHADE, shader);
 			return;
@@ -654,7 +656,7 @@ class Scene { // CENA!
 		drawTriangle(p, rgb(material->baseColor));
 	}
 
-	void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, FRAG_SHADER shader = nullptr, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false, bool edgeclip = true) {
+	void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, std::optional<FragShader> shader = std::nullopt, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false, bool edgeclip = true) {
 		if (edgeclip) {
 			std::vector<Triangle3> tt = TriSplit(s, camera.F).first;
 
@@ -774,7 +776,7 @@ class Scene { // CENA!
 		}
 	}
 
-	void fillMesh(Mesh& m, BaseMaterial* material = nullptr, FRAG_SHADER shader = nullptr, bool SMOOTHSHADE = true, bool PHONGSHADE = true, bool INTERPNORM = false, bool BACKFACECULL = true) {
+	void fillMesh(Mesh& m, BaseMaterial* material = nullptr, std::optional<FragShader> shader = std::nullopt, bool SMOOTHSHADE = true, bool PHONGSHADE = true, bool INTERPNORM = false, bool BACKFACECULL = true) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
@@ -810,7 +812,7 @@ class Scene { // CENA!
 		}
 	}
 
-	void fillMesh(MorphedMesh& m, BaseMaterial* material = nullptr, FRAG_SHADER shader = nullptr, bool SMOOTHSHADE = true, bool PHONGSHADE = true, bool INTERPNORM = false, bool BACKFACECULL = true) {
+	void fillMesh(MorphedMesh& m, BaseMaterial* material = nullptr, std::optional<FragShader> shader = std::nullopt, bool SMOOTHSHADE = true, bool PHONGSHADE = true, bool INTERPNORM = false, bool BACKFACECULL = true) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";

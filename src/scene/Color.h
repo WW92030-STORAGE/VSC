@@ -64,4 +64,65 @@ Vector3 clampColor(Vector3 s) {
 	return Vector3(BASE::clamp(s.x, 0, 1), BASE::clamp(s.y, 0, 1), BASE::clamp(s.z, 0, 1));
 }
 
+// RGB and HSV conversions. Hue rotation is measured in revolutions so that 180 degrees is the value 0.5, and 0 is pure red.
+Vector3 rgb2hsv(Vector3 rgb) {
+	float r = rgb.x;
+	float g = rgb.y;
+	float b = rgb.z;
+
+	float xmax = fmax(r, fmax(g, b));
+	float xmin = fmin(r, fmin(g, b));
+
+	float value = xmax;
+	float chroma = xmax - xmin;
+
+	float saturation = 0;
+	if (!BASE::fzero(value)) saturation = chroma / value;
+
+	float hue = 0;
+	if (!BASE::fzero(chroma)) {
+		if (BASE::fequal(chroma, r)) hue = BASE::frem((g - b) / chroma, 6.0) / 6.0;
+		else if (BASE::fequal(chroma, g)) hue = BASE::frem(2 + (b - r) / chroma, 6.0) / 6.0;
+		else if (BASE::fequal(chroma, b)) hue = BASE::frem(4 + (g - b) / chroma, 6.0) / 6.0;
+	}
+
+	return Vector3(hue, saturation, value);
+}
+
+Vector3 hsv2rgb(Vector3 hsv) {
+	float hue = hsv.x;
+	float saturation = hsv.y;
+	float value = hsv.z;
+
+	float chroma = saturation * value;
+	float hprime = hue * 6;
+
+	float x = chroma * (1 - fabs(BASE::frem(hprime, 2) - 1));
+
+	Vector3 res(0, 0, 0);
+
+	switch (BASE::ifloor(hprime)) {
+		case 0:
+			res = Vector3(chroma, x, 0);
+			break;
+		case 1:
+			res = Vector3(x, chroma, 0);
+			break;
+		case 2:
+			res = Vector3(0, chroma, x);
+			break;
+		case 3:
+			res = Vector3(0, x, chroma);
+			break;
+		case 4:
+			res = Vector3(x, 0, chroma);
+			break;
+		case 5:
+			res = Vector3(chroma, 0, x);
+			break;
+	}
+
+	return res + (Vector3(1, 1, 1) * (value - chroma));
+}
+
 #endif

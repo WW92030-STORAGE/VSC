@@ -69,4 +69,17 @@ inline T lerp(T a, T b, float t) {
 	return (a * (1 - t)) + (b * t);
 }
 
+// Polar and rectangular
+
+inline Vector2 rect2polar(Vector2 rect) {
+	float theta = atan2(rect.y, rect.x);
+	float modu = rect.length();
+
+	return Vector2(modu, theta);
+}
+
+inline Vector2 polar2rect(Vector2 polar) {
+	return Vector2(cosf(polar.y), sinf(polar.y)) * polar.x;
+}
+
 #endif
