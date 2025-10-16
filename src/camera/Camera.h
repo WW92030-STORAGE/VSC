@@ -96,10 +96,16 @@ class Camera : public Object {
 		alpha = other.alpha;
 		n = other.n;
 		f = other.f;
-		epsilon = 1.0 / tanf(alpha * 0.5);
-		init();
+		epsilon = other.epsilon;
 
-		Trans(other.transform);
+		N = Plane(other.N);
+		F = Plane(other.F);
+		U = Plane(other.U);
+		L = Plane(other.L);
+		R = Plane(other.R);
+		D = Plane(other.D);
+		frustum = Matrix4(other.frustum);
+		transform = Transform(other.transform);
 	}
 
 	// From a projection matrix. Start with clip space planes and then reverse the frustum matrix to get the end result.

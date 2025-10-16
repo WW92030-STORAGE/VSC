@@ -309,6 +309,18 @@ class Matrix3 {
 		}
 	}
 
+	Vector3 getCol(int a) {
+		if (a == 0) return Vector3(xAxis);
+		if (a == 1) return Vector3(yAxis);
+		return Vector3(zAxis);
+	}
+
+	void setCol(int a, Vector3 v) {
+		if (a == 0) xAxis = Vector3(v);
+		else if (a == 1) yAxis = Vector3(v);
+		else zAxis = Vector3(v);
+	}
+
 	Vector3 getRow(int a) {
 		if (a == 0) return Vector3(xAxis.x, yAxis.x, zAxis.x);
 		if (a == 1) return Vector3(xAxis.y, yAxis.y, zAxis.y);
@@ -405,10 +417,28 @@ class Matrix3 {
 		return Matrix3(vecmul(other.xAxis), vecmul(other.yAxis), vecmul(other.zAxis));
 	}
 
-	// Solve a linear system using Elimination and backsub. 
+	// Specialized solve method using Cramer's rule because gprof says this gets called a lot
+	Vector3 solve(Vector3 b) {
+		float deter = det();
+		if (BASE::fzero(deter)) return solve2(b);
+
+		Matrix3 A(*this);
+		Vector3 res(0, 0, 0);
+
+		for (int i = 0; i < 3; i++) {
+			Vector3 temp = A.getCol(i);
+			A.setCol(i, b);
+			res.set(i, A.det() / deter);
+			A.setCol(i, temp);
+		}
+
+		return res;
+	}
+
+	// Solve a linear system using Elimination and backsub (legacy). 
 	// If the system has multiple solutions any of them are given. If no solution exists the NIL vector is returned.
 	// To use this elsewhere: copy, set N to the dimension, then replace each Matrix3 and Vector3 with MatrixN and VectorN.
-	Vector3 solve(Vector3 b) {
+	Vector3 solve2(Vector3 b) {
 		// const bool DEBUG = false;
 		Matrix3 A(*this);
 		int N = 3;

@@ -1952,7 +1952,7 @@ inline void ShaderTest3() {
 	std::cout << "Stored\n";
 }
 
-// TEST 9.83E PROTOTRACER VI (Multiple cameras + shaders)
+// TEST 9.83E PROTOTRACER VI (Multiple cameras + shaders, also a stress test if needed)
 inline void AnimShader() {
 	int N = 512;
 	int D = 1;
@@ -1988,8 +1988,8 @@ inline void AnimShader() {
 	MorphedMesh dragon(test);
 	dragon.copyTo(test2);
 
-	Mesh cube1 = cube(0.5);
-	Mesh cube2 = cube(0.5);
+	Mesh cube1 = icosphere(0.5, 4);
+	Mesh cube2 = icosphere(0.5, 4);
 
 	Transform back(Vector3(0, -1, -5), Rotation3(Vector3(0, 1, 0), -0.4 + M_PI));
 	dragon.Trans(back);
@@ -2146,8 +2146,8 @@ int main() {
 	// MulticamTest();
 
 	// ShaderTest();
-	ShaderTest3();
-	// AnimShader();
+	// ShaderTest2();
+	AnimShader();
 	std::cout << "End\n";
 
 

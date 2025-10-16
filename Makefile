@@ -7,7 +7,7 @@ PY = render.py
 PY_VIDEO = video.py
 PY_GIF = gif.py
 
-all: $(FILE)
+build: $(FILE)
 	$(CXX) $(FILE) -o $(TARGET) $(CXXFLAGS) 
 	./$(TARGET)
 	python3 $(PY)
@@ -21,3 +21,8 @@ video: $(FILE)
 
 clean:
 	rm -f $(TARGET)
+
+profile: $(FILE)
+	$(CXX) -pg $(FILE) -o $(TARGET) $(CXXFLAGS)
+	./$(TARGET)
+	gprof $(TARGET) gmon.out > analysis.txt
