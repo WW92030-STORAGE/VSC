@@ -88,6 +88,7 @@ Triangle of FRAGMENTS
 - `Vector3 bary(int x, int y)` = Barycentric coordinates of `(x, y)` as Fragment coords.
 - `float interp(int x, int y, float f0, float f1, float f2)` = Barycentric interpolation of vertex attributes `(f0, f1, f2)` to position `(x, y)`.
 - `T interp(int x, int y, T a, T b, T c)` = Genericized interpolation.
+- `T interp_given_bary(Vector2 bv, T a, T b, T c)` = Genericized interpolation given already barycentric coordinates.
 - `Vector4 centroid()` = Returns the centroid.
 - `bool operator<(const Triangle3& other) const` = Compares by centroid z coordinate.
 

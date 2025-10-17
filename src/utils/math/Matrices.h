@@ -30,8 +30,8 @@ class Matrix2 {
 	}
 
 	Matrix2(const Matrix2& other) {
-		xAxis = Vector2(other.xAxis);
-		yAxis = Vector2(other.yAxis);
+		xAxis = (other.xAxis);
+		yAxis = (other.yAxis);
 	}
 
 	// Row major order: input one ROW at a time.
@@ -249,15 +249,15 @@ class Matrix3 {
 	}
 
 	Matrix3(Vector3 r, Vector3 s, Vector3 t) {
-		xAxis = Vector3(r);
-		yAxis = Vector3(s);
-		zAxis = Vector3(t);
+		xAxis = (r);
+		yAxis = (s);
+		zAxis = (t);
 	}
 
 	Matrix3(const Matrix3& other) {
-		xAxis = Vector3(other.xAxis);
-		yAxis = Vector3(other.yAxis);
-		zAxis = Vector3(other.zAxis);
+		xAxis = (other.xAxis);
+		yAxis = (other.yAxis);
+		zAxis = (other.zAxis);
 	}
 
 	// Row major order: input one ROW at a time.
@@ -310,15 +310,15 @@ class Matrix3 {
 	}
 
 	Vector3 getCol(int a) {
-		if (a == 0) return Vector3(xAxis);
-		if (a == 1) return Vector3(yAxis);
-		return Vector3(zAxis);
+		if (a == 0) return (xAxis);
+		if (a == 1) return (yAxis);
+		return (zAxis);
 	}
 
 	void setCol(int a, Vector3 v) {
-		if (a == 0) xAxis = Vector3(v);
-		else if (a == 1) yAxis = Vector3(v);
-		else zAxis = Vector3(v);
+		if (a == 0) xAxis = (v);
+		else if (a == 1) yAxis = (v);
+		else zAxis = (v);
 	}
 
 	Vector3 getRow(int a) {
@@ -590,17 +590,17 @@ class Matrix4 {
 	}
 
 	Matrix4(Vector4 r, Vector4 s, Vector4 t, Vector4 u) {
-		xAxis = Vector4(r);
-		yAxis = Vector4(s);
-		zAxis = Vector4(t);
-		wAxis = Vector4(u);
+		xAxis = (r);
+		yAxis = (s);
+		zAxis = (t);
+		wAxis = (u);
 	}
 
 	Matrix4(const Matrix4& other) {
-		xAxis = Vector4(other.xAxis);
-		yAxis = Vector4(other.yAxis);
-		zAxis = Vector4(other.zAxis);
-		wAxis = Vector4(other.wAxis);
+		xAxis = (other.xAxis);
+		yAxis = (other.yAxis);
+		zAxis = (other.zAxis);
+		wAxis = (other.wAxis);
 	}
 
 	// Row major order: input one ROW at a time.

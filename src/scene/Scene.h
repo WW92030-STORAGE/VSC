@@ -470,24 +470,14 @@ class Scene { // CENA!
 	}
 
 	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
-		float zc = s.interp(x, y, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
-		float wc = 1.0 / s.interp(x, y, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
+		Vector3 b = s.bary(x, y);
+		b = NormSum(b);
+		float zc = s.interp_given_bary(b, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
+		float wc = 1.0 / s.interp_given_bary(b, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
 
 		// for (int i = 0; i < 3; i++) std::cout << "UV " << s.p[i].uv.to_string() << " ";
 		// std::cout << "\n";
-
-		Vector3 b = s.bary(x, y);
-		// if (b.x > 1 || b.y > 1 || b.z > 1) return;
-		b.x = BASE::clamp(b.x, 0, 1);
-		b.y = BASE::clamp(b.y, 0, 1);
-		b.z = BASE::clamp(b.z, 0, 1);
-		if (!BASE::fzero(b.x + b.y + b.z)) {
-			float sum = b.x + b.y + b.z;
-			b.x /= sum;
-			b.y /= sum;
-			b.z /= sum;
-		}
-
+		
 		// std::cout << s.to_string() << " " << x <<  " " << y << " = " << b.to_string() << "\n\n";
 
 		// Interpolate uv TODO - make this perspective correct

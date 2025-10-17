@@ -29,7 +29,7 @@ clean:
 profile: $(FILE) preprofile doprofile
 
 preprofile: $(FILE)
-	$(CXX) -pg $(FILE) -o $(TARGET) -O3 -w -fcompare-debug-second
+	$(CXX) -pg $(FILE) -o $(TARGET) -w -fcompare-debug-second
 
 doprofile: $(FILE)
 	./$(TARGET)

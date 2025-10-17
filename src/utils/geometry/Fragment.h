@@ -28,53 +28,53 @@ class Fragment {
 	}
 
 	Fragment(Vector4 V, Vector3 N, uint32_t C) {
-		ndc = Vector4(V);
-		normal = Vector3(N);
+		ndc = (V);
+		normal = (N);
 		color = C;
 	}
 
 	Fragment(Vector4 V, Vector3 N, uint32_t C, Vector2 U) {
-		ndc = Vector4(V);
-		normal = Vector3(N);
+		ndc = (V);
+		normal = (N);
 		color = C;
-		uv = Vector2(U);
+		uv = (U);
 	}
 
 	Fragment(Vector4 V, Vector3 N, uint32_t C, Vector2 U, uint32_t A) {
-		ndc = Vector4(V);
-		normal = Vector3(N);
+		ndc = (V);
+		normal = (N);
 		color = C;
-		uv = Vector2(U);
+		uv = (U);
 		albedo = A;
 	}
 
 	Fragment(Vector4 V, Vector3 N, uint32_t C, Vector2 U, uint32_t A, Vector2 suv) {
-		ndc = Vector4(V);
-		normal = Vector3(N);
+		ndc = (V);
+		normal = (N);
 		color = C;
-		uv = Vector2(U);
+		uv = (U);
 		albedo = A;
-		screenUV = Vector2(suv);
+		screenUV = (suv);
 	}
 
 	Fragment(Vector4 V, Vector3 N, uint32_t C, Vector2 U, uint32_t A, Vector2 suv, Vector3 wsp) {
-		ndc = Vector4(V);
-		normal = Vector3(N);
+		ndc = (V);
+		normal = (N);
 		color = C;
-		uv = Vector2(U);
+		uv = (U);
 		albedo = A;
-		screenUV = Vector2(suv);
-		wspos = Vector3(wsp);
+		screenUV = (suv);
+		wspos = (wsp);
 	}
 
 	Fragment(const Fragment& o) {
-		ndc = Vector4(o.ndc);
-		normal = Vector3(o.normal);
+		ndc = (o.ndc);
+		normal = (o.normal);
 		color = o.color;
-		uv = Vector2(o.uv);
+		uv = (o.uv);
 		albedo = o.albedo;
-		screenUV = Vector2(o.screenUV);
-		wspos = Vector3(o.wspos);
+		screenUV = (o.screenUV);
+		wspos = (o.wspos);
 	}
 
 	inline bool operator==(Fragment& o) {

@@ -32,17 +32,17 @@ class Triangle2 {
 	}
 
 	Triangle2(Vector2 a, Vector2 b, Vector2 c) {
-		p[0] = Vector2(a);
-		p[1] = Vector2(b);
-		p[2] = Vector2(c);
+		p[0] = (a);
+		p[1] = (b);
+		p[2] = (c);
 	}
 
 	Triangle2(Vector2 x[3]) {
-		for (int i = 0; i < 3; i++) p[i] = Vector2(x[i]);
+		for (int i = 0; i < 3; i++) p[i] = (x[i]);
 	}
 
 	Triangle2(const Triangle2& other) {
-		for (int i = 0; i < 3; i++) p[i] = Vector2(other.p[i]);
+		for (int i = 0; i < 3; i++) p[i] = (other.p[i]);
 	}
 
 	// Orient this triangle so the vertices are in counterclockwise order and the normal has positive z. 2D TRIANGLE ONLY
@@ -53,7 +53,7 @@ class Triangle2 {
 
 		if ((e1.cross(e2)).z < 0) {
 			Vector2 temp(p[1]);
-			p[1] = Vector2(p[2]);
+			p[1] = (p[2]);
 			p[2] = temp;
 		}
 	}
@@ -98,49 +98,49 @@ class Triangle3 : public Object {
 	}
 
 	Triangle3(Vector3 a, Vector3 b, Vector3 c) {
-		p[0] = Vector3(a);
-		p[1] = Vector3(b);
-		p[2] = Vector3(c);
+		p[0] = (a);
+		p[1] = (b);
+		p[2] = (c);
 		for (int i = 0; i < 3; i++) uv[i] = Vector2();
 		N = normal();
 	}
 
 	Triangle3(Vector3& a, Vector3& b, Vector3& c, Vector2& q, Vector2& r, Vector2 s) {
-		p[0] = Vector3(a);
-		p[1] = Vector3(b);
-		p[2] = Vector3(c);
-		uv[0] = Vector2(q);
-		uv[1] = Vector2(r);
-		uv[2] = Vector2(s);
+		p[0] = (a);
+		p[1] = (b);
+		p[2] = (c);
+		uv[0] = (q);
+		uv[1] = (r);
+		uv[2] = (s);
 
 		N = normal();
 	}
 
 	Triangle3(Vector3 x[3]) {
-		for (int i = 0; i < 3; i++) p[i] = Vector3(x[i]);
+		for (int i = 0; i < 3; i++) p[i] = (x[i]);
 		for (int i = 0; i < 3; i++) uv[i] = Vector2();
 		N = normal();
 	}
 
 	Triangle3(Vector3 x[3], Vector2 uu[3]) {
-		for (int i = 0; i < 3; i++) p[i] = Vector3(x[i]);
-		for (int i = 0; i < 3; i++) uv[i] = Vector2(uu[i]);
+		for (int i = 0; i < 3; i++) p[i] = (x[i]);
+		for (int i = 0; i < 3; i++) uv[i] = (uu[i]);
 		N = normal();
 	}
 
 	Triangle3(const Triangle3& other) : Object(other) {
 		for (int i = 0; i < 3; i++) {
-			p[i] = Vector3(other.p[i]);
-			uv[i] = Vector2(other.uv[i]);
+			p[i] = (other.p[i]);
+			uv[i] = (other.uv[i]);
 		}
-		N = normal();
+		N = other.N;
 	}
 
 	inline void flipNormal() {
 		Vector3 temp(p[0]);
 		p[0] = Vector3(p[1]);
 		p[1] = temp;
-		N = normal();
+		N = N * -1;
 	}
 
 	// The normal is off teh direction based on the counterclockwise orientation of the points. 
@@ -273,24 +273,24 @@ class TriangleF {
 		ON = Vector3(1, 1, 1).normalized();
 	}
 
-	TriangleF(Fragment& a, Fragment& b, Fragment& c, Vector3 n) {
-		p[0] = Fragment(a);
-		p[1] = Fragment(b);
-		p[2] = Fragment(c);
-		N = Vector3(n);
-		ON = Vector3(n);
+	TriangleF(Fragment a, Fragment b, Fragment c, Vector3 n) {
+		p[0] = (a);
+		p[1] = (b);
+		p[2] = (c);
+		N = (n);
+		ON = (n);
 	}
 
 	TriangleF(Fragment x[3], Vector3 n) {
-		for (int i = 0; i < 3; i++) p[i] = Fragment(x[i]);
-		N = Vector3(n);
-		ON = Vector3(n);
+		for (int i = 0; i < 3; i++) p[i] = (x[i]);
+		N = (n);
+		ON = (n);
 	}
 
 	TriangleF(const TriangleF& other) {
-		for (int i = 0; i < 3; i++) p[i] = Fragment(other.p[i]);
-		N = Vector3(other.N);
-		ON = Vector3(other.ON);
+		for (int i = 0; i < 3; i++) p[i] = (other.p[i]);
+		N = (other.N);
+		ON = (other.ON);
 
 		material = other.material;
 	}
@@ -384,6 +384,12 @@ class TriangleF {
 	inline T interp(int x, int y, T a, T b, T c) {
 		Vector3 r = NormSum(bary(x, y));
 
+		return a * r.x + b * r.y + c * r.z;
+	}
+
+	template <typename T>
+	inline T interp_given_bary(Vector3 bv, T a, T b, T c) {
+		Vector3 r = NormSum(bv);
 		return a * r.x + b * r.y + c * r.z;
 	}
 

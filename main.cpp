@@ -2082,7 +2082,9 @@ inline void AnimShader() {
 		animation.setCamActive(24, 1);
 	}
 
-	for (int i = 0; i < animation.getLength(); i++) {
+	int SKIP = 1;
+
+	for (int i = 0; i < animation.getLength(); i += SKIP) {
 		animation.animate(i);
 		s.render(true, 0, octantShader);
 		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
@@ -2152,6 +2154,12 @@ int main() {
 
 	Matrix2 A(2, 4, -3, 1);
 	std::cout << A.to_string() << "\n" << A.inv().to_string() << "\n" << (A.inv() * A).to_string() << std::endl;
+
+	Vector3 v(1, 2, 3);
+
+	Vector3 u = v;
+	u.x = 100;
+	std::cout << u.to_string() << " " << v.to_string() << "\n";
 
 	std::cout << "End\n";
 

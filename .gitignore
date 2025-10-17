@@ -13,3 +13,6 @@ BUFFER
 *.mp4
 *.avi
 *.mpeg
+
+analysis.txt
+gmon.out

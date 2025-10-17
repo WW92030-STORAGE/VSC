@@ -23,18 +23,18 @@ class Transform {
 	}
 
 	Transform(Vector3 loc) {
-		origin = Vector3(loc);
+		origin = (loc);
 		basis = Matrix3::eye();
 	}
 
 	Transform(Matrix3 rot) {
 		origin = Vector3();
-		basis = Matrix3(rot);
+		basis = (rot);
 	}
 
 	Transform(Vector3 loc, Matrix3 rot) {
-		origin = Vector3(loc);
-		basis = Matrix3(rot);
+		origin = (loc);
+		basis = (rot);
 	}
 
 	Transform(Matrix4 m) {
@@ -47,8 +47,8 @@ class Transform {
 	}
 
 	Transform(const Transform& other) {
-		origin = Vector3(other.origin);
-		basis = Matrix3(other.basis);
+		origin = (other.origin);
+		basis = (other.basis);
 	}
 
 	inline Matrix4 matrix() {
