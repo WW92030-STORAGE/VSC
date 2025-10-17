@@ -20,11 +20,12 @@ class Fragment {
 	uint32_t color = 0;
 	uint32_t albedo = 0;
 	Vector2 screenUV = NILVEC2;
-	Vector3 wspos = Vector3(0, 0, 0);
+	Vector3 wspos;
 
 	Fragment() {
-		ndc = Vector4(0, 0, INF, INF);
-		normal = Vector3(0, 0, 1);
+		ndc.z = INF;
+		ndc.w = INF;
+		normal.z = 1;
 	}
 
 	Fragment(Vector4 V, Vector3 N, uint32_t C) {

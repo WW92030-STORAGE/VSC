@@ -18,7 +18,6 @@ class Transform {
 	Matrix3 basis; // rotation, the linear component
 
 	Transform() {
-		origin = Vector3();
 		basis = Matrix3::eye();
 	}
 
@@ -28,7 +27,6 @@ class Transform {
 	}
 
 	Transform(Matrix3 rot) {
-		origin = Vector3();
 		basis = (rot);
 	}
 
@@ -38,8 +36,6 @@ class Transform {
 	}
 
 	Transform(Matrix4 m) {
-		origin = Vector3();
-		basis = Matrix3();
 		for (int i = 0; i < 3; i++) {
 			origin.set(i, m.get(i, 3));
 			for (int j = 0; j < 3; j++) basis.set(i, j, m.get(i, j));

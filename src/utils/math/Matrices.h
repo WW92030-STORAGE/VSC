@@ -262,9 +262,18 @@ class Matrix3 {
 
 	// Row major order: input one ROW at a time.
 	Matrix3(float a, float b, float c, float d, float e, float f, float g, float h, float i) {
-		xAxis = Vector3(a, d, g);
-		yAxis = Vector3(b, e, h);
-		zAxis = Vector3(c, f, i);
+		xAxis.x = a;
+		xAxis.y = d;
+		xAxis.z = g;
+		yAxis.x = b;
+		yAxis.y = e;
+		yAxis.z = h;
+		zAxis.x = c;
+		zAxis.y = f;
+		zAxis.z = i;
+		// xAxis = Vector3(a, d, g);
+		// yAxis = Vector3(b, e, h);
+		// zAxis = Vector3(c, f, i);
 	}
 
 	// Identity matrix
