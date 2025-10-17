@@ -25,13 +25,13 @@ class Line {
 	}
 
 	Line(Vector3 p, Vector3 s) {
-		point = Vector3(p);
-		slope = Vector3(s).normalized();
+		point = (p);
+		slope = (s).normalized();
 	}
 
 	Line(const Line& other) {
-		point = Vector3(other.point);
-		slope = Vector3(other.slope);
+		point = (other.point);
+		slope = (other.slope);
 	}
 
 	inline Vector3 get(float t) {
@@ -96,13 +96,13 @@ class Plane : public Object {
 	}
 
 	Plane(Vector3 r, Vector3 s) {
-		p = Vector3(r);
-		n = Vector3(s).normalized();
+		p = (r);
+		n = (s).normalized();
 	}
 
 	Plane(const Plane& other) {
-		p = Vector3(other.p);
-		n = Vector3(other.n).normalized();
+		p = (other.p);
+		n = (other.n);
 	}
 
 	// Standard Form Planes

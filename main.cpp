@@ -2161,6 +2161,10 @@ int main() {
 	u.x = 100;
 	std::cout << u.to_string() << " " << v.to_string() << "\n";
 
+	Vector3 defaultconstest;
+
+	std::cout << defaultconstest.to_string() << "\n";
+
 	std::cout << "End\n";
 
 

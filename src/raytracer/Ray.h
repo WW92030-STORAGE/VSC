@@ -23,13 +23,13 @@ class Ray {
 	}
 
 	Ray(Vector3 p, Vector3 s) {
-		point = Vector3(p);
+		point = (p);
 		slope = Vector3(s).normalized();
 	}
 
 	Ray(const Ray& other) {
-		point = Vector3(other.point);
-		slope = Vector3(other.slope).normalized();
+		point = (other.point);
+		slope = (other.slope);
 	}
 
 	Vector3 get(float t) {
@@ -66,8 +66,8 @@ class IntersectionPoint {
 	IntersectionPoint(BaseMaterial* bm, float t, Vector3 n, Vector2 u) {
 		material = bm;
 		time = t;
-		N = Vector3(n);
-		uv = Vector2(u);
+		N = (n);
+		uv = (u);
 	}
 
 	inline bool valid() {

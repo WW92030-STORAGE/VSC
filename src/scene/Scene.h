@@ -453,7 +453,7 @@ class Scene { // CENA!
 
 		TriangleF tri;
 
-		tri.ON = Vector3(s.normal());
+		tri.ON = (s.normal());
 
 		for (int i = 0; i < 3; i++) {
 			tri.p[i] = Fragment(res[i], s.N, c, s.uv[i]);
@@ -515,9 +515,9 @@ class Scene { // CENA!
 		} else {
 			c = rgb(illuminate(t.centroid(), t.centroid(), s.N, finaluv, s.material));
 		}
-		Fragment F__F(Vector4(x, y, zc, wc), Vector3(s.ON), c, finaluv, oc);
+		Fragment F__F(Vector4(x, y, zc, wc), (s.ON), c, finaluv, oc);
 		F__F.screenUV = Vector2((float)(x) / W, (float)(y) / H);
-		F__F.wspos = Vector3(finalwsp);
+		F__F.wspos = (finalwsp);
 
 		// std::cout << "DrawTriFrag " << (uint64_t)(shader) << "\n";
 

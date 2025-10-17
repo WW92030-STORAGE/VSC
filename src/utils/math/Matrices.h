@@ -243,9 +243,9 @@ class Matrix3 {
 	Vector3 zAxis;
 
 	Matrix3() {
-		xAxis = Vector3();
-		yAxis = Vector3();
-		zAxis = Vector3();
+		// xAxis = Vector3();
+		// yAxis = Vector3();
+		// zAxis = Vector3();
 	}
 
 	Matrix3(Vector3 r, Vector3 s, Vector3 t) {
