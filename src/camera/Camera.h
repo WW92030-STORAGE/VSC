@@ -1,7 +1,7 @@
 #ifndef CAMERA_EXT
 #define CAMERA_EXT
 
-// #include <iostream>
+#include <iostream>
 #include <string>
 
 
@@ -11,7 +11,6 @@
 
 class Camera : public Object {
 	public:
-	Transform transform;
 
 	float alpha; // FOV
 	float epsilon; // Distance to the projection plane
@@ -105,7 +104,7 @@ class Camera : public Object {
 		R = Plane(other.R);
 		D = Plane(other.D);
 		frustum = Matrix4(other.frustum);
-		transform = Transform(other.transform);
+		// transform = Transform(other.transform);
 	}
 
 	// From a projection matrix. Start with clip space planes and then reverse the frustum matrix to get the end result.

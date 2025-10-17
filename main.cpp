@@ -2148,6 +2148,11 @@ int main() {
 	// ShaderTest();
 	// ShaderTest2();
 	AnimShader();
+
+
+	Matrix2 A(2, 4, -3, 1);
+	std::cout << A.to_string() << "\n" << A.inv().to_string() << "\n" << (A.inv() * A).to_string() << std::endl;
+
 	std::cout << "End\n";
 
 

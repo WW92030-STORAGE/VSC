@@ -70,8 +70,8 @@ class Matrix2 {
 		return Matrix2(xAxis * other, yAxis * other);
 	}
 	inline Matrix2 div(float other) {
-		if (other == 0) return eye();
-		return Matrix2(xAxis * other, yAxis * other);
+		if (BASE::fzero(other)) return eye();
+		return Matrix2(xAxis / other, yAxis / other);
 	}
 
 	// Matrix specific operations
@@ -86,8 +86,8 @@ class Matrix2 {
 
 	inline Matrix2 inv() {
 		float d = det();
-		if (d == 0) return eye();
-		return Matrix2(yAxis.y, xAxis.y, yAxis.x, xAxis.x).div(d);
+		if (BASE::fzero(d)) return eye();
+		return Matrix2(yAxis.y, -yAxis.x, -xAxis.y, xAxis.x).div(d); // sowwy 3:
 	}
 
 	inline Vector2 vecmul(const Vector2& other) {

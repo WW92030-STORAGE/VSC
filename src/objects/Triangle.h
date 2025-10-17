@@ -338,9 +338,32 @@ class TriangleF {
 	x = s0 x0 + s1 x1 + s2 x2
 	y = s0 y0 + s1 y1 + s2 y2
 	1 = s0    + s1    + s2 // normalization criterion
+
+	Alternatively, if: 
+	x = L0 x0 + L1 x1 + L2 x2
+	y = L0 y0 + L1 y1 + L2 y2
+	then knowing L2 = 1 - L0 - L1 we get
+	L0(x0 - x2) + L1(x1 - x2) + x2 - x = 0
+	L0(y0 - y2) + L1(y1 - y2) + y2 - y = 0
+
+	or rather:
+
+	[[x0 - x2, x1 - x2], [y0 - y2, y1 - y2]] [L0, L1] = [x - x2, y - y2]
+
+	solve from there
 	
 	*/
 	inline Vector3 bary(int x, int y) {
+		Matrix2 A(p[0].ndc.x - p[2].ndc.x, p[1].ndc.x - p[2].ndc.x, p[0].ndc.y - p[2].ndc.y, p[1].ndc.y - p[2].ndc.y);
+
+		if (BASE::fzero(A.det())) return bary2(x, y);
+
+		Vector2 res = A.inv() * Vector2(x - p[2].ndc.x, y - p[2].ndc.y);
+
+		return Vector3(res.x, res.y, 1 - res.x - res.y);
+	}
+
+	inline Vector3 bary2(int x, int y) {
 		Vector3 xxx[3];
 		for (int i = 0; i < 3; i++) xxx[i] = Vector3(p[i].ndc.x, p[i].ndc.y, 1);
 		Matrix3 A(xxx[0], xxx[1], xxx[2]);

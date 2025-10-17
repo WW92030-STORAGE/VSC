@@ -7,8 +7,12 @@ PY = render.py
 PY_VIDEO = video.py
 PY_GIF = gif.py
 
+all: $(FILE) build run
+
 build: $(FILE)
 	$(CXX) $(FILE) -o $(TARGET) $(CXXFLAGS) 
+
+run: $(FILE)
 	./$(TARGET)
 	python3 $(PY)
 
@@ -22,7 +26,11 @@ video: $(FILE)
 clean:
 	rm -f $(TARGET)
 
-profile: $(FILE)
-	$(CXX) -pg $(FILE) -o $(TARGET) $(CXXFLAGS)
+profile: $(FILE) preprofile doprofile
+
+preprofile: $(FILE)
+	$(CXX) -pg $(FILE) -o $(TARGET) -O3 -w -fcompare-debug-second
+
+doprofile: $(FILE)
 	./$(TARGET)
 	gprof $(TARGET) gmon.out > analysis.txt

@@ -3,114 +3,114 @@ Flat profile:
 Each sample counts as 0.01 seconds.
   %   cumulative   self              self     total           
  time   seconds   seconds    calls   s/call   s/call  name    
- 23.58      0.29     0.29  9748553     0.00     0.00  Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>)
- 13.82      0.46     0.17   511776     0.00     0.00  Scene::render(bool, int, std::optional<FragShader>)
- 10.57      0.59     0.13 10359458     0.00     0.00  Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool)
-  8.94      0.70     0.11        1     0.11     1.22  AnimShader()
-  8.13      0.80     0.10   483007     0.00     0.00  Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool)
-  7.32      0.89     0.09 29245659     0.00     0.00  TriangleF::bary(int, int)
-  4.07      0.94     0.05  3015739     0.00     0.00  TriSplit(Triangle3, Plane)
-  3.25      0.98     0.04   203619     0.00     0.00  Scene::project(Triangle3, unsigned int)
-  2.44      1.01     0.03   611781     0.00     0.00  Matrix4::det()
-  1.63      1.03     0.02 21540615     0.00     0.00  Fragment::Fragment(Fragment const&)
-  1.63      1.05     0.02 17048365     0.00     0.00  ImageTexture::getColor(int, int)
-  1.63      1.07     0.02 16889554     0.00     0.00  BaseMaterial::getColor(Vector2)
-  1.63      1.09     0.02  6273468     0.00     0.00  Matrix4::getRow(int)
-  1.63      1.11     0.02  1458909     0.00     0.00  ANIMI::SINE_OUT(float)
-  1.63      1.13     0.02   611781     0.00     0.00  Matrix4::inv()
-  1.63      1.15     0.02      210     0.00     0.00  Mesh::setupvns()
-  0.81      1.16     0.01 20956212     0.00     0.00  Matrix4::setRow(int, Vector4)
-  0.81      1.17     0.01 10878499     0.00     0.00  Triangle3::Triangle3(Triangle3 const&)
-  0.81      1.18     0.01  9748553     0.00     0.00  octant_shader(Fragment)
-  0.81      1.19     0.01  4563063     0.00     0.00  FragShaders::invert(Fragment)
-  0.81      1.20     0.01  3070656     0.00     0.00  Plane::Plane(Plane const&)
-  0.81      1.21     0.01  3023369     0.00     0.00  void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&)
-  0.81      1.22     0.01  2475171     0.00     0.00  void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&)
-  0.81      1.23     0.01     1664     0.00     0.00  _init
-  0.00      1.23     0.00  9788496     0.00     0.00  Matrix4::get(int, int)
-  0.00      1.23     0.00  3023369     0.00     0.00  operator*(std::vector<float, std::allocator<float> > const&, float)
-  0.00      1.23     0.00  1535328     0.00     0.00  std::vector<Triangle3, std::allocator<Triangle3> >::~vector()
-  0.00      1.23     0.00  1021753     0.00     0.00  example_shader(Fragment)
-  0.00      1.23     0.00   203619     0.00     0.00  TriangleF::TriangleF(TriangleF const&)
-  0.00      1.23     0.00    11446     0.00     0.00  Triangle3::Triangle3(Vector3, Vector3, Vector3)
-  0.00      1.23     0.00    10200     0.00     0.00  std::pair<std::_Rb_tree_iterator<std::pair<std::pair<int, int> const, int> >, bool> std::_Rb_tree<std::pair<int, int>, std::pair<std::pair<int, int> const, int>, std::_Select1st<std::pair<std::pair<int, int> const, int> >, std::less<std::pair<int, int> >, std::allocator<std::pair<std::pair<int, int> const, int> > >::_M_insert_unique<std::pair<std::pair<int, int> const, int> >(std::pair<std::pair<int, int> const, int>&&)
-  0.00      1.23     0.00     7630     0.00     0.00  Plane::intersection(Line&)
-  0.00      1.23     0.00     5306     0.00     0.00  void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
-  0.00      1.23     0.00     3658     0.00     0.00  Transform::matrix()
-  0.00      1.23     0.00     1296     0.00     0.00  void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&)
-  0.00      1.23     0.00     1296     0.00     0.00  void std::vector<int, std::allocator<int> >::_M_realloc_insert<int>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int&&)
-  0.00      1.23     0.00     1071     0.00     0.00  Transform::mul(Transform&)
-  0.00      1.23     0.00      824     0.00     0.00  std::vector<int, std::allocator<int> >::vector(std::vector<int, std::allocator<int> > const&)
-  0.00      1.23     0.00      588     0.00     0.00  Plane::Trans(Transform)
-  0.00      1.23     0.00      290     0.00     0.00  void std::vector<float, std::allocator<float> >::_M_realloc_insert<float>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float&&)
-  0.00      1.23     0.00      240     0.00     0.00  Animation::animateMesh(int, int)
-  0.00      1.23     0.00      196     0.00     0.00  Mesh::Trans(Transform)
-  0.00      1.23     0.00      196     0.00     0.00  Transform::Transform(Transform const&)
-  0.00      1.23     0.00      180     0.00     0.00  ANIMI::LERP(float)
-  0.00      1.23     0.00      158     0.00     0.00  std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&)
-  0.00      1.23     0.00      144     0.00     0.00  spherp(Quaternion, Quaternion, float)
-  0.00      1.23     0.00      144     0.00     0.00  std::__cxx11::to_string(int)
-  0.00      1.23     0.00      109     0.00     0.00  std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&)
-  0.00      1.23     0.00      108     0.00     0.00  ANIMI::SINE(float)
-  0.00      1.23     0.00      107     0.00     0.00  std::vector<float, std::allocator<float> >::~vector()
-  0.00      1.23     0.00      101     0.00     0.00  Camera::Camera(Camera const&)
-  0.00      1.23     0.00       98     0.00     0.00  Camera::Trans(Transform)
-  0.00      1.23     0.00       96     0.00     0.00  std::vector<float, std::allocator<float> >::vector(std::vector<float, std::allocator<float> > const&)
-  0.00      1.23     0.00       92     0.00     0.00  void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > >(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> >&&)
-  0.00      1.23     0.00       51     0.00     0.00  MorphedMesh::m_setupvns()
-  0.00      1.23     0.00       51     0.00     0.00  MorphedMesh::setupvns()
-  0.00      1.23     0.00       50     0.00     0.00  Animation::getLength()
-  0.00      1.23     0.00       49     0.00     0.00  MorphedMesh::Trans(Transform)
-  0.00      1.23     0.00       48     0.00     0.00  ANIMI::SINE_IN(float)
-  0.00      1.23     0.00       48     0.00     0.00  operator+(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)
-  0.00      1.23     0.00       40     0.00     0.00  void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3&&)
-  0.00      1.23     0.00       40     0.00     0.00  void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > const&>(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> > const&)
-  0.00      1.23     0.00       20     0.00     0.00  void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2&&)
-  0.00      1.23     0.00       20     0.00     0.00  std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::~vector()
-  0.00      1.23     0.00       16     0.00     0.00  void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3 const&>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3 const&)
-  0.00      1.23     0.00       14     0.00     0.00  std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector()
-  0.00      1.23     0.00       12     0.00     0.00  std::vector<int, std::allocator<int> >* std::__do_uninit_fill_n<std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > >(std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > const&)
-  0.00      1.23     0.00       11     0.00     0.00  Scene::morph(int, std::vector<float, std::allocator<float> >)
-  0.00      1.23     0.00       10     0.00     0.00  Mesh::~Mesh()
-  0.00      1.23     0.00        8     0.00     0.00  subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&)
-  0.00      1.23     0.00        8     0.00     0.00  Rotation3(Vector3, float)
-  0.00      1.23     0.00        6     0.00     0.00  Mesh::Mesh(Mesh const&)
-  0.00      1.23     0.00        6     0.00     0.00  void std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > > >, std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >&&)
-  0.00      1.23     0.00        6     0.00     0.00  void std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > > >, std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >&&)
-  0.00      1.23     0.00        5     0.00     0.00  Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>)
-  0.00      1.23     0.00        5     0.00     0.00  std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
-  0.00      1.23     0.00        4     0.00     0.00  Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&)
-  0.00      1.23     0.00        4     0.00     0.00  Camera::init()
-  0.00      1.23     0.00        4     0.00     0.00  void std::vector<BaseMaterial*, std::allocator<BaseMaterial*> >::_M_realloc_insert<BaseMaterial*>(__gnu_cxx::__normal_iterator<BaseMaterial**, std::vector<BaseMaterial*, std::allocator<BaseMaterial*> > >, BaseMaterial*&&)
-  0.00      1.23     0.00        4     0.00     0.00  void std::vector<Mesh*, std::allocator<Mesh*> >::_M_realloc_insert<Mesh*>(__gnu_cxx::__normal_iterator<Mesh**, std::vector<Mesh*, std::allocator<Mesh*> > >, Mesh*&&)
-  0.00      1.23     0.00        4     0.00     0.00  void std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > >::_M_realloc_insert<std::vector<Vector3, std::allocator<Vector3> > >(__gnu_cxx::__normal_iterator<std::vector<Vector3, std::allocator<Vector3> >*, std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > > >, std::vector<Vector3, std::allocator<Vector3> >&&)
-  0.00      1.23     0.00        4     0.00     0.00  std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::initializer_list<std::vector<unsigned int, std::allocator<unsigned int> > >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > const&)
-  0.00      1.23     0.00        4     0.00     0.00  void std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >*, std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > > >, std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >&&)
-  0.00      1.23     0.00        4     0.00     0.00  void std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > >::_M_realloc_insert<std::optional<FragShader> const&>(__gnu_cxx::__normal_iterator<std::optional<FragShader>*, std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > > >, std::optional<FragShader> const&)
-  0.00      1.23     0.00        4     0.00     0.00  std::vector<unsigned int, std::allocator<unsigned int> >* std::__do_uninit_fill_n<std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > >(std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > const&)
-  0.00      1.23     0.00        3     0.00     0.00  ImageTexture::getColor(Vector2)
-  0.00      1.23     0.00        3     0.00     0.00  Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
-  0.00      1.23     0.00        2     0.00     0.00  icosphere(float, int)
-  0.00      1.23     0.00        2     0.00     0.00  ImageTexture::ImageTexture(std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >)
-  0.00      1.23     0.00        2     0.00     0.00  Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&)
-  0.00      1.23     0.00        2     0.00     0.00  Camera::Camera(float)
-  0.00      1.23     0.00        2     0.00     0.00  Object::Trans(Transform)
-  0.00      1.23     0.00        2     0.00     0.00  void std::vector<Camera, std::allocator<Camera> >::_M_realloc_insert<Camera const&>(__gnu_cxx::__normal_iterator<Camera*, std::vector<Camera, std::allocator<Camera> > >, Camera const&)
-  0.00      1.23     0.00        2     0.00     0.00  std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > > const&)
-  0.00      1.23     0.00        1     0.00     0.00  GridSquare(float, int)
-  0.00      1.23     0.00        1     0.00     0.00  Quaternion::Quaternion(Matrix3)
-  0.00      1.23     0.00        1     0.00     0.00  MorphedMesh::copyTo(Mesh&, int)
-  0.00      1.23     0.00        1     0.00     0.00  MorphedMesh::MorphedMesh(Mesh const&)
-  0.00      1.23     0.00        1     0.00     0.00  MorphedMesh::MorphedMesh(MorphedMesh const&)
-  0.00      1.23     0.00        1     0.00     0.00  MorphedMesh::~MorphedMesh()
-  0.00      1.23     0.00        1     0.00     0.00  Scene::Scene(int, int)
-  0.00      1.23     0.00        1     0.00     0.00  Scene::~Scene()
-  0.00      1.23     0.00        1     0.00     0.00  Animation::loadScene(Scene*)
-  0.00      1.23     0.00        1     0.00     0.00  Animation::~Animation()
-  0.00      1.23     0.00        1     0.00     0.00  std::_Hashtable<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_rehash(unsigned long, unsigned long const&)
-  0.00      1.23     0.00        1     0.00     0.00  void std::vector<Light, std::allocator<Light> >::_M_realloc_insert<Light const&>(__gnu_cxx::__normal_iterator<Light*, std::vector<Light, std::allocator<Light> > >, Light const&)
-  0.00      1.23     0.00        1     0.00     0.00  std::vector<Light, std::allocator<Light> >::push_back(Light const&)
-  0.00      1.23     0.00        1     0.00     0.00  std::vector<float, std::allocator<float> >::vector(std::initializer_list<float>, std::allocator<float> const&)
+ 17.95      0.21     0.21  9748553     0.00     0.00  Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>)
+ 17.09      0.41     0.20   483007     0.00     0.00  Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool)
+ 10.26      0.53     0.12        1     0.12     1.15  AnimShader()
+  8.55      0.63     0.10 10359458     0.00     0.00  Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool)
+  7.69      0.72     0.09  3015739     0.00     0.00  TriSplit(Triangle3, Plane)
+  7.69      0.81     0.09   511776     0.00     0.00  Scene::render(bool, int, std::optional<FragShader>)
+  6.84      0.89     0.08 29245659     0.00     0.00  TriangleF::bary(int, int)
+  3.42      0.93     0.04 10878499     0.00     0.00  Triangle3::Triangle3(Triangle3 const&)
+  2.56      0.96     0.03   611781     0.00     0.00  Matrix4::inv()
+  1.71      0.98     0.02 16889554     0.00     0.00  BaseMaterial::getColor(Vector2)
+  1.71      1.00     0.02 16505353     0.00     0.00  ImageTexture::getColor(int, int)
+  1.71      1.02     0.02  4423557     0.00     0.00  FragShaders::invert(Fragment)
+  1.71      1.04     0.02  3070656     0.00     0.00  Plane::Plane(Plane const&)
+  1.71      1.06     0.02  1458909     0.00     0.00  ANIMI::SINE_OUT(float)
+  1.71      1.08     0.02   611781     0.00     0.00  Matrix4::det()
+  1.71      1.10     0.02   203619     0.00     0.00  Scene::project(Triangle3, unsigned int)
+  1.71      1.12     0.02     1664     0.00     0.00  _init
+  0.85      1.13     0.01 21540615     0.00     0.00  Fragment::Fragment(Fragment const&)
+  0.85      1.14     0.01 20956212     0.00     0.00  Matrix4::setRow(int, Vector4)
+  0.85      1.15     0.01  9788496     0.00     0.00  Matrix4::get(int, int)
+  0.85      1.16     0.01  3023369     0.00     0.00  void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&)
+  0.85      1.17     0.01      210     0.00     0.00  Mesh::setupvns()
+  0.00      1.17     0.00  9748553     0.00     0.00  octant_shader(Fragment)
+  0.00      1.17     0.00  6273468     0.00     0.00  Matrix4::getRow(int)
+  0.00      1.17     0.00  3023369     0.00     0.00  operator*(std::vector<float, std::allocator<float> > const&, float)
+  0.00      1.17     0.00  2475171     0.00     0.00  void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&)
+  0.00      1.17     0.00  1535328     0.00     0.00  std::vector<Triangle3, std::allocator<Triangle3> >::~vector()
+  0.00      1.17     0.00  1021753     0.00     0.00  example_shader(Fragment)
+  0.00      1.17     0.00   203619     0.00     0.00  TriangleF::TriangleF(TriangleF const&)
+  0.00      1.17     0.00    11446     0.00     0.00  Triangle3::Triangle3(Vector3, Vector3, Vector3)
+  0.00      1.17     0.00    10200     0.00     0.00  std::pair<std::_Rb_tree_iterator<std::pair<std::pair<int, int> const, int> >, bool> std::_Rb_tree<std::pair<int, int>, std::pair<std::pair<int, int> const, int>, std::_Select1st<std::pair<std::pair<int, int> const, int> >, std::less<std::pair<int, int> >, std::allocator<std::pair<std::pair<int, int> const, int> > >::_M_insert_unique<std::pair<std::pair<int, int> const, int> >(std::pair<std::pair<int, int> const, int>&&)
+  0.00      1.17     0.00     7630     0.00     0.00  Plane::intersection(Line&)
+  0.00      1.17     0.00     5306     0.00     0.00  void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+  0.00      1.17     0.00     3658     0.00     0.00  Transform::matrix()
+  0.00      1.17     0.00     1296     0.00     0.00  void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&)
+  0.00      1.17     0.00     1296     0.00     0.00  void std::vector<int, std::allocator<int> >::_M_realloc_insert<int>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int&&)
+  0.00      1.17     0.00     1071     0.00     0.00  Transform::mul(Transform&)
+  0.00      1.17     0.00      824     0.00     0.00  std::vector<int, std::allocator<int> >::vector(std::vector<int, std::allocator<int> > const&)
+  0.00      1.17     0.00      588     0.00     0.00  Plane::Trans(Transform)
+  0.00      1.17     0.00      290     0.00     0.00  void std::vector<float, std::allocator<float> >::_M_realloc_insert<float>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float&&)
+  0.00      1.17     0.00      240     0.00     0.00  Animation::animateMesh(int, int)
+  0.00      1.17     0.00      196     0.00     0.00  Mesh::Trans(Transform)
+  0.00      1.17     0.00      196     0.00     0.00  Transform::Transform(Transform const&)
+  0.00      1.17     0.00      180     0.00     0.00  ANIMI::LERP(float)
+  0.00      1.17     0.00      158     0.00     0.00  std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&)
+  0.00      1.17     0.00      144     0.00     0.00  spherp(Quaternion, Quaternion, float)
+  0.00      1.17     0.00      144     0.00     0.00  std::__cxx11::to_string(int)
+  0.00      1.17     0.00      109     0.00     0.00  std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&)
+  0.00      1.17     0.00      108     0.00     0.00  ANIMI::SINE(float)
+  0.00      1.17     0.00      107     0.00     0.00  std::vector<float, std::allocator<float> >::~vector()
+  0.00      1.17     0.00      101     0.00     0.00  Camera::Camera(Camera const&)
+  0.00      1.17     0.00       98     0.00     0.00  Camera::Trans(Transform)
+  0.00      1.17     0.00       96     0.00     0.00  std::vector<float, std::allocator<float> >::vector(std::vector<float, std::allocator<float> > const&)
+  0.00      1.17     0.00       92     0.00     0.00  void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > >(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> >&&)
+  0.00      1.17     0.00       51     0.00     0.00  MorphedMesh::m_setupvns()
+  0.00      1.17     0.00       51     0.00     0.00  MorphedMesh::setupvns()
+  0.00      1.17     0.00       50     0.00     0.00  Animation::getLength()
+  0.00      1.17     0.00       49     0.00     0.00  MorphedMesh::Trans(Transform)
+  0.00      1.17     0.00       48     0.00     0.00  ANIMI::SINE_IN(float)
+  0.00      1.17     0.00       48     0.00     0.00  operator+(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)
+  0.00      1.17     0.00       40     0.00     0.00  void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3&&)
+  0.00      1.17     0.00       40     0.00     0.00  void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > const&>(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> > const&)
+  0.00      1.17     0.00       20     0.00     0.00  void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2&&)
+  0.00      1.17     0.00       20     0.00     0.00  std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::~vector()
+  0.00      1.17     0.00       16     0.00     0.00  void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3 const&>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3 const&)
+  0.00      1.17     0.00       13     0.00     0.00  std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector()
+  0.00      1.17     0.00       12     0.00     0.00  std::vector<int, std::allocator<int> >* std::__do_uninit_fill_n<std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > >(std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > const&)
+  0.00      1.17     0.00       11     0.00     0.00  Scene::morph(int, std::vector<float, std::allocator<float> >)
+  0.00      1.17     0.00       10     0.00     0.00  Mesh::~Mesh()
+  0.00      1.17     0.00        8     0.00     0.00  subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&)
+  0.00      1.17     0.00        8     0.00     0.00  Rotation3(Vector3, float)
+  0.00      1.17     0.00        6     0.00     0.00  Mesh::Mesh(Mesh const&)
+  0.00      1.17     0.00        6     0.00     0.00  void std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > > >, std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >&&)
+  0.00      1.17     0.00        6     0.00     0.00  void std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > > >, std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >&&)
+  0.00      1.17     0.00        5     0.00     0.00  Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>)
+  0.00      1.17     0.00        5     0.00     0.00  std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+  0.00      1.17     0.00        4     0.00     0.00  Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&)
+  0.00      1.17     0.00        4     0.00     0.00  Camera::init()
+  0.00      1.17     0.00        4     0.00     0.00  void std::vector<BaseMaterial*, std::allocator<BaseMaterial*> >::_M_realloc_insert<BaseMaterial*>(__gnu_cxx::__normal_iterator<BaseMaterial**, std::vector<BaseMaterial*, std::allocator<BaseMaterial*> > >, BaseMaterial*&&)
+  0.00      1.17     0.00        4     0.00     0.00  void std::vector<Mesh*, std::allocator<Mesh*> >::_M_realloc_insert<Mesh*>(__gnu_cxx::__normal_iterator<Mesh**, std::vector<Mesh*, std::allocator<Mesh*> > >, Mesh*&&)
+  0.00      1.17     0.00        4     0.00     0.00  void std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > >::_M_realloc_insert<std::vector<Vector3, std::allocator<Vector3> > >(__gnu_cxx::__normal_iterator<std::vector<Vector3, std::allocator<Vector3> >*, std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > > >, std::vector<Vector3, std::allocator<Vector3> >&&)
+  0.00      1.17     0.00        4     0.00     0.00  std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::initializer_list<std::vector<unsigned int, std::allocator<unsigned int> > >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > const&)
+  0.00      1.17     0.00        4     0.00     0.00  void std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >*, std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > > >, std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >&&)
+  0.00      1.17     0.00        4     0.00     0.00  void std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > >::_M_realloc_insert<std::optional<FragShader> const&>(__gnu_cxx::__normal_iterator<std::optional<FragShader>*, std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > > >, std::optional<FragShader> const&)
+  0.00      1.17     0.00        4     0.00     0.00  std::vector<unsigned int, std::allocator<unsigned int> >* std::__do_uninit_fill_n<std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > >(std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > const&)
+  0.00      1.17     0.00        3     0.00     0.00  ImageTexture::getColor(Vector2)
+  0.00      1.17     0.00        3     0.00     0.00  Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  0.00      1.17     0.00        2     0.00     0.00  icosphere(float, int)
+  0.00      1.17     0.00        2     0.00     0.00  ImageTexture::ImageTexture(std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >)
+  0.00      1.17     0.00        2     0.00     0.00  Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&)
+  0.00      1.17     0.00        2     0.00     0.00  Camera::Camera(float)
+  0.00      1.17     0.00        2     0.00     0.00  Object::Trans(Transform)
+  0.00      1.17     0.00        2     0.00     0.00  void std::vector<Camera, std::allocator<Camera> >::_M_realloc_insert<Camera const&>(__gnu_cxx::__normal_iterator<Camera*, std::vector<Camera, std::allocator<Camera> > >, Camera const&)
+  0.00      1.17     0.00        2     0.00     0.00  std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > > const&)
+  0.00      1.17     0.00        1     0.00     0.00  GridSquare(float, int)
+  0.00      1.17     0.00        1     0.00     0.00  Quaternion::Quaternion(Matrix3)
+  0.00      1.17     0.00        1     0.00     0.00  MorphedMesh::copyTo(Mesh&, int)
+  0.00      1.17     0.00        1     0.00     0.00  MorphedMesh::MorphedMesh(Mesh const&)
+  0.00      1.17     0.00        1     0.00     0.00  MorphedMesh::MorphedMesh(MorphedMesh const&)
+  0.00      1.17     0.00        1     0.00     0.00  MorphedMesh::~MorphedMesh()
+  0.00      1.17     0.00        1     0.00     0.00  Scene::Scene(int, int)
+  0.00      1.17     0.00        1     0.00     0.00  Scene::~Scene()
+  0.00      1.17     0.00        1     0.00     0.00  Animation::loadScene(Scene*)
+  0.00      1.17     0.00        1     0.00     0.00  Animation::~Animation()
+  0.00      1.17     0.00        1     0.00     0.00  std::_Hashtable<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_rehash(unsigned long, unsigned long const&)
+  0.00      1.17     0.00        1     0.00     0.00  void std::vector<Light, std::allocator<Light> >::_M_realloc_insert<Light const&>(__gnu_cxx::__normal_iterator<Light*, std::vector<Light, std::allocator<Light> > >, Light const&)
+  0.00      1.17     0.00        1     0.00     0.00  std::vector<Light, std::allocator<Light> >::push_back(Light const&)
+  0.00      1.17     0.00        1     0.00     0.00  std::vector<float, std::allocator<float> >::vector(std::initializer_list<float>, std::allocator<float> const&)
 
  %         the percentage of the total running time of the
 time       program used by this function.
@@ -148,34 +148,34 @@ notice and this notice are preserved.
 		     Call graph (explanation follows)
 
 
-granularity: each sample hit covers 4 byte(s) for 0.81% of 1.23 seconds
+granularity: each sample hit covers 4 byte(s) for 0.85% of 1.17 seconds
 
 index % time    self  children    called     name
                                                  <spontaneous>
-[1]     99.2    0.00    1.22                 main [1]
-                0.11    1.11       1/1           AnimShader() [2]
-                0.00    0.00       3/1458909     ANIMI::SINE_OUT(float) [16]
+[1]     98.3    0.00    1.15                 main [1]
+                0.12    1.03       1/1           AnimShader() [2]
+                0.00    0.00       3/1458909     ANIMI::SINE_OUT(float) [18]
 -----------------------------------------------
-                0.11    1.11       1/1           main [1]
-[2]     99.2    0.11    1.11       1         AnimShader() [2]
-                0.17    0.92  511776/511776      Scene::render(bool, int, std::optional<FragShader>) [3]
-                0.00    0.02     240/240         Animation::animateMesh(int, int) [19]
+                0.12    1.03       1/1           main [1]
+[2]     98.3    0.12    1.03       1         AnimShader() [2]
+                0.09    0.93  511776/511776      Scene::render(bool, int, std::optional<FragShader>) [3]
+                0.00    0.01     240/240         Animation::animateMesh(int, int) [26]
+                0.00    0.00       3/3           Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
                 0.00    0.00       5/5           Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
-                0.00    0.00       3/3           Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
-                0.00    0.00       2/2           icosphere(float, int) [32]
-                0.00    0.00       4/210         Mesh::setupvns() [17]
-                0.00    0.00       1/1           GridSquare(float, int) [35]
-                0.00    0.00       1/1           MorphedMesh::MorphedMesh(Mesh const&) [36]
-                0.00    0.00      98/98          Camera::Trans(Transform) [39]
-                0.00    0.00      96/611781      Matrix4::inv() [9]
-                0.00    0.00      50/50          Animation::getLength() [40]
-                0.00    0.00     540/1458909     ANIMI::SINE_OUT(float) [16]
-                0.00    0.00       1/1           Animation::~Animation() [42]
-                0.00    0.00       1/1           Animation::loadScene(Scene*) [43]
-                0.00    0.00     109/109         std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [45]
-                0.00    0.00      11/11          Scene::morph(int, std::vector<float, std::allocator<float> >) [46]
-                0.00    0.00      14/158         std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [44]
-                0.00    0.00      10/17048365     ImageTexture::getColor(int, int) [13]
+                0.00    0.00       2/2           icosphere(float, int) [31]
+                0.00    0.00       4/210         Mesh::setupvns() [25]
+                0.00    0.00      98/98          Camera::Trans(Transform) [35]
+                0.00    0.00       1/1           GridSquare(float, int) [36]
+                0.00    0.00       1/1           MorphedMesh::MorphedMesh(Mesh const&) [37]
+                0.00    0.00      96/611781      Matrix4::inv() [10]
+                0.00    0.00      50/50          Animation::getLength() [39]
+                0.00    0.00     540/1458909     ANIMI::SINE_OUT(float) [18]
+                0.00    0.00       1/1           Animation::~Animation() [41]
+                0.00    0.00       1/1           Animation::loadScene(Scene*) [42]
+                0.00    0.00     109/109         std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [44]
+                0.00    0.00      11/11          Scene::morph(int, std::vector<float, std::allocator<float> >) [45]
+                0.00    0.00      14/158         std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [43]
+                0.00    0.00      10/16505353     ImageTexture::getColor(int, int) [15]
                 0.00    0.00     196/196         Transform::Transform(Transform const&) [69]
                 0.00    0.00     144/144         std::__cxx11::to_string(int) [72]
                 0.00    0.00      96/101         Camera::Camera(Camera const&) [75]
@@ -206,125 +206,158 @@ index % time    self  children    called     name
                 0.00    0.00       1/1           Scene::~Scene() [112]
                 0.00    0.00       1/2           void std::vector<Camera, std::allocator<Camera> >::_M_realloc_insert<Camera const&>(__gnu_cxx::__normal_iterator<Camera*, std::vector<Camera, std::allocator<Camera> > >, Camera const&) [106]
 -----------------------------------------------
-                0.17    0.92  511776/511776      AnimShader() [2]
-[3]     88.6    0.17    0.92  511776         Scene::render(bool, int, std::optional<FragShader>) [3]
-                0.10    0.71  483007/483007      Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
-                0.05    0.02 3015739/3015739     TriSplit(Triangle3, Plane) [10]
-                0.02    0.00 1449021/1458909     ANIMI::SINE_OUT(float) [16]
-                0.01    0.00 2475171/2475171     void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&) [21]
-                0.01    0.00 3070656/3070656     Plane::Plane(Plane const&) [26]
-                0.00    0.00 1477790/10878499     Triangle3::Triangle3(Triangle3 const&) [24]
+                0.09    0.93  511776/511776      AnimShader() [2]
+[3]     87.2    0.09    0.93  511776         Scene::render(bool, int, std::optional<FragShader>) [3]
+                0.20    0.55  483007/483007      Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
+                0.09    0.03 3015739/3015739     TriSplit(Triangle3, Plane) [7]
+                0.02    0.00 3070656/3070656     Plane::Plane(Plane const&) [17]
+                0.02    0.00 1449021/1458909     ANIMI::SINE_OUT(float) [18]
+                0.00    0.01 2475171/2475171     void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&) [27]
+                0.01    0.00 1477790/10878499     Triangle3::Triangle3(Triangle3 const&) [11]
                 0.00    0.00 1535328/1535328     std::vector<Triangle3, std::allocator<Triangle3> >::~vector() [56]
 -----------------------------------------------
-                0.10    0.71  483007/483007      Scene::render(bool, int, std::optional<FragShader>) [3]
-[4]     65.9    0.10    0.71  483007         Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
-                0.29    0.29 9748553/9748553     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
-                0.04    0.08  203619/203619      Scene::project(Triangle3, unsigned int) [7]
+                0.20    0.55  483007/483007      Scene::render(bool, int, std::optional<FragShader>) [3]
+[4]     64.4    0.20    0.55  483007         Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
+                0.21    0.24 9748553/9748553     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
+                0.02    0.07  203619/203619      Scene::project(Triangle3, unsigned int) [8]
                 0.01    0.00  610857/10359458     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
-                0.00    0.00  890245/10878499     Triangle3::Triangle3(Triangle3 const&) [24]
+                0.00    0.00  890245/10878499     Triangle3::Triangle3(Triangle3 const&) [11]
                 0.00    0.00  203619/203619      TriangleF::TriangleF(TriangleF const&) [57]
 -----------------------------------------------
-                0.29    0.29 9748553/9748553     Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
-[5]     47.2    0.29    0.29 9748553         Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
-                0.12    0.03 9748553/10359458     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
-                0.09    0.00 29245659/29245659     TriangleF::bary(int, int) [8]
-                0.02    0.00 21540612/21540615     Fragment::Fragment(Fragment const&) [12]
-                0.01    0.01 9748553/9748553     octant_shader(Fragment) [18]
+                0.21    0.24 9748553/9748553     Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
+[5]     38.7    0.21    0.24 9748553         Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
+                0.09    0.03 9748553/10359458     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
+                0.08    0.00 29245659/29245659     TriangleF::bary(int, int) [9]
+                0.00    0.02 9748553/9748553     octant_shader(Fragment) [21]
+                0.01    0.00 21540612/21540615     Fragment::Fragment(Fragment const&) [22]
                 0.01    0.00 8154032/16889554     BaseMaterial::getColor(Vector2) [14]
-                0.00    0.00 1021753/1021753     example_shader(Fragment) [28]
+                0.00    0.00 1021753/1021753     example_shader(Fragment) [47]
 -----------------------------------------------
                                  144             Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
-                0.00    0.00      48/10359458     Animation::animateMesh(int, int) [19]
+                0.00    0.00      48/10359458     Animation::animateMesh(int, int) [26]
                 0.01    0.00  610857/10359458     Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
-                0.12    0.03 9748553/10359458     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
-[6]     13.0    0.13    0.03 10359458+144     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
-                0.02    0.00 17045006/17048365     ImageTexture::getColor(int, int) [13]
+                0.09    0.03 9748553/10359458     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
+[6]     11.1    0.10    0.03 10359458+144     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
+                0.02    0.00 16501994/16505353     ImageTexture::getColor(int, int) [15]
                 0.01    0.00 8735522/16889554     BaseMaterial::getColor(Vector2) [14]
                                  144             Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
 -----------------------------------------------
-                0.04    0.08  203619/203619      Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
-[7]      9.7    0.04    0.08  203619         Scene::project(Triangle3, unsigned int) [7]
-                0.02    0.06  610857/611781      Matrix4::inv() [9]
------------------------------------------------
-                0.09    0.00 29245659/29245659     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
-[8]      7.3    0.09    0.00 29245659         TriangleF::bary(int, int) [8]
------------------------------------------------
-                0.00    0.00      96/611781      AnimShader() [2]
-                0.00    0.00     240/611781      Animation::animateMesh(int, int) [19]
-                0.00    0.00     588/611781      Plane::Trans(Transform) [38]
-                0.02    0.06  610857/611781      Scene::project(Triangle3, unsigned int) [7]
-[9]      6.5    0.02    0.06  611781         Matrix4::inv() [9]
-                0.03    0.00  611781/611781      Matrix4::det() [11]
-                0.02    0.00 6273468/6273468     Matrix4::getRow(int) [15]
-                0.01    0.00 20956212/20956212     Matrix4::setRow(int, Vector4) [23]
-                0.00    0.00 9788496/9788496     Matrix4::get(int, int) [54]
------------------------------------------------
-                0.05    0.02 3015739/3015739     Scene::render(bool, int, std::optional<FragShader>) [3]
-[10]     5.3    0.05    0.02 3015739         TriSplit(Triangle3, Plane) [10]
-                0.01    0.00 3023369/3023369     void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&) [20]
-                0.00    0.00 3011924/10878499     Triangle3::Triangle3(Triangle3 const&) [24]
+                0.09    0.03 3015739/3015739     Scene::render(bool, int, std::optional<FragShader>) [3]
+[7]     10.4    0.09    0.03 3015739         TriSplit(Triangle3, Plane) [7]
+                0.01    0.01 3023369/3023369     void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&) [12]
+                0.01    0.00 3011924/10878499     Triangle3::Triangle3(Triangle3 const&) [11]
                 0.00    0.00 3023369/3023369     operator*(std::vector<float, std::allocator<float> > const&, float) [55]
                 0.00    0.00   11445/11446       Triangle3::Triangle3(Vector3, Vector3, Vector3) [58]
                 0.00    0.00    7630/7630        Plane::intersection(Line&) [60]
 -----------------------------------------------
-                0.03    0.00  611781/611781      Matrix4::inv() [9]
-[11]     2.4    0.03    0.00  611781         Matrix4::det() [11]
+                0.02    0.07  203619/203619      Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
+[8]      7.7    0.02    0.07  203619         Scene::project(Triangle3, unsigned int) [8]
+                0.03    0.04  610857/611781      Matrix4::inv() [10]
 -----------------------------------------------
-                0.00    0.00       3/21540615     __static_initialization_and_destruction_0() [22]
-                0.02    0.00 21540612/21540615     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
-[12]     1.6    0.02    0.00 21540615         Fragment::Fragment(Fragment const&) [12]
+                0.08    0.00 29245659/29245659     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
+[9]      6.8    0.08    0.00 29245659         TriangleF::bary(int, int) [9]
 -----------------------------------------------
-                0.00    0.00      10/17048365     AnimShader() [2]
-                0.00    0.00    3349/17048365     Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
-                0.02    0.00 17045006/17048365     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
-[13]     1.6    0.02    0.00 17048365         ImageTexture::getColor(int, int) [13]
+                0.00    0.00      96/611781      AnimShader() [2]
+                0.00    0.00     240/611781      Animation::animateMesh(int, int) [26]
+                0.00    0.00     588/611781      Plane::Trans(Transform) [34]
+                0.03    0.04  610857/611781      Scene::project(Triangle3, unsigned int) [8]
+[10]     6.0    0.03    0.04  611781         Matrix4::inv() [10]
+                0.02    0.00  611781/611781      Matrix4::det() [19]
+                0.01    0.00 20956212/20956212     Matrix4::setRow(int, Vector4) [23]
+                0.01    0.00 9788496/9788496     Matrix4::get(int, int) [24]
+                0.00    0.00 6273468/6273468     Matrix4::getRow(int) [54]
+-----------------------------------------------
+                0.00    0.00  890245/10878499     Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
+                0.01    0.00 1477790/10878499     Scene::render(bool, int, std::optional<FragShader>) [3]
+                0.01    0.00 2475171/10878499     void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&) [27]
+                0.01    0.00 3011924/10878499     TriSplit(Triangle3, Plane) [7]
+                0.01    0.00 3023369/10878499     void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&) [12]
+[11]     3.4    0.04    0.00 10878499         Triangle3::Triangle3(Triangle3 const&) [11]
+-----------------------------------------------
+                0.01    0.01 3023369/3023369     TriSplit(Triangle3, Plane) [7]
+[12]     1.8    0.01    0.01 3023369         void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&) [12]
+                0.01    0.00 3023369/10878499     Triangle3::Triangle3(Triangle3 const&) [11]
+-----------------------------------------------
+                                                 <spontaneous>
+[13]     1.7    0.00    0.02                 __static_initialization_and_destruction_0() [13]
+                0.02    0.00    1664/1664        _init [20]
+                0.00    0.00       3/1458909     ANIMI::SINE_OUT(float) [18]
+                0.00    0.00       3/21540615     Fragment::Fragment(Fragment const&) [22]
+                0.00    0.00       4/4           std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::initializer_list<std::vector<unsigned int, std::allocator<unsigned int> > >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > const&) [98]
+                0.00    0.00       1/11446       Triangle3::Triangle3(Vector3, Vector3, Vector3) [58]
+                0.00    0.00       1/8           Rotation3(Vector3, float) [91]
 -----------------------------------------------
                 0.01    0.00 8154032/16889554     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
                 0.01    0.00 8735522/16889554     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
-[14]     1.6    0.02    0.00 16889554         BaseMaterial::getColor(Vector2) [14]
+[14]     1.7    0.02    0.00 16889554         BaseMaterial::getColor(Vector2) [14]
 -----------------------------------------------
-                0.02    0.00 6273468/6273468     Matrix4::inv() [9]
-[15]     1.6    0.02    0.00 6273468         Matrix4::getRow(int) [15]
+                0.00    0.00      10/16505353     AnimShader() [2]
+                0.00    0.00    3349/16505353     Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
+                0.02    0.00 16501994/16505353     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
+[15]     1.7    0.02    0.00 16505353         ImageTexture::getColor(int, int) [15]
 -----------------------------------------------
-                                1018             ANIMI::SINE_OUT(float) [16]
+                0.00    0.00       1/4423557     example_shader(Fragment) [47]
+                0.02    0.00 4423556/4423557     octant_shader(Fragment) [21]
+[16]     1.7    0.02    0.00 4423557         FragShaders::invert(Fragment) [16]
+-----------------------------------------------
+                0.02    0.00 3070656/3070656     Scene::render(bool, int, std::optional<FragShader>) [3]
+[17]     1.7    0.02    0.00 3070656         Plane::Plane(Plane const&) [17]
+-----------------------------------------------
+                                1018             ANIMI::SINE_OUT(float) [18]
                 0.00    0.00       1/1458909     Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
-                0.00    0.00       3/1458909     __static_initialization_and_destruction_0() [22]
+                0.00    0.00       3/1458909     __static_initialization_and_destruction_0() [13]
                 0.00    0.00       3/1458909     main [1]
-                0.00    0.00       5/1458909     std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [47]
-                0.00    0.00       6/1458909     Scene::morph(int, std::vector<float, std::allocator<float> >) [46]
-                0.00    0.00      11/1458909     std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [45]
-                0.00    0.00      12/1458909     std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [44]
-                0.00    0.00      16/1458909     Animation::loadScene(Scene*) [43]
-                0.00    0.00      24/1458909     Animation::~Animation() [42]
-                0.00    0.00      40/1458909     icosphere(float, int) [32]
-                0.00    0.00      58/1458909     subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [41]
+                0.00    0.00       5/1458909     std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [46]
+                0.00    0.00       6/1458909     Scene::morph(int, std::vector<float, std::allocator<float> >) [45]
+                0.00    0.00      11/1458909     std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [44]
+                0.00    0.00      12/1458909     std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [43]
+                0.00    0.00      16/1458909     Animation::loadScene(Scene*) [42]
+                0.00    0.00      24/1458909     Animation::~Animation() [41]
+                0.00    0.00      40/1458909     icosphere(float, int) [31]
+                0.00    0.00      58/1458909     subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [40]
                 0.00    0.00     540/1458909     AnimShader() [2]
-                0.00    0.00     650/1458909     Animation::getLength() [40]
-                0.00    0.00    1056/1458909     Animation::animateMesh(int, int) [19]
-                0.00    0.00    7463/1458909     Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
+                0.00    0.00     650/1458909     Animation::getLength() [39]
+                0.00    0.00    1056/1458909     Animation::animateMesh(int, int) [26]
+                0.00    0.00    7463/1458909     Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
                 0.02    0.00 1449021/1458909     Scene::render(bool, int, std::optional<FragShader>) [3]
-[16]     1.6    0.02    0.00 1458909+1018    ANIMI::SINE_OUT(float) [16]
-                                1018             ANIMI::SINE_OUT(float) [16]
+[18]     1.7    0.02    0.00 1458909+1018    ANIMI::SINE_OUT(float) [18]
+                                1018             ANIMI::SINE_OUT(float) [18]
 -----------------------------------------------
-                0.00    0.00       2/210         icosphere(float, int) [32]
-                0.00    0.00       2/210         Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [34]
-                0.00    0.00       4/210         Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
+                0.02    0.00  611781/611781      Matrix4::inv() [10]
+[19]     1.7    0.02    0.00  611781         Matrix4::det() [19]
+-----------------------------------------------
+                0.02    0.00    1664/1664        __static_initialization_and_destruction_0() [13]
+[20]     1.7    0.02    0.00    1664         _init [20]
+-----------------------------------------------
+                0.00    0.02 9748553/9748553     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
+[21]     1.7    0.00    0.02 9748553         octant_shader(Fragment) [21]
+                0.02    0.00 4423556/4423557     FragShaders::invert(Fragment) [16]
+-----------------------------------------------
+                0.00    0.00       3/21540615     __static_initialization_and_destruction_0() [13]
+                0.01    0.00 21540612/21540615     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
+[22]     0.9    0.01    0.00 21540615         Fragment::Fragment(Fragment const&) [22]
+-----------------------------------------------
+                0.01    0.00 20956212/20956212     Matrix4::inv() [10]
+[23]     0.9    0.01    0.00 20956212         Matrix4::setRow(int, Vector4) [23]
+-----------------------------------------------
+                0.01    0.00 9788496/9788496     Matrix4::inv() [10]
+[24]     0.9    0.01    0.00 9788496         Matrix4::get(int, int) [24]
+-----------------------------------------------
+                0.00    0.00       2/210         icosphere(float, int) [31]
+                0.00    0.00       2/210         Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
+                0.00    0.00       4/210         Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [32]
                 0.00    0.00       4/210         AnimShader() [2]
-                0.00    0.00       6/210         Mesh::Mesh(Mesh const&) [29]
-                0.02    0.00     192/210         Animation::animateMesh(int, int) [19]
-[17]     1.6    0.02    0.00     210         Mesh::setupvns() [17]
+                0.00    0.00       6/210         Mesh::Mesh(Mesh const&) [28]
+                0.01    0.00     192/210         Animation::animateMesh(int, int) [26]
+[25]     0.9    0.01    0.00     210         Mesh::setupvns() [25]
 -----------------------------------------------
-                0.01    0.01 9748553/9748553     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
-[18]     1.5    0.01    0.01 9748553         octant_shader(Fragment) [18]
-                0.01    0.00 4047495/4563063     FragShaders::invert(Fragment) [25]
------------------------------------------------
-                0.00    0.02     240/240         AnimShader() [2]
-[19]     1.5    0.00    0.02     240         Animation::animateMesh(int, int) [19]
-                0.02    0.00     192/210         Mesh::setupvns() [17]
-                0.00    0.00     240/611781      Matrix4::inv() [9]
-                0.00    0.00    1056/1458909     ANIMI::SINE_OUT(float) [16]
+                0.00    0.01     240/240         AnimShader() [2]
+[26]     0.8    0.00    0.01     240         Animation::animateMesh(int, int) [26]
+                0.01    0.00     192/210         Mesh::setupvns() [25]
+                0.00    0.00     240/611781      Matrix4::inv() [10]
+                0.00    0.00    1056/1458909     ANIMI::SINE_OUT(float) [18]
                 0.00    0.00      48/10359458     Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [6]
-                0.00    0.00     144/158         std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [44]
+                0.00    0.00     144/158         std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [43]
                 0.00    0.00     240/3658        Transform::matrix() [62]
                 0.00    0.00     240/1071        Transform::mul(Transform&) [65]
                 0.00    0.00     192/196         Mesh::Trans(Transform) [68]
@@ -339,71 +372,21 @@ index % time    self  children    called     name
                 0.00    0.00      48/48          operator+(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&) [82]
                 0.00    0.00      12/108         ANIMI::SINE(float) [73]
 -----------------------------------------------
-                0.01    0.00 3023369/3023369     TriSplit(Triangle3, Plane) [10]
-[20]     1.0    0.01    0.00 3023369         void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&) [20]
-                0.00    0.00 3023369/10878499     Triangle3::Triangle3(Triangle3 const&) [24]
+                0.00    0.01 2475171/2475171     Scene::render(bool, int, std::optional<FragShader>) [3]
+[27]     0.8    0.00    0.01 2475171         void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&) [27]
+                0.01    0.00 2475171/10878499     Triangle3::Triangle3(Triangle3 const&) [11]
 -----------------------------------------------
-                0.01    0.00 2475171/2475171     Scene::render(bool, int, std::optional<FragShader>) [3]
-[21]     1.0    0.01    0.00 2475171         void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&) [21]
-                0.00    0.00 2475171/10878499     Triangle3::Triangle3(Triangle3 const&) [24]
------------------------------------------------
-                                                 <spontaneous>
-[22]     0.8    0.00    0.01                 __static_initialization_and_destruction_0() [22]
-                0.01    0.00    1664/1664        _init [27]
-                0.00    0.00       3/1458909     ANIMI::SINE_OUT(float) [16]
-                0.00    0.00       3/21540615     Fragment::Fragment(Fragment const&) [12]
-                0.00    0.00       4/4           std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::initializer_list<std::vector<unsigned int, std::allocator<unsigned int> > >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > const&) [98]
-                0.00    0.00       1/11446       Triangle3::Triangle3(Vector3, Vector3, Vector3) [58]
-                0.00    0.00       1/8           Rotation3(Vector3, float) [91]
------------------------------------------------
-                0.01    0.00 20956212/20956212     Matrix4::inv() [9]
-[23]     0.8    0.01    0.00 20956212         Matrix4::setRow(int, Vector4) [23]
------------------------------------------------
-                0.00    0.00  890245/10878499     Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
-                0.00    0.00 1477790/10878499     Scene::render(bool, int, std::optional<FragShader>) [3]
-                0.00    0.00 2475171/10878499     void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&) [21]
-                0.00    0.00 3011924/10878499     TriSplit(Triangle3, Plane) [10]
-                0.00    0.00 3023369/10878499     void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&) [20]
-[24]     0.8    0.01    0.00 10878499         Triangle3::Triangle3(Triangle3 const&) [24]
------------------------------------------------
-                0.00    0.00  515568/4563063     example_shader(Fragment) [28]
-                0.01    0.00 4047495/4563063     octant_shader(Fragment) [18]
-[25]     0.8    0.01    0.00 4563063         FragShaders::invert(Fragment) [25]
------------------------------------------------
-                0.01    0.00 3070656/3070656     Scene::render(bool, int, std::optional<FragShader>) [3]
-[26]     0.8    0.01    0.00 3070656         Plane::Plane(Plane const&) [26]
------------------------------------------------
-                0.01    0.00    1664/1664        __static_initialization_and_destruction_0() [22]
-[27]     0.8    0.01    0.00    1664         _init [27]
------------------------------------------------
-                0.00    0.00 1021753/1021753     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
-[28]     0.1    0.00    0.00 1021753         example_shader(Fragment) [28]
-                0.00    0.00  515568/4563063     FragShaders::invert(Fragment) [25]
------------------------------------------------
-                0.00    0.00       1/6           MorphedMesh::MorphedMesh(MorphedMesh const&) [37]
-                0.00    0.00       1/6           MorphedMesh::MorphedMesh(Mesh const&) [36]
+                0.00    0.00       1/6           MorphedMesh::MorphedMesh(MorphedMesh const&) [38]
+                0.00    0.00       1/6           MorphedMesh::MorphedMesh(Mesh const&) [37]
                 0.00    0.00       4/6           Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
-[29]     0.0    0.00    0.00       6         Mesh::Mesh(Mesh const&) [29]
-                0.00    0.00       6/210         Mesh::setupvns() [17]
------------------------------------------------
-                0.00    0.00       5/5           AnimShader() [2]
-[30]     0.0    0.00    0.00       5         Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
-                0.00    0.00       4/6           Mesh::Mesh(Mesh const&) [29]
-                0.00    0.00       1/1           MorphedMesh::MorphedMesh(MorphedMesh const&) [37]
-                0.00    0.00       5/5           std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [47]
-                0.00    0.00       1/1458909     ANIMI::SINE_OUT(float) [16]
-                0.00    0.00       4/20          std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::~vector() [86]
-                0.00    0.00       4/4           void std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > >::_M_realloc_insert<std::optional<FragShader> const&>(__gnu_cxx::__normal_iterator<std::optional<FragShader>*, std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > > >, std::optional<FragShader> const&) [100]
-                0.00    0.00       4/5306        void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [61]
-                0.00    0.00       4/4           void std::vector<Mesh*, std::allocator<Mesh*> >::_M_realloc_insert<Mesh*>(__gnu_cxx::__normal_iterator<Mesh**, std::vector<Mesh*, std::allocator<Mesh*> > >, Mesh*&&) [96]
-                0.00    0.00       4/4           void std::vector<BaseMaterial*, std::allocator<BaseMaterial*> >::_M_realloc_insert<BaseMaterial*>(__gnu_cxx::__normal_iterator<BaseMaterial**, std::vector<BaseMaterial*, std::allocator<BaseMaterial*> > >, BaseMaterial*&&) [95]
-                0.00    0.00       2/4           std::vector<unsigned int, std::allocator<unsigned int> >* std::__do_uninit_fill_n<std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > >(std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > const&) [101]
+[28]     0.0    0.00    0.00       6         Mesh::Mesh(Mesh const&) [28]
+                0.00    0.00       6/210         Mesh::setupvns() [25]
 -----------------------------------------------
                 0.00    0.00       3/3           AnimShader() [2]
-[31]     0.0    0.00    0.00       3         Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
-                0.00    0.00       3/4           Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
-                0.00    0.00    7463/1458909     ANIMI::SINE_OUT(float) [16]
-                0.00    0.00    3349/17048365     ImageTexture::getColor(int, int) [13]
+[29]     0.0    0.00    0.00       3         Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
+                0.00    0.00       3/4           Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [32]
+                0.00    0.00    7463/1458909     ANIMI::SINE_OUT(float) [18]
+                0.00    0.00    3349/16505353     ImageTexture::getColor(int, int) [15]
                 0.00    0.00    5302/5306        void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [61]
                 0.00    0.00    1296/1296        void std::vector<int, std::allocator<int> >::_M_realloc_insert<int>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int&&) [64]
                 0.00    0.00    1296/1296        void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&) [63]
@@ -411,106 +394,123 @@ index % time    self  children    called     name
                 0.00    0.00      40/40          void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > const&>(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> > const&) [84]
                 0.00    0.00      37/40          void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3&&) [83]
                 0.00    0.00      20/20          void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2&&) [85]
-                0.00    0.00       6/14          std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector() [88]
+                0.00    0.00       6/13          std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector() [88]
+-----------------------------------------------
+                0.00    0.00       5/5           AnimShader() [2]
+[30]     0.0    0.00    0.00       5         Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
+                0.00    0.00       4/6           Mesh::Mesh(Mesh const&) [28]
+                0.00    0.00       1/1           MorphedMesh::MorphedMesh(MorphedMesh const&) [38]
+                0.00    0.00       5/5           std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [46]
+                0.00    0.00       1/1458909     ANIMI::SINE_OUT(float) [18]
+                0.00    0.00       4/20          std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::~vector() [86]
+                0.00    0.00       4/4           void std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > >::_M_realloc_insert<std::optional<FragShader> const&>(__gnu_cxx::__normal_iterator<std::optional<FragShader>*, std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > > >, std::optional<FragShader> const&) [100]
+                0.00    0.00       4/5306        void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [61]
+                0.00    0.00       4/4           void std::vector<Mesh*, std::allocator<Mesh*> >::_M_realloc_insert<Mesh*>(__gnu_cxx::__normal_iterator<Mesh**, std::vector<Mesh*, std::allocator<Mesh*> > >, Mesh*&&) [96]
+                0.00    0.00       4/4           void std::vector<BaseMaterial*, std::allocator<BaseMaterial*> >::_M_realloc_insert<BaseMaterial*>(__gnu_cxx::__normal_iterator<BaseMaterial**, std::vector<BaseMaterial*, std::allocator<BaseMaterial*> > >, BaseMaterial*&&) [95]
+                0.00    0.00       2/4           std::vector<unsigned int, std::allocator<unsigned int> >* std::__do_uninit_fill_n<std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > >(std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > const&) [101]
 -----------------------------------------------
                 0.00    0.00       2/2           AnimShader() [2]
-[32]     0.0    0.00    0.00       2         icosphere(float, int) [32]
-                0.00    0.00       2/2           Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [34]
-                0.00    0.00       2/210         Mesh::setupvns() [17]
-                0.00    0.00       8/8           subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [41]
-                0.00    0.00      40/1458909     ANIMI::SINE_OUT(float) [16]
+[31]     0.0    0.00    0.00       2         icosphere(float, int) [31]
+                0.00    0.00       2/2           Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
+                0.00    0.00       2/210         Mesh::setupvns() [25]
+                0.00    0.00       8/8           subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [40]
+                0.00    0.00      40/1458909     ANIMI::SINE_OUT(float) [18]
 -----------------------------------------------
-                0.00    0.00       1/4           GridSquare(float, int) [35]
-                0.00    0.00       3/4           Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
-[33]     0.0    0.00    0.00       4         Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
-                0.00    0.00       4/210         Mesh::setupvns() [17]
+                0.00    0.00       1/4           GridSquare(float, int) [36]
+                0.00    0.00       3/4           Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
+[32]     0.0    0.00    0.00       4         Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [32]
+                0.00    0.00       4/210         Mesh::setupvns() [25]
                 0.00    0.00       8/12          std::vector<int, std::allocator<int> >* std::__do_uninit_fill_n<std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > >(std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > const&) [89]
 -----------------------------------------------
-                0.00    0.00       2/2           icosphere(float, int) [32]
-[34]     0.0    0.00    0.00       2         Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [34]
-                0.00    0.00       2/210         Mesh::setupvns() [17]
+                0.00    0.00       2/2           icosphere(float, int) [31]
+[33]     0.0    0.00    0.00       2         Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
+                0.00    0.00       2/210         Mesh::setupvns() [25]
                 0.00    0.00       4/12          std::vector<int, std::allocator<int> >* std::__do_uninit_fill_n<std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > >(std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > const&) [89]
 -----------------------------------------------
+                0.00    0.00     588/588         Camera::Trans(Transform) [35]
+[34]     0.0    0.00    0.00     588         Plane::Trans(Transform) [34]
+                0.00    0.00     588/611781      Matrix4::inv() [10]
+                0.00    0.00     588/1071        Transform::mul(Transform&) [65]
+                0.00    0.00     588/3658        Transform::matrix() [62]
+-----------------------------------------------
+                0.00    0.00      98/98          AnimShader() [2]
+[35]     0.0    0.00    0.00      98         Camera::Trans(Transform) [35]
+                0.00    0.00     588/588         Plane::Trans(Transform) [34]
+                0.00    0.00      98/1071        Transform::mul(Transform&) [65]
+-----------------------------------------------
                 0.00    0.00       1/1           AnimShader() [2]
-[35]     0.0    0.00    0.00       1         GridSquare(float, int) [35]
-                0.00    0.00       1/4           Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
+[36]     0.0    0.00    0.00       1         GridSquare(float, int) [36]
+                0.00    0.00       1/4           Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [32]
                 0.00    0.00       4/92          void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > >(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> >&&) [77]
                 0.00    0.00       3/40          void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3&&) [83]
 -----------------------------------------------
                 0.00    0.00       1/1           AnimShader() [2]
-[36]     0.0    0.00    0.00       1         MorphedMesh::MorphedMesh(Mesh const&) [36]
-                0.00    0.00       1/6           Mesh::Mesh(Mesh const&) [29]
-                0.00    0.00       4/14          std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector() [88]
+[37]     0.0    0.00    0.00       1         MorphedMesh::MorphedMesh(Mesh const&) [37]
+                0.00    0.00       1/6           Mesh::Mesh(Mesh const&) [28]
+                0.00    0.00       4/13          std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector() [88]
                 0.00    0.00       2/4           void std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > >::_M_realloc_insert<std::vector<Vector3, std::allocator<Vector3> > >(__gnu_cxx::__normal_iterator<std::vector<Vector3, std::allocator<Vector3> >*, std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > > >, std::vector<Vector3, std::allocator<Vector3> >&&) [97]
                 0.00    0.00       1/51          MorphedMesh::setupvns() [79]
                 0.00    0.00       1/51          MorphedMesh::m_setupvns() [78]
                 0.00    0.00       1/290         void std::vector<float, std::allocator<float> >::_M_realloc_insert<float>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float&&) [67]
 -----------------------------------------------
                 0.00    0.00       1/1           Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
-[37]     0.0    0.00    0.00       1         MorphedMesh::MorphedMesh(MorphedMesh const&) [37]
-                0.00    0.00       1/6           Mesh::Mesh(Mesh const&) [29]
-                0.00    0.00       4/14          std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector() [88]
+[38]     0.0    0.00    0.00       1         MorphedMesh::MorphedMesh(MorphedMesh const&) [38]
+                0.00    0.00       1/6           Mesh::Mesh(Mesh const&) [28]
+                0.00    0.00       3/13          std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector() [88]
                 0.00    0.00       1/51          MorphedMesh::m_setupvns() [78]
                 0.00    0.00       1/51          MorphedMesh::setupvns() [79]
 -----------------------------------------------
-                0.00    0.00     588/588         Camera::Trans(Transform) [39]
-[38]     0.0    0.00    0.00     588         Plane::Trans(Transform) [38]
-                0.00    0.00     588/611781      Matrix4::inv() [9]
-                0.00    0.00     588/1071        Transform::mul(Transform&) [65]
-                0.00    0.00     588/3658        Transform::matrix() [62]
------------------------------------------------
-                0.00    0.00      98/98          AnimShader() [2]
-[39]     0.0    0.00    0.00      98         Camera::Trans(Transform) [39]
-                0.00    0.00     588/588         Plane::Trans(Transform) [38]
-                0.00    0.00      98/1071        Transform::mul(Transform&) [65]
------------------------------------------------
                 0.00    0.00      50/50          AnimShader() [2]
-[40]     0.0    0.00    0.00      50         Animation::getLength() [40]
-                0.00    0.00     650/1458909     ANIMI::SINE_OUT(float) [16]
+[39]     0.0    0.00    0.00      50         Animation::getLength() [39]
+                0.00    0.00     650/1458909     ANIMI::SINE_OUT(float) [18]
 -----------------------------------------------
-                0.00    0.00       8/8           icosphere(float, int) [32]
-[41]     0.0    0.00    0.00       8         subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [41]
-                0.00    0.00      58/1458909     ANIMI::SINE_OUT(float) [16]
+                0.00    0.00       8/8           icosphere(float, int) [31]
+[40]     0.0    0.00    0.00       8         subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [40]
+                0.00    0.00      58/1458909     ANIMI::SINE_OUT(float) [18]
                 0.00    0.00   10200/10200       std::pair<std::_Rb_tree_iterator<std::pair<std::pair<int, int> const, int> >, bool> std::_Rb_tree<std::pair<int, int>, std::pair<std::pair<int, int> const, int>, std::_Select1st<std::pair<std::pair<int, int> const, int> >, std::less<std::pair<int, int> >, std::allocator<std::pair<std::pair<int, int> const, int> > >::_M_insert_unique<std::pair<std::pair<int, int> const, int> >(std::pair<std::pair<int, int> const, int>&&) [59]
                 0.00    0.00      88/92          void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > >(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> >&&) [77]
                 0.00    0.00      16/16          void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3 const&>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3 const&) [87]
 -----------------------------------------------
                 0.00    0.00       1/1           AnimShader() [2]
-[42]     0.0    0.00    0.00       1         Animation::~Animation() [42]
-                0.00    0.00      24/1458909     ANIMI::SINE_OUT(float) [16]
+[41]     0.0    0.00    0.00       1         Animation::~Animation() [41]
+                0.00    0.00      24/1458909     ANIMI::SINE_OUT(float) [18]
 -----------------------------------------------
                 0.00    0.00       1/1           AnimShader() [2]
-[43]     0.0    0.00    0.00       1         Animation::loadScene(Scene*) [43]
-                0.00    0.00      16/1458909     ANIMI::SINE_OUT(float) [16]
+[42]     0.0    0.00    0.00       1         Animation::loadScene(Scene*) [42]
+                0.00    0.00      16/1458909     ANIMI::SINE_OUT(float) [18]
                 0.00    0.00       6/6           void std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > > >, std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >&&) [93]
                 0.00    0.00       6/6           void std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > > >, std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >&&) [92]
                 0.00    0.00       4/4           void std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >*, std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > > >, std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >&&) [99]
                 0.00    0.00       2/101         Camera::Camera(Camera const&) [75]
 -----------------------------------------------
                 0.00    0.00      14/158         AnimShader() [2]
-                0.00    0.00     144/158         Animation::animateMesh(int, int) [19]
-[44]     0.0    0.00    0.00     158         std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [44]
-                0.00    0.00      12/1458909     ANIMI::SINE_OUT(float) [16]
+                0.00    0.00     144/158         Animation::animateMesh(int, int) [26]
+[43]     0.0    0.00    0.00     158         std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [43]
+                0.00    0.00      12/1458909     ANIMI::SINE_OUT(float) [18]
 -----------------------------------------------
                 0.00    0.00     109/109         AnimShader() [2]
-[45]     0.0    0.00    0.00     109         std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [45]
-                0.00    0.00      11/1458909     ANIMI::SINE_OUT(float) [16]
+[44]     0.0    0.00    0.00     109         std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [44]
+                0.00    0.00      11/1458909     ANIMI::SINE_OUT(float) [18]
                 0.00    0.00      48/108         ANIMI::SINE(float) [73]
                 0.00    0.00      48/144         spherp(Quaternion, Quaternion, float) [71]
 -----------------------------------------------
                 0.00    0.00      11/11          AnimShader() [2]
-[46]     0.0    0.00    0.00      11         Scene::morph(int, std::vector<float, std::allocator<float> >) [46]
-                0.00    0.00       6/1458909     ANIMI::SINE_OUT(float) [16]
+[45]     0.0    0.00    0.00      11         Scene::morph(int, std::vector<float, std::allocator<float> >) [45]
+                0.00    0.00       6/1458909     ANIMI::SINE_OUT(float) [18]
 -----------------------------------------------
                 0.00    0.00       5/5           Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
-[47]     0.0    0.00    0.00       5         std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [47]
-                0.00    0.00       5/1458909     ANIMI::SINE_OUT(float) [16]
+[46]     0.0    0.00    0.00       5         std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [46]
+                0.00    0.00       5/1458909     ANIMI::SINE_OUT(float) [18]
                 0.00    0.00       1/1           std::_Hashtable<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_rehash(unsigned long, unsigned long const&) [113]
 -----------------------------------------------
-                0.00    0.00 9788496/9788496     Matrix4::inv() [9]
-[54]     0.0    0.00    0.00 9788496         Matrix4::get(int, int) [54]
+                0.00    0.00 1021753/1021753     Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [5]
+[47]     0.0    0.00    0.00 1021753         example_shader(Fragment) [47]
+                0.00    0.00       1/4423557     FragShaders::invert(Fragment) [16]
 -----------------------------------------------
-                0.00    0.00 3023369/3023369     TriSplit(Triangle3, Plane) [10]
+                0.00    0.00 6273468/6273468     Matrix4::inv() [10]
+[54]     0.0    0.00    0.00 6273468         Matrix4::getRow(int) [54]
+-----------------------------------------------
+                0.00    0.00 3023369/3023369     TriSplit(Triangle3, Plane) [7]
 [55]     0.0    0.00    0.00 3023369         operator*(std::vector<float, std::allocator<float> > const&, float) [55]
 -----------------------------------------------
                 0.00    0.00 1535328/1535328     Scene::render(bool, int, std::optional<FragShader>) [3]
@@ -519,53 +519,53 @@ index % time    self  children    called     name
                 0.00    0.00  203619/203619      Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [4]
 [57]     0.0    0.00    0.00  203619         TriangleF::TriangleF(TriangleF const&) [57]
 -----------------------------------------------
-                0.00    0.00       1/11446       __static_initialization_and_destruction_0() [22]
-                0.00    0.00   11445/11446       TriSplit(Triangle3, Plane) [10]
+                0.00    0.00       1/11446       __static_initialization_and_destruction_0() [13]
+                0.00    0.00   11445/11446       TriSplit(Triangle3, Plane) [7]
 [58]     0.0    0.00    0.00   11446         Triangle3::Triangle3(Vector3, Vector3, Vector3) [58]
 -----------------------------------------------
-                0.00    0.00   10200/10200       subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [41]
+                0.00    0.00   10200/10200       subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [40]
 [59]     0.0    0.00    0.00   10200         std::pair<std::_Rb_tree_iterator<std::pair<std::pair<int, int> const, int> >, bool> std::_Rb_tree<std::pair<int, int>, std::pair<std::pair<int, int> const, int>, std::_Select1st<std::pair<std::pair<int, int> const, int> >, std::less<std::pair<int, int> >, std::allocator<std::pair<std::pair<int, int> const, int> > >::_M_insert_unique<std::pair<std::pair<int, int> const, int> >(std::pair<std::pair<int, int> const, int>&&) [59]
 -----------------------------------------------
-                0.00    0.00    7630/7630        TriSplit(Triangle3, Plane) [10]
+                0.00    0.00    7630/7630        TriSplit(Triangle3, Plane) [7]
 [60]     0.0    0.00    0.00    7630         Plane::intersection(Line&) [60]
 -----------------------------------------------
                 0.00    0.00       4/5306        Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
-                0.00    0.00    5302/5306        Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
+                0.00    0.00    5302/5306        Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
 [61]     0.0    0.00    0.00    5306         void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [61]
 -----------------------------------------------
                 0.00    0.00       4/3658        Object::Trans(Transform) [105]
                 0.00    0.00      96/3658        AnimShader() [2]
-                0.00    0.00     240/3658        Animation::animateMesh(int, int) [19]
-                0.00    0.00     588/3658        Plane::Trans(Transform) [38]
+                0.00    0.00     240/3658        Animation::animateMesh(int, int) [26]
+                0.00    0.00     588/3658        Plane::Trans(Transform) [34]
                 0.00    0.00     588/3658        Mesh::Trans(Transform) [68]
                 0.00    0.00    2142/3658        Transform::mul(Transform&) [65]
 [62]     0.0    0.00    0.00    3658         Transform::matrix() [62]
 -----------------------------------------------
-                0.00    0.00    1296/1296        Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
+                0.00    0.00    1296/1296        Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
 [63]     0.0    0.00    0.00    1296         void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&) [63]
 -----------------------------------------------
-                0.00    0.00    1296/1296        Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
+                0.00    0.00    1296/1296        Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
 [64]     0.0    0.00    0.00    1296         void std::vector<int, std::allocator<int> >::_M_realloc_insert<int>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int&&) [64]
 -----------------------------------------------
                 0.00    0.00      49/1071        MorphedMesh::Trans(Transform) [80]
                 0.00    0.00      96/1071        AnimShader() [2]
-                0.00    0.00      98/1071        Camera::Trans(Transform) [39]
-                0.00    0.00     240/1071        Animation::animateMesh(int, int) [19]
-                0.00    0.00     588/1071        Plane::Trans(Transform) [38]
+                0.00    0.00      98/1071        Camera::Trans(Transform) [35]
+                0.00    0.00     240/1071        Animation::animateMesh(int, int) [26]
+                0.00    0.00     588/1071        Plane::Trans(Transform) [34]
 [65]     0.0    0.00    0.00    1071         Transform::mul(Transform&) [65]
                 0.00    0.00    2142/3658        Transform::matrix() [62]
 -----------------------------------------------
-                0.00    0.00     824/824         Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
+                0.00    0.00     824/824         Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
 [66]     0.0    0.00    0.00     824         std::vector<int, std::allocator<int> >::vector(std::vector<int, std::allocator<int> > const&) [66]
 -----------------------------------------------
                 0.00    0.00       1/290         MorphedMesh::copyTo(Mesh&, int) [109]
-                0.00    0.00       1/290         MorphedMesh::MorphedMesh(Mesh const&) [36]
+                0.00    0.00       1/290         MorphedMesh::MorphedMesh(Mesh const&) [37]
                 0.00    0.00      96/290         operator+(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&) [82]
-                0.00    0.00     192/290         Animation::animateMesh(int, int) [19]
+                0.00    0.00     192/290         Animation::animateMesh(int, int) [26]
 [67]     0.0    0.00    0.00     290         void std::vector<float, std::allocator<float> >::_M_realloc_insert<float>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float&&) [67]
 -----------------------------------------------
                 0.00    0.00       4/196         AnimShader() [2]
-                0.00    0.00     192/196         Animation::animateMesh(int, int) [19]
+                0.00    0.00     192/196         Animation::animateMesh(int, int) [26]
 [68]     0.0    0.00    0.00     196         Mesh::Trans(Transform) [68]
                 0.00    0.00     588/3658        Transform::matrix() [62]
 -----------------------------------------------
@@ -573,99 +573,99 @@ index % time    self  children    called     name
 [69]     0.0    0.00    0.00     196         Transform::Transform(Transform const&) [69]
 -----------------------------------------------
                 0.00    0.00      48/180         AnimShader() [2]
-                0.00    0.00     132/180         Animation::animateMesh(int, int) [19]
+                0.00    0.00     132/180         Animation::animateMesh(int, int) [26]
 [70]     0.0    0.00    0.00     180         ANIMI::LERP(float) [70]
 -----------------------------------------------
-                0.00    0.00      48/144         std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [45]
-                0.00    0.00      96/144         Animation::animateMesh(int, int) [19]
+                0.00    0.00      48/144         std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [44]
+                0.00    0.00      96/144         Animation::animateMesh(int, int) [26]
 [71]     0.0    0.00    0.00     144         spherp(Quaternion, Quaternion, float) [71]
 -----------------------------------------------
                 0.00    0.00     144/144         AnimShader() [2]
 [72]     0.0    0.00    0.00     144         std::__cxx11::to_string(int) [72]
 -----------------------------------------------
-                0.00    0.00      12/108         Animation::animateMesh(int, int) [19]
-                0.00    0.00      48/108         std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [45]
+                0.00    0.00      12/108         Animation::animateMesh(int, int) [26]
+                0.00    0.00      48/108         std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [44]
                 0.00    0.00      48/108         AnimShader() [2]
 [73]     0.0    0.00    0.00     108         ANIMI::SINE(float) [73]
 -----------------------------------------------
                 0.00    0.00      11/107         AnimShader() [2]
-                0.00    0.00      96/107         Animation::animateMesh(int, int) [19]
+                0.00    0.00      96/107         Animation::animateMesh(int, int) [26]
 [74]     0.0    0.00    0.00     107         std::vector<float, std::allocator<float> >::~vector() [74]
 -----------------------------------------------
-                0.00    0.00       2/101         Animation::loadScene(Scene*) [43]
+                0.00    0.00       2/101         Animation::loadScene(Scene*) [42]
                 0.00    0.00       3/101         void std::vector<Camera, std::allocator<Camera> >::_M_realloc_insert<Camera const&>(__gnu_cxx::__normal_iterator<Camera*, std::vector<Camera, std::allocator<Camera> > >, Camera const&) [106]
                 0.00    0.00      96/101         AnimShader() [2]
 [75]     0.0    0.00    0.00     101         Camera::Camera(Camera const&) [75]
 -----------------------------------------------
-                0.00    0.00      96/96          Animation::animateMesh(int, int) [19]
+                0.00    0.00      96/96          Animation::animateMesh(int, int) [26]
 [76]     0.0    0.00    0.00      96         std::vector<float, std::allocator<float> >::vector(std::vector<float, std::allocator<float> > const&) [76]
 -----------------------------------------------
-                0.00    0.00       4/92          GridSquare(float, int) [35]
-                0.00    0.00      88/92          subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [41]
+                0.00    0.00       4/92          GridSquare(float, int) [36]
+                0.00    0.00      88/92          subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [40]
 [77]     0.0    0.00    0.00      92         void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > >(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> >&&) [77]
 -----------------------------------------------
-                0.00    0.00       1/51          MorphedMesh::MorphedMesh(MorphedMesh const&) [37]
-                0.00    0.00       1/51          MorphedMesh::MorphedMesh(Mesh const&) [36]
+                0.00    0.00       1/51          MorphedMesh::MorphedMesh(MorphedMesh const&) [38]
+                0.00    0.00       1/51          MorphedMesh::MorphedMesh(Mesh const&) [37]
                 0.00    0.00       1/51          AnimShader() [2]
-                0.00    0.00      48/51          Animation::animateMesh(int, int) [19]
+                0.00    0.00      48/51          Animation::animateMesh(int, int) [26]
 [78]     0.0    0.00    0.00      51         MorphedMesh::m_setupvns() [78]
 -----------------------------------------------
-                0.00    0.00       1/51          MorphedMesh::MorphedMesh(MorphedMesh const&) [37]
-                0.00    0.00       1/51          MorphedMesh::MorphedMesh(Mesh const&) [36]
+                0.00    0.00       1/51          MorphedMesh::MorphedMesh(MorphedMesh const&) [38]
+                0.00    0.00       1/51          MorphedMesh::MorphedMesh(Mesh const&) [37]
                 0.00    0.00      49/51          MorphedMesh::Trans(Transform) [80]
 [79]     0.0    0.00    0.00      51         MorphedMesh::setupvns() [79]
 -----------------------------------------------
                 0.00    0.00       1/49          AnimShader() [2]
-                0.00    0.00      48/49          Animation::animateMesh(int, int) [19]
+                0.00    0.00      48/49          Animation::animateMesh(int, int) [26]
 [80]     0.0    0.00    0.00      49         MorphedMesh::Trans(Transform) [80]
                 0.00    0.00      49/1071        Transform::mul(Transform&) [65]
                 0.00    0.00      49/51          MorphedMesh::setupvns() [79]
 -----------------------------------------------
-                0.00    0.00      48/48          Animation::animateMesh(int, int) [19]
+                0.00    0.00      48/48          Animation::animateMesh(int, int) [26]
 [81]     0.0    0.00    0.00      48         ANIMI::SINE_IN(float) [81]
 -----------------------------------------------
-                0.00    0.00      48/48          Animation::animateMesh(int, int) [19]
+                0.00    0.00      48/48          Animation::animateMesh(int, int) [26]
 [82]     0.0    0.00    0.00      48         operator+(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&) [82]
                 0.00    0.00      96/290         void std::vector<float, std::allocator<float> >::_M_realloc_insert<float>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float&&) [67]
 -----------------------------------------------
-                0.00    0.00       3/40          GridSquare(float, int) [35]
-                0.00    0.00      37/40          Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
+                0.00    0.00       3/40          GridSquare(float, int) [36]
+                0.00    0.00      37/40          Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
 [83]     0.0    0.00    0.00      40         void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3&&) [83]
 -----------------------------------------------
-                0.00    0.00      40/40          Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
+                0.00    0.00      40/40          Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
 [84]     0.0    0.00    0.00      40         void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > const&>(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> > const&) [84]
 -----------------------------------------------
-                0.00    0.00      20/20          Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
+                0.00    0.00      20/20          Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
 [85]     0.0    0.00    0.00      20         void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2&&) [85]
 -----------------------------------------------
                 0.00    0.00       4/20          Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
                 0.00    0.00      16/20          AnimShader() [2]
 [86]     0.0    0.00    0.00      20         std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::~vector() [86]
 -----------------------------------------------
-                0.00    0.00      16/16          subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [41]
+                0.00    0.00      16/16          subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [40]
 [87]     0.0    0.00    0.00      16         void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3 const&>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3 const&) [87]
 -----------------------------------------------
-                0.00    0.00       4/14          MorphedMesh::MorphedMesh(MorphedMesh const&) [37]
-                0.00    0.00       4/14          MorphedMesh::MorphedMesh(Mesh const&) [36]
-                0.00    0.00       6/14          Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [31]
-[88]     0.0    0.00    0.00      14         std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector() [88]
+                0.00    0.00       3/13          MorphedMesh::MorphedMesh(MorphedMesh const&) [38]
+                0.00    0.00       4/13          MorphedMesh::MorphedMesh(Mesh const&) [37]
+                0.00    0.00       6/13          Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [29]
+[88]     0.0    0.00    0.00      13         std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector() [88]
 -----------------------------------------------
-                0.00    0.00       4/12          Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [34]
-                0.00    0.00       8/12          Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
+                0.00    0.00       4/12          Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [33]
+                0.00    0.00       8/12          Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [32]
 [89]     0.0    0.00    0.00      12         std::vector<int, std::allocator<int> >* std::__do_uninit_fill_n<std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > >(std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > const&) [89]
 -----------------------------------------------
                 0.00    0.00       4/10          Scene::~Scene() [112]
                 0.00    0.00       6/10          AnimShader() [2]
 [90]     0.0    0.00    0.00      10         Mesh::~Mesh() [90]
 -----------------------------------------------
-                0.00    0.00       1/8           __static_initialization_and_destruction_0() [22]
+                0.00    0.00       1/8           __static_initialization_and_destruction_0() [13]
                 0.00    0.00       7/8           AnimShader() [2]
 [91]     0.0    0.00    0.00       8         Rotation3(Vector3, float) [91]
 -----------------------------------------------
-                0.00    0.00       6/6           Animation::loadScene(Scene*) [43]
+                0.00    0.00       6/6           Animation::loadScene(Scene*) [42]
 [92]     0.0    0.00    0.00       6         void std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > > >, std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >&&) [92]
 -----------------------------------------------
-                0.00    0.00       6/6           Animation::loadScene(Scene*) [43]
+                0.00    0.00       6/6           Animation::loadScene(Scene*) [42]
 [93]     0.0    0.00    0.00       6         void std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > > >, std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >&&) [93]
 -----------------------------------------------
                 0.00    0.00       2/4           Scene::Scene(int, int) [111]
@@ -679,13 +679,13 @@ index % time    self  children    called     name
 [96]     0.0    0.00    0.00       4         void std::vector<Mesh*, std::allocator<Mesh*> >::_M_realloc_insert<Mesh*>(__gnu_cxx::__normal_iterator<Mesh**, std::vector<Mesh*, std::allocator<Mesh*> > >, Mesh*&&) [96]
 -----------------------------------------------
                 0.00    0.00       2/4           MorphedMesh::copyTo(Mesh&, int) [109]
-                0.00    0.00       2/4           MorphedMesh::MorphedMesh(Mesh const&) [36]
+                0.00    0.00       2/4           MorphedMesh::MorphedMesh(Mesh const&) [37]
 [97]     0.0    0.00    0.00       4         void std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > >::_M_realloc_insert<std::vector<Vector3, std::allocator<Vector3> > >(__gnu_cxx::__normal_iterator<std::vector<Vector3, std::allocator<Vector3> >*, std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > > >, std::vector<Vector3, std::allocator<Vector3> >&&) [97]
 -----------------------------------------------
-                0.00    0.00       4/4           __static_initialization_and_destruction_0() [22]
+                0.00    0.00       4/4           __static_initialization_and_destruction_0() [13]
 [98]     0.0    0.00    0.00       4         std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::initializer_list<std::vector<unsigned int, std::allocator<unsigned int> > >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > const&) [98]
 -----------------------------------------------
-                0.00    0.00       4/4           Animation::loadScene(Scene*) [43]
+                0.00    0.00       4/4           Animation::loadScene(Scene*) [42]
 [99]     0.0    0.00    0.00       4         void std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >*, std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > > >, std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >&&) [99]
 -----------------------------------------------
                 0.00    0.00       4/4           Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [30]
@@ -737,7 +737,7 @@ index % time    self  children    called     name
 [112]    0.0    0.00    0.00       1         Scene::~Scene() [112]
                 0.00    0.00       4/10          Mesh::~Mesh() [90]
 -----------------------------------------------
-                0.00    0.00       1/1           std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [47]
+                0.00    0.00       1/1           std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [46]
 [113]    0.0    0.00    0.00       1         std::_Hashtable<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_rehash(unsigned long, unsigned long const&) [113]
 -----------------------------------------------
                 0.00    0.00       1/1           AnimShader() [2]
@@ -841,38 +841,38 @@ notice and this notice are preserved.
 Index by function name
 
    [2] AnimShader()            [5] Scene::DrawTriFrag(TriangleF, Triangle3, int, int, bool, std::optional<FragShader>) [106] void std::vector<Camera, std::allocator<Camera> >::_M_realloc_insert<Camera const&>(__gnu_cxx::__normal_iterator<Camera*, std::vector<Camera, std::allocator<Camera> > >, Camera const&)
-  [35] GridSquare(float, int)  [4] Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [85] void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2&&)
-  [18] octant_shader(Fragment) [46] Scene::morph(int, std::vector<float, std::allocator<float> >) [87] void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3 const&>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3 const&)
-  [28] example_shader(Fragment) [6] Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [83] void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3&&)
-  [41] subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [3] Scene::render(bool, int, std::optional<FragShader>) [21] void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&)
-  [71] spherp(Quaternion, Quaternion, float) [30] Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [20] void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&)
-  [10] TriSplit(Triangle3, Plane) [7] Scene::project(Triangle3, unsigned int) [56] std::vector<Triangle3, std::allocator<Triangle3> >::~vector()
+  [36] GridSquare(float, int)  [4] Scene::fillTriangle(Triangle3, BaseMaterial*, Vector3*, Vector2*, std::optional<FragShader>, bool, bool, bool, bool) [85] void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2&&)
+  [21] octant_shader(Fragment) [45] Scene::morph(int, std::vector<float, std::allocator<float> >) [87] void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3 const&>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3 const&)
+  [47] example_shader(Fragment) [6] Scene::shade(Vector3, Vector3, Vector3, Vector2, BaseMaterial*, bool) [83] void std::vector<Vector3, std::allocator<Vector3> >::_M_realloc_insert<Vector3>(__gnu_cxx::__normal_iterator<Vector3*, std::vector<Vector3, std::allocator<Vector3> > >, Vector3&&)
+  [40] subdivide_sphere(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [3] Scene::render(bool, int, std::optional<FragShader>) [27] void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3 const&>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3 const&)
+  [71] spherp(Quaternion, Quaternion, float) [30] Scene::addMesh(Mesh*, BaseMaterial*, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::optional<FragShader>) [12] void std::vector<Triangle3, std::allocator<Triangle3> >::_M_realloc_insert<Triangle3>(__gnu_cxx::__normal_iterator<Triangle3*, std::vector<Triangle3, std::allocator<Triangle3> > >, Triangle3&&)
+   [7] TriSplit(Triangle3, Plane) [8] Scene::project(Triangle3, unsigned int) [56] std::vector<Triangle3, std::allocator<Triangle3> >::~vector()
   [91] Rotation3(Vector3, float) [111] Scene::Scene(int, int) [61] void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
-  [32] icosphere(float, int) [112] Scene::~Scene()        [95] void std::vector<BaseMaterial*, std::allocator<BaseMaterial*> >::_M_realloc_insert<BaseMaterial*>(__gnu_cxx::__normal_iterator<BaseMaterial**, std::vector<BaseMaterial*, std::allocator<BaseMaterial*> > >, BaseMaterial*&&)
+  [31] icosphere(float, int) [112] Scene::~Scene()        [95] void std::vector<BaseMaterial*, std::allocator<BaseMaterial*> >::_M_realloc_insert<BaseMaterial*>(__gnu_cxx::__normal_iterator<BaseMaterial**, std::vector<BaseMaterial*, std::allocator<BaseMaterial*> > >, BaseMaterial*&&)
  [108] Quaternion::Quaternion(Matrix3) [94] Camera::init() [96] void std::vector<Mesh*, std::allocator<Mesh*> >::_M_realloc_insert<Mesh*>(__gnu_cxx::__normal_iterator<Mesh**, std::vector<Mesh*, std::allocator<Mesh*> > >, Mesh*&&)
-  [25] FragShaders::invert(Fragment) [39] Camera::Trans(Transform) [97] void std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > >::_M_realloc_insert<std::vector<Vector3, std::allocator<Vector3> > >(__gnu_cxx::__normal_iterator<std::vector<Vector3, std::allocator<Vector3> >*, std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > > >, std::vector<Vector3, std::allocator<Vector3> >&&)
+  [16] FragShaders::invert(Fragment) [35] Camera::Trans(Transform) [97] void std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > >::_M_realloc_insert<std::vector<Vector3, std::allocator<Vector3> > >(__gnu_cxx::__normal_iterator<std::vector<Vector3, std::allocator<Vector3> >*, std::vector<std::vector<Vector3, std::allocator<Vector3> >, std::allocator<std::vector<Vector3, std::allocator<Vector3> > > > >, std::vector<Vector3, std::allocator<Vector3> >&&)
   [78] MorphedMesh::m_setupvns() [75] Camera::Camera(Camera const&) [84] void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > const&>(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> > const&)
   [80] MorphedMesh::Trans(Transform) [104] Camera::Camera(float) [77] void std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::_M_realloc_insert<std::vector<int, std::allocator<int> > >(__gnu_cxx::__normal_iterator<std::vector<int, std::allocator<int> >*, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > > >, std::vector<int, std::allocator<int> >&&)
  [109] MorphedMesh::copyTo(Mesh&, int) [105] Object::Trans(Transform) [88] std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >::~vector()
-  [79] MorphedMesh::setupvns() [11] Matrix4::det()        [98] std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::initializer_list<std::vector<unsigned int, std::allocator<unsigned int> > >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > const&)
-  [36] MorphedMesh::MorphedMesh(Mesh const&) [54] Matrix4::get(int, int) [107] std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > > const&)
-  [37] MorphedMesh::MorphedMesh(MorphedMesh const&) [9] Matrix4::inv() [86] std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::~vector()
- [110] MorphedMesh::~MorphedMesh() [15] Matrix4::getRow(int) [92] void std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > > >, std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >&&)
+  [79] MorphedMesh::setupvns() [19] Matrix4::det()        [98] std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::initializer_list<std::vector<unsigned int, std::allocator<unsigned int> > >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > const&)
+  [37] MorphedMesh::MorphedMesh(Mesh const&) [24] Matrix4::get(int, int) [107] std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::vector(std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > > const&)
+  [38] MorphedMesh::MorphedMesh(MorphedMesh const&) [10] Matrix4::inv() [86] std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >::~vector()
+ [110] MorphedMesh::~MorphedMesh() [54] Matrix4::getRow(int) [92] void std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > > > > >, std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >&&)
   [14] BaseMaterial::getColor(Vector2) [23] Matrix4::setRow(int, Vector4) [93] void std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >*, std::vector<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >, std::allocator<std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > > > > >, std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >&&)
- [102] ImageTexture::getColor(Vector2) [12] Fragment::Fragment(Fragment const&) [99] void std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >*, std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > > >, std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >&&)
-  [13] ImageTexture::getColor(int, int) [19] Animation::animateMesh(int, int) [100] void std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > >::_M_realloc_insert<std::optional<FragShader> const&>(__gnu_cxx::__normal_iterator<std::optional<FragShader>*, std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > > >, std::optional<FragShader> const&)
- [103] ImageTexture::ImageTexture(std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >) [40] Animation::getLength() [67] void std::vector<float, std::allocator<float> >::_M_realloc_insert<float>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float&&)
-  [68] Mesh::Trans(Transform) [43] Animation::loadScene(Scene*) [76] std::vector<float, std::allocator<float> >::vector(std::vector<float, std::allocator<float> > const&)
-  [31] Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [42] Animation::~Animation() [116] std::vector<float, std::allocator<float> >::vector(std::initializer_list<float>, std::allocator<float> const&)
-  [17] Mesh::setupvns()       [65] Transform::mul(Transform&) [74] std::vector<float, std::allocator<float> >::~vector()
-  [34] Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [62] Transform::matrix() [63] void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&)
-  [29] Mesh::Mesh(Mesh const&) [69] Transform::Transform(Transform const&) [64] void std::vector<int, std::allocator<int> >::_M_realloc_insert<int>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int&&)
-  [33] Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [24] Triangle3::Triangle3(Triangle3 const&) [66] std::vector<int, std::allocator<int> >::vector(std::vector<int, std::allocator<int> > const&)
+ [102] ImageTexture::getColor(Vector2) [22] Fragment::Fragment(Fragment const&) [99] void std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > >::_M_realloc_insert<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > >(__gnu_cxx::__normal_iterator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >*, std::vector<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >, std::allocator<std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > > > > >, std::map<int, std::pair<float (*)(float), std::vector<float, std::allocator<float> > >, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), std::vector<float, std::allocator<float> > > > > >&&)
+  [15] ImageTexture::getColor(int, int) [26] Animation::animateMesh(int, int) [100] void std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > >::_M_realloc_insert<std::optional<FragShader> const&>(__gnu_cxx::__normal_iterator<std::optional<FragShader>*, std::vector<std::optional<FragShader>, std::allocator<std::optional<FragShader> > > >, std::optional<FragShader> const&)
+ [103] ImageTexture::ImageTexture(std::vector<std::vector<unsigned int, std::allocator<unsigned int> >, std::allocator<std::vector<unsigned int, std::allocator<unsigned int> > > >) [39] Animation::getLength() [67] void std::vector<float, std::allocator<float> >::_M_realloc_insert<float>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float&&)
+  [68] Mesh::Trans(Transform) [42] Animation::loadScene(Scene*) [76] std::vector<float, std::allocator<float> >::vector(std::vector<float, std::allocator<float> > const&)
+  [29] Mesh::fromOBJ(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [41] Animation::~Animation() [116] std::vector<float, std::allocator<float> >::vector(std::initializer_list<float>, std::allocator<float> const&)
+  [25] Mesh::setupvns()       [65] Transform::mul(Transform&) [74] std::vector<float, std::allocator<float> >::~vector()
+  [33] Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [62] Transform::matrix() [63] void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&)
+  [28] Mesh::Mesh(Mesh const&) [69] Transform::Transform(Transform const&) [64] void std::vector<int, std::allocator<int> >::_M_realloc_insert<int>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int&&)
+  [32] Mesh::Mesh(std::vector<Vector3, std::allocator<Vector3> >&, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&, std::vector<Vector2, std::allocator<Vector2> >, std::vector<std::vector<int, std::allocator<int> >, std::allocator<std::vector<int, std::allocator<int> > > >&) [11] Triangle3::Triangle3(Triangle3 const&) [66] std::vector<int, std::allocator<int> >::vector(std::vector<int, std::allocator<int> > const&)
   [90] Mesh::~Mesh()          [58] Triangle3::Triangle3(Vector3, Vector3, Vector3) [72] std::__cxx11::to_string(int)
-  [70] ANIMI::LERP(float)      [8] TriangleF::bary(int, int) [59] std::pair<std::_Rb_tree_iterator<std::pair<std::pair<int, int> const, int> >, bool> std::_Rb_tree<std::pair<int, int>, std::pair<std::pair<int, int> const, int>, std::_Select1st<std::pair<std::pair<int, int> const, int> >, std::less<std::pair<int, int> >, std::allocator<std::pair<std::pair<int, int> const, int> > >::_M_insert_unique<std::pair<std::pair<int, int> const, int> >(std::pair<std::pair<int, int> const, int>&&)
-  [73] ANIMI::SINE(float)     [57] TriangleF::TriangleF(TriangleF const&) [47] std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+  [70] ANIMI::LERP(float)      [9] TriangleF::bary(int, int) [59] std::pair<std::_Rb_tree_iterator<std::pair<std::pair<int, int> const, int> >, bool> std::_Rb_tree<std::pair<int, int>, std::pair<std::pair<int, int> const, int>, std::_Select1st<std::pair<std::pair<int, int> const, int> >, std::less<std::pair<int, int> >, std::allocator<std::pair<std::pair<int, int> const, int> > >::_M_insert_unique<std::pair<std::pair<int, int> const, int> >(std::pair<std::pair<int, int> const, int>&&)
+  [73] ANIMI::SINE(float)     [57] TriangleF::TriangleF(TriangleF const&) [46] std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
   [81] ANIMI::SINE_IN(float) [113] std::_Hashtable<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, unsigned long> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_rehash(unsigned long, unsigned long const&) [89] std::vector<int, std::allocator<int> >* std::__do_uninit_fill_n<std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > >(std::vector<int, std::allocator<int> >*, unsigned long, std::vector<int, std::allocator<int> > const&)
-  [16] ANIMI::SINE_OUT(float) [45] std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [101] std::vector<unsigned int, std::allocator<unsigned int> >* std::__do_uninit_fill_n<std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > >(std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > const&)
-  [60] Plane::intersection(Line&) [44] std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [55] operator*(std::vector<float, std::allocator<float> > const&, float)
-  [38] Plane::Trans(Transform) [114] void std::vector<Light, std::allocator<Light> >::_M_realloc_insert<Light const&>(__gnu_cxx::__normal_iterator<Light*, std::vector<Light, std::allocator<Light> > >, Light const&) [82] operator+(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)
-  [26] Plane::Plane(Plane const&) [115] std::vector<Light, std::allocator<Light> >::push_back(Light const&) [27] _init
+  [18] ANIMI::SINE_OUT(float) [44] std::map<int, std::pair<float (*)(float), Quaternion>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Quaternion> > > >::operator[](int const&) [101] std::vector<unsigned int, std::allocator<unsigned int> >* std::__do_uninit_fill_n<std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > >(std::vector<unsigned int, std::allocator<unsigned int> >*, unsigned long, std::vector<unsigned int, std::allocator<unsigned int> > const&)
+  [60] Plane::intersection(Line&) [43] std::map<int, std::pair<float (*)(float), Vector3>, std::less<int>, std::allocator<std::pair<int const, std::pair<float (*)(float), Vector3> > > >::operator[](int const&) [55] operator*(std::vector<float, std::allocator<float> > const&, float)
+  [34] Plane::Trans(Transform) [114] void std::vector<Light, std::allocator<Light> >::_M_realloc_insert<Light const&>(__gnu_cxx::__normal_iterator<Light*, std::vector<Light, std::allocator<Light> > >, Light const&) [82] operator+(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&)
+  [17] Plane::Plane(Plane const&) [115] std::vector<Light, std::allocator<Light> >::push_back(Light const&) [20] _init
