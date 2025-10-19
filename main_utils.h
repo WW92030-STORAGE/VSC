@@ -19,6 +19,21 @@ std::string VIDEO_PATH = "video";
 
 using namespace std;
 
+Scene scene_blank() {
+		int N = 256;
+	Scene s(N, N);
+	float A = 0.1;
+
+	PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-2, 2, 0)));
+	// s.lights.push_back(PL);
+
+	PointLight P2(Vector3(1, 1, 1), A);
+	P2.Trans(Transform(Vector3(0, 2, 0)));
+	s.lights.push_back(P2);
+	return s;
+}
+
 Scene scene_protocubes() {
 	int N = 512;
 	int D = 1;

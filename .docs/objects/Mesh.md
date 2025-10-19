@@ -32,6 +32,11 @@ Triangle mesh class. Stores vertices and triangles as indices of vertices, uvs, 
 - `Mesh(Triangle3* tt, int sz)` = No material support.
 - `Mesh(std::vector<Triangle3> tt)` = No material support.
 
+`v` is the list of vertices in the mesh
+`t` is the list of triangle, represented as indices regarding `v`
+`tex` is the list of `uv` coordinates that the mesh uses for vertices
+`texco` is the list of triangle corner uvs, in terms of indices into `tex`
+
 ## Functions
 
 - `setupvns()` = Given the mesh, re-calculates the vertex normals as averages of the normals of adjoining faces. 

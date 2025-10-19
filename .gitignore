@@ -4,6 +4,7 @@
 archive/*
 video/*
 misc/*.obj
+misc/*.dae
 tests/*
 deprecated/*
 
