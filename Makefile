@@ -39,3 +39,8 @@ preprofile: $(FILE)
 doprofile: $(FILE)
 	./$(TARGET)
 	gprof $(TARGET) gmon.out > analysis.txt
+
+# Convenience
+
+collada: 
+	cd python && python3 colladaparser.py

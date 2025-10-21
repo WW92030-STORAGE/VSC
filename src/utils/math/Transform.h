@@ -61,8 +61,20 @@ class Transform {
 		return Transform(matrix().inv());
 	}
 
-	inline Transform mul(Transform& other) {
+	inline Transform mul(Transform other) {
 		return Transform(matrix().matmul(other.matrix()));
+	}
+
+	inline Vector4 mul(Vector4 other) {
+		return matrix() * (other);
+	}
+
+	inline Vector3 mul(Vector3 other, float p = 1) {
+		Vector4 v = vec4(other);
+		v.w = p;
+
+		auto res = matrix() * v;
+		return vec3(res);
 	}
 
 	// inverse transpose
@@ -73,7 +85,15 @@ class Transform {
 
 	// Overload
 
-	inline Transform operator*(Transform& other) {
+	inline Transform operator*(Transform other) {
+		return mul(other);
+	}
+
+	inline Vector3 operator*(Vector3 other) {
+		return mul(other);
+	}
+
+	inline Vector4 operator*(Vector4 other) {
 		return mul(other);
 	}
 

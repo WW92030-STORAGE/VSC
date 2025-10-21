@@ -1,7 +1,6 @@
 # VSC TEST NUMBERS (For Legacy Purposes)
 
 - Nicknames for tests are chosen from a variety of sources.
-
 # RASTERIZATION
 
 - 1.0 Basic Mesh (Kulde)
@@ -45,12 +44,20 @@
 - 9.8A. B-Spline Patch (AZI II)
 - 9.8B. CC with Sharp Edges (PLUSH II)
 
-# ANIMATION
+# ANIMATION I
 
 - 9.81. Migrating the addMesh etc. functionality to Scene and placing the old Scene in a LegacyScene class (??????????? I)
 - 9.82. Setting up the Animation system, first with only linear movement (??????????? II)
 - 9.83A. Quaternion Fixes
 - 9.83B. Animating Rotations (??????????? III)
+- 9.83C. Multiple cameras (... IV)
+- 9.83D. Fragment Shaders (... V)
+- 9.83E. Cam Animations, Shaders, and Swapping (... VI)
+- 9.85. Collada parser for meshes (SPECTRUM I)
+
+# ANIMATION II
+
+- 9.85A. BONE extraction and reconstruction (TEMPEST)
 
 # MISCELLANEOUS TOPICS
 
