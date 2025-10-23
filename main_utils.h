@@ -19,7 +19,7 @@ std::string VIDEO_PATH = "video";
 
 using namespace std;
 
-Scene scene_blank() {
+Scene scene_blank(bool more_lights = false) {
 		int N = 256;
 	Scene s(N, N);
 	float A = 0.1;
@@ -29,8 +29,14 @@ Scene scene_blank() {
 	// s.lights.push_back(PL);
 
 	PointLight P2(Vector3(1, 1, 1), A);
-	P2.Trans(Transform(Vector3(0, 2, 0)));
+	P2.Trans(Transform(Vector3(2, 2, 0)));
 	s.lights.push_back(P2);
+
+if (more_lights) {
+	PointLight P3(Vector3(1, 1, 1), A);
+	P3.Trans(Transform(Vector3(0, -2, 0)));
+	s.lights.push_back(P3);
+}
 	return s;
 }
 

@@ -18,6 +18,8 @@ Mathematical methods that only use native C++ and not custom data types in VSC.
 - `int ifloor(float f)`
 - `int iceil(float f)`
 - `int iround(float f)`
+- `int frem(float a, float m)`
+- `int irem(int a, int m)`
 - `float lerp(float f, float g, float t)` = Linear interpolate between `f (t = 0)` and `g (t = 1)` using the time `t`.
 - `float pow(float f, int g)`
 - `int min(int a, int b)`

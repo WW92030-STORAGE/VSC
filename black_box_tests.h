@@ -2123,6 +2123,61 @@ std::vector<std::vector<int>> mcrproto_texco({{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {
 	std::cout << "Stored\n";
 }
 
+void run_blackbox() {
+		// phongtest();
+	// texmapref();
+
+	// BVHStanford();
+	// BVHSponge();
+	// BVHTest();
+	// BVHSimpleObject();
+	// BoxTest();
+
+	// FracNoiseTest();
+	// BezierTest();
+
+	// Subdiv2();
+
+	// noisetex();
+
+	// RTexTest();
+
+	// RTexBVH();
+
+	// texmapref();
+
+	// BezierMeshTest();
+	// BezierMeshRTX();
+
+	// QuadMeshTest();
+	// SubdivideCCTest();
+	// QuadRTX();
+
+	// TriClip();
+	// TriClipAttr();
+	// ClipTest();
+	// MengerSpongeDual();
+
+	// BSPTest();
+	// BSPMeshTest();
+
+	// SubdivideCCSharp();
+
+	// FormalRaster();
+	// AnimSan();
+
+	// QuaternionTest();
+	// FullAnimation();
+
+	// MulticamTest();
+
+	// ShaderTest();
+	// ShaderTest2();
+	// AnimShader();
+
+	// Collada1();
+}
+
 
 
 #endif

@@ -21,6 +21,7 @@
 #include "objects/Triangle.h"
 #include "objects/Mesh.h"
 #include "objects/MorphedMesh.h"
+#include "objects/RiggedMesh.h"
 
 #include "objects/QuadMesh.h"
 

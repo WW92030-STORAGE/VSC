@@ -23,7 +23,7 @@ https://www.khronos.org/files/collada_spec_1_4.pdf
 # Constants
 
 PREFIX = "../misc"
-FILENAME = "BONES3"
+FILENAME = "BONES2"
 OUTPUT = FILENAME + ".dat"
 
 def printout(value, type):
@@ -449,23 +449,23 @@ def parse(FILE_PATH = PREFIX + "/" + FILENAME + ".dae", NAME = FILENAME, OUTPUT_
 
     # Bone transform postprocessin
 
-    bone_transform_printout = "std::unordered_map<std::string, Matrix4> " + OUTPUT_NAME + "_bonetrans({"
+    bone_transform_printout = "std::vector<Matrix4> " + OUTPUT_NAME + "_bonetrans({"
     
     hasElements = False
-    for key in transforms:
+    for key in range(len(joint_names)):
         if hasElements:
             bone_transform_printout = bone_transform_printout + ", "
         hasElements = True  # Matrixes in collada are row major so use the row-wise constructor
-        bone_transform_printout = bone_transform_printout + "{" + printout(key, "std::string") + ", " + "Matrix4("
+        bone_transform_printout = bone_transform_printout + "Matrix4("
         HE = False
-        for r in transforms[key]:
+        for r in transforms[joint_names[key]]:
             for c in r:
                 if HE:
                     bone_transform_printout = bone_transform_printout + ", "
                 HE = True
                 bone_transform_printout = bone_transform_printout + str(c)
         
-        bone_transform_printout = bone_transform_printout + ")}"
+        bone_transform_printout = bone_transform_printout + ")"
     
     bone_transform_printout = bone_transform_printout + "});"
 
@@ -489,21 +489,54 @@ def parse(FILE_PATH = PREFIX + "/" + FILENAME + ".dae", NAME = FILENAME, OUTPUT_
     print("REAL TIPS:", bone_tips)
 
     # Bone tip printout
-    bone_tip_printout = "std::unordered_map<std::string, Vector3> " + OUTPUT_NAME + "_bonetips({"
+    bone_tip_printout = "std::vector<Vector3> " + OUTPUT_NAME + "_bonetips({"
     hasElements = False
-    for key in bone_tips:
-        vec = bone_tips[key]
+    for key in range(len(joint_names)):
+        vec = bone_tips[joint_names[key]]
         if hasElements:
             bone_tip_printout = bone_tip_printout + ", "
         hasElements = True
-        bone_tip_printout = bone_tip_printout + "{" + printout(key, "std::string") + ", " + "Vector3("
+        bone_tip_printout = bone_tip_printout + "Vector3("
         bone_tip_printout = bone_tip_printout + str(vec[0]) + ", " + str(vec[1]) + ", " + str(vec[2])
 
         
-        bone_tip_printout = bone_tip_printout + ")}"
+        bone_tip_printout = bone_tip_printout + ")"
     
     bone_tip_printout = bone_tip_printout + "});"
 
+    # Print the vertex weights
+
+    vertex_weights_printout = "std::vector<std::unordered_map<int, float>> " + OUTPUT_NAME + "_weights({"
+
+    hasElements = False
+    for weightmap in vertex_weights:
+        if hasElements:
+            vertex_weights_printout = vertex_weights_printout + ", "
+        hasElements = True
+
+        vertex_weights_printout = vertex_weights_printout + "std::unordered_map<int, float>({"
+        HE = False
+        for succ in weightmap:
+            if HE:
+                vertex_weights_printout = vertex_weights_printout + ", "
+            HE = True
+            vertex_weights_printout = vertex_weights_printout + "{" + str(joint_inv[succ["JOINT"][0]]) + ", " + str(succ["WEIGHT"][0]) + "}"
+
+        vertex_weights_printout = vertex_weights_printout + "})"
+    vertex_weights_printout = vertex_weights_printout + "});"
+
+
+    # Convert a few things for convenience
+    parent_indices = [-1] * len(joint_names)
+    for key in parent:
+        k_index = joint_inv[key]
+        v_index = joint_inv[parent[key]]
+        parent_indices[k_index] = v_index
+
+
+    absolute_tips_converted = []
+    for i in absolute_tips:
+        absolute_tips_converted.append(joint_inv[i])
 
     return [
         print_vector_vector(vertex_positions, "Vector3", OUTPUT_NAME + "_v"), 
@@ -511,10 +544,11 @@ def parse(FILE_PATH = PREFIX + "/" + FILENAME + ".dae", NAME = FILENAME, OUTPUT_
         print_vector_vector(tex_coords, "Vector2", OUTPUT_NAME + "_tex"),
         print_vector_2d(texco, "int", OUTPUT_NAME + "_texco"),
         print_vector(joint_names, "std::string", OUTPUT_NAME + "_bones"),
-        print_map(parent, "std::string", "std::string", OUTPUT_NAME + "_parent", True),
+        print_vector(parent_indices, "int", OUTPUT_NAME + "_parent"),
         bone_transform_printout, 
         bone_tip_printout,
-        print_set(absolute_tips, "std::string", OUTPUT_NAME + "_atips")  # unused
+        print_set(absolute_tips_converted, "int", OUTPUT_NAME + "_atips"),
+        vertex_weights_printout
     ]
 
 

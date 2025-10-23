@@ -229,6 +229,42 @@ Mesh GridSquare(float X = 16, int N = 1) {
 	return res;
 }
 
+// Cylinder -- The initial direction is towards the z axis, and the cylinder is to be centered at the origin.
+
+Mesh cylinder(float R = 1, float H = 1, int X = 16) {
+	if (X < 3) X = 3;
+	std::vector<Vector3> points;
+	// The points will be in pairs, starting with the pair of points on the X-Z plane and winding counterclockwise in the X-Y plane.
+	float theta = 2 * M_PI / X;
+	for (int i = 0; i < X; i++) {
+		points.push_back(Vector3(R * cosf(i * theta), R * sinf(i * theta), -0.5 * H));
+		points.push_back(Vector3(R * cosf(i * theta), R * sinf(i * theta), 0.5 * H));
+	}
+
+	// And now for the triangles. For convenience we will denote a center point on each base:
+	points.push_back(Vector3(0, 0, -0.5 * H));
+	points.push_back(Vector3(0, 0, 0.5 * H));
+
+	std::vector<std::vector<int>> triangles;
+	int EDGE_PTS = 2 * X;
+	int N = points.size();
+	for (int i = 0; i < X; i++) {
+		// Remember: there are 2 * X + 2 points. Each pair
+		int index = (i<<1);
+		// (i, i + 1) in the first X forms a triangle with the subsequent (i + 2), and a triangle with the predecessor (i - 1):
+		// (i + 1, i, i + 2), (i, i + 1, i - 1)
+		// There are also two triangles (i + 2, ,i N - 2) and (i - 1, i + 1, N - 1), in these orders to preserve orientation.
+		// of course, yhou need to take modulo (2 * X) for the points relative to i. Points N -2 and N-1 are the centers.
+
+		triangles.push_back(std::vector<int>({index + 1, index, (index + 2) % EDGE_PTS}));
+		triangles.push_back(std::vector<int>({index, index + 1, BASE::irem(index - 1, EDGE_PTS)}));
+		triangles.push_back(std::vector<int>({(index + 2) % EDGE_PTS, index, N - 2}));
+		triangles.push_back(std::vector<int>({BASE::irem(index - 1, EDGE_PTS), index + 1, N - 1}));
+	}
+
+	return Mesh(points, triangles);
+}
+
 
 // BELOW - ICOSPHERE GENERATOR
 

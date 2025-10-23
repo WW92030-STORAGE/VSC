@@ -12,6 +12,8 @@
 #include <unordered_map>
 
 #include "../objects/Mesh.h"
+#include "../objects/MorphedMesh.h"
+#include "../objects/RiggedMesh.h"
 #include "../objects/Triangle.h"
 #include "../objects/Object.h"
 #include "../objects/Clip.h"
@@ -84,7 +86,9 @@ class Scene { // CENA!
 		names_inv[name] = meshes.size();
 
 		MorphedMesh* morphed = dynamic_cast<MorphedMesh*>(mesh);
+		RiggedMesh* rigged = dynamic_cast<RiggedMesh*>(mesh);
 		if (morphed != nullptr) meshes.push_back(new MorphedMesh(*morphed));
+		else if (rigged) meshes.push_back(new RiggedMesh(*rigged));
 		else meshes.push_back(new Mesh(*mesh));
 
 		if (mat != nullptr) {

@@ -59,6 +59,12 @@ inline float frem(float a, float m) {
     return fmod(res, m);
 }
 
+inline int irem(int a, int m) {
+    int res = a % m;
+    while (res < 0) res += m;
+    return res % m;
+}
+
 // LERP
 
 inline float lerp(float f, float g, float t) {
