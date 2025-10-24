@@ -3,7 +3,6 @@
 "I might have to wait, I'll never give up. I guess it's half timing, and the other half is luck..." -Michael Buble  
   
 VSC (VOUGA-SHREINER-CANTH) Verified is A real-time 3D rendering engine written _entirely using software_ with the intention of being portable.
-Inspired by DoomGeneric with its rather novel approach to separating the backend from the frontend.  
   
 This is a rasterizer. It uses computational techniques to approximate the reality of lights, shadows, textures, and materials.  
 If you want a raytracer stay tuned for the sequel FINAL DESTINATION coming soon to theaters near you in the `src/raytracer` directory.  
