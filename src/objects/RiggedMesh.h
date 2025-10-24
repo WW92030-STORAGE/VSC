@@ -118,6 +118,33 @@ class RiggedMesh : public Mesh {
         setupvns();
     }
 
+    void Trans(Transform t) override {
+        transform = t * transform;
+		Matrix4 trans = t.matrix();
+		for (int i = 0; i < nverts; i++) {
+            verts[i] = vec3(trans * fromPoint(verts[i]));
+            original_verts[i] = vec3(trans * fromPoint(original_verts[i]));
+        }
+
+        for (int i = 0; i < nbones; i++) {
+            if (is_root(i)) rest_transforms[i] = t * rest_transforms[i];
+        }
+		setupvns();
+    }
+
+    void ForceTrans(Transform t) override {
+		Matrix4 trans = t.matrix();
+		for (int i = 0; i < nverts; i++) {
+            verts[i] = vec3(trans * fromPoint(verts[i]));
+            original_verts[i] = vec3(trans * fromPoint(original_verts[i]));
+        }
+
+        for (int i = 0; i < nbones; i++) {
+            if (is_root(i)) rest_transforms[i] = t * rest_transforms[i];
+        }
+		setupvns();
+    }
+
     RiggedMesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t) : Mesh(v, t){
         init();
     }

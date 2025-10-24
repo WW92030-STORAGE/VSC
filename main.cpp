@@ -305,6 +305,7 @@ std::vector<std::unordered_map<int, float>> BONE_weights({std::unordered_map<int
 	int LEN = 48;
 
 	for (int i = 0; i < LEN; i++) {
+		// if (i == LEN / 0) rmesh->Trans(Transform(Vector3(0, 2, 0)));
 		rmesh->deformations[0] = Transform(Vector3(), Rotation3(Vector3(1, 1, 1), M_PI * 0.2 * sinf(i * M_PI * 2.0 * 1.0 / LEN)));
 		rmesh->deformations[1] = Transform(Vector3(), Rotation3(Vector3(2, -1, 3), M_PI * 0.1 * sinf((i + LEN / 4) * M_PI * 2.0 * 2.0 / LEN)));
 		rmesh->deformations[2] = Transform(Vector3(), Rotation3(Vector3(5, 3, -4), M_PI * 0.15 * sinf((i + LEN / 2) * M_PI * 2.0 * 4.0 / LEN)));
