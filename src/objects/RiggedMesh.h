@@ -42,7 +42,6 @@ class RiggedMesh : public Mesh {
     std::vector<Transform> rest_transforms;
     std::vector<Vector3> tips;
     std::vector<Transform> deformations;
-    std::vector<bool> is_root;
 
     std::vector<Transform> absolute_transforms;
     std::vector<Vector3> absolute_joints;
@@ -54,15 +53,46 @@ class RiggedMesh : public Mesh {
 
     std::vector<Vector3> original_verts;
 
+    RiggedMesh(const RiggedMesh& other) : Mesh(other) {
+		size = other.size;
+		nverts = other.nverts;
+		nuv = other.nuv;
+		verts = std::vector<Vector3>(nverts);
+		triindices = std::vector<std::vector<int>>(size);
+		texcoords = std::vector<std::vector<int>>(size);
+		uv = std::vector<Vector2>(nuv);
+		for (int i = 0; i < nverts; i++) verts[i] = Vector3(other.verts[i]);
+		for (int i = 0; i < nuv; i++) uv[i] = Vector2(other.uv[i]);
+		for (int i = 0; i < size; i++) {
+			triindices[i] = std::vector<int>(other.triindices[i]);
+			texcoords[i] = std::vector<int>(other.texcoords[i]);
+		}
+
+        nbones = other.nbones;
+
+        bone_names = std::vector<std::string>(other.bone_names);
+        bone_names_inv = std::unordered_map<std::string, int>(other.bone_names_inv);
+        parent = std::vector<int>(other.parent);
+        children = std::vector<std::vector<int>>(other.children);
+        rest_transforms = std::vector<Transform>(other.rest_transforms);
+        tips = std::vector<Vector3>(other.tips);
+        deformations = std::vector<Transform>(other.deformations);
+        absolute_transforms = std::vector<Transform>(other.absolute_transforms);
+        absolute_joints = std::vector<Vector3>(other.absolute_joints);
+        absolute_tips = std::vector<Vector3>(other.absolute_tips);
+        a_tips = std::unordered_set<int>(other.a_tips);
+        vertex_weights = std::vector<std::unordered_map<int, float>>(other.vertex_weights);
+        vertex_displacements = std::vector<std::unordered_map<int, Vector3>>(other.vertex_displacements);
+        original_verts = std::vector<Vector3>(other.original_verts);
+
+        init();
+    }
+
     void init() {
         deformations = std::vector<Transform>(nbones, Transform(Matrix4::eye()));
         absolute_transforms = std::vector<Transform>(rest_transforms);
         absolute_tips = std::vector<Vector3>(tips);
         absolute_joints = std::vector<Vector3>(nbones);
-        is_root = std::vector<bool>(nbones, 0);
-        for (int i = 0; i < nbones; i++) {
-            if (parent[i] < 0) is_root[i] = true;
-        }
 
         computeAbsoluteTransforms();
 
@@ -84,6 +114,8 @@ class RiggedMesh : public Mesh {
         }
 
         original_verts = std::vector<Vector3>(verts);
+
+        setupvns();
     }
 
     RiggedMesh(std::vector<Vector3>& v, std::vector<std::vector<int>>& t) : Mesh(v, t){
@@ -158,12 +190,16 @@ class RiggedMesh : public Mesh {
         init();
     }
 
+    inline bool is_root(int i) {
+        return parent[i] < 0;
+    }
+
 
     void computeAbsoluteTransforms() {
         std::queue<int> q;
         // std::cout << nbones << " " << absolute_transforms.size() << " " << rest_transforms.size() << " " << absolute_tips.size() << " " << absolute_joints.size() << " " << tips.size() << "\n";
         for (int i = 0; i < nbones; i++) {
-            if (is_root[i]) {
+            if (is_root(i)) {
                 q.push(i);
                 absolute_transforms[i] = deformations[i] * rest_transforms[i];
                 absolute_joints[i] = absolute_transforms[i].origin;
@@ -201,6 +237,8 @@ class RiggedMesh : public Mesh {
             }
             if (!BASE::fzero(sum)) verts[i] = new_pos * 1.0 / sum;
         }
+
+        setupvns();
     }
 
     std::vector<Mesh> visBones(float R = 0.2) {

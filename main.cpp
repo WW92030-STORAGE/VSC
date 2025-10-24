@@ -190,9 +190,54 @@ std::vector<std::unordered_map<int, float>> BONE_weights({std::unordered_map<int
 
 	RiggedMesh rmesh(BONE_v, BONE_t, BONE_tex, BONE_texco, BONE_bones, BONE_parent, BONE_bonetrans, BONE_bonetips, BONE_atips, BONE_weights);
 
-	rmesh.deformations[1] = Transform(Vector3(), Rotation3(Vector3(0, 0, 1), M_PI * -0.2)); // If the root transform is fucked up then all the rest will be also.
-	rmesh.deformations[2] = Transform(Vector3(), Rotation3(Vector3(0, 0, 1), M_PI * 0.3)); // If the root transform is fucked up then all the rest will be also.
-	rmesh.deformations[5] = Transform(Vector3(), Rotation3(Vector3(0, 0, 1), M_PI * 0.2)); // If the root transform is fucked up then all the rest will be also.
+	rmesh.deformations[1] = Transform(Vector3(), Rotation3(Vector3(1, 1, 1), M_PI * 0.3)); // If the root transform is fucked up then all the rest will be also.
+	rmesh.deformations[2] = Transform(Vector3(), Rotation3(Vector3(0, -1, 1), M_PI * 0.1)); // If the root transform is fucked up then all the rest will be also.
+	rmesh.deformations[4] = Transform(Vector3(), Rotation3(Vector3(1, 0, 1), M_PI * -0.5)); // If the root transform is fucked up then all the rest will be also.
+	rmesh.deformations[5] = Transform(Vector3(), Rotation3(Vector3(-1, 1, 0), M_PI * 0.2)); // If the root transform is fucked up then all the rest will be also.
+	rmesh.computeAbsoluteTransforms();
+	s.camera.Trans(Transform(Vector3(0, -4, 2), Rotation3(Vector3(1, 0, 0), M_PI * 0.5)));
+
+	std::vector<Mesh> bone_vis = rmesh.visBones();
+
+	for (auto i : bone_vis) s.addMesh(&i);
+
+	s.render();
+
+	s.drawMesh(rmesh);
+
+	std::cout << "Prepared\n";
+
+	
+
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+}
+
+// TEST 9.85C LUNAR (Linear Blend Skinning)
+void SkinTest() {
+std::vector<Vector3> BONE_v({Vector3(-1.0, -1.0, -1.0), Vector3(-1.0, -1.0, 1.0), Vector3(-1.0, 1.0, -1.0), Vector3(-1.0, 1.0, 1.0), Vector3(1.0, -1.0, -1.0), Vector3(1.0, -1.0, 1.0), Vector3(1.0, 1.0, -1.0), Vector3(1.0, 1.0, 1.0), Vector3(-1.0, -1.0, 3.0), Vector3(-1.0, 1.0, 3.0), Vector3(1.0, 1.0, 3.0), Vector3(1.0, -1.0, 3.0), Vector3(-1.0, -1.0, 5.0), Vector3(-1.0, 1.0, 5.0), Vector3(1.0, 1.0, 5.0), Vector3(1.0, -1.0, 5.0), Vector3(3.0, 1.0, 1.0), Vector3(3.0, -1.0, 1.0), Vector3(3.0, 1.0, 3.0), Vector3(3.0, -1.0, 3.0)});
+std::vector<std::vector<int>> BONE_t({{1, 2, 0}, {3, 6, 2}, {7, 4, 6}, {5, 0, 4}, {6, 0, 2}, {3, 10, 7}, {10, 15, 11}, {5, 19, 11}, {1, 9, 3}, {5, 8, 1}, {13, 15, 14}, {8, 13, 9}, {11, 12, 8}, {9, 14, 10}, {16, 19, 17}, {11, 18, 10}, {7, 17, 5}, {10, 16, 7}, {1, 3, 2}, {3, 7, 6}, {7, 5, 4}, {5, 1, 0}, {6, 4, 0}, {3, 9, 10}, {10, 14, 15}, {5, 17, 19}, {1, 8, 9}, {5, 11, 8}, {13, 12, 15}, {8, 12, 13}, {11, 15, 12}, {9, 13, 14}, {16, 18, 19}, {11, 19, 18}, {7, 16, 17}, {10, 18, 16}});
+std::vector<Vector2> BONE_tex({Vector2(0.625, 0.0), Vector2(0.375, 0.25), Vector2(0.375, 0.0), Vector2(0.625, 0.25), Vector2(0.375, 0.5), Vector2(0.375, 0.25), Vector2(0.625, 0.5), Vector2(0.375, 0.75), Vector2(0.375, 0.5), Vector2(0.625, 0.75), Vector2(0.375, 1.0), Vector2(0.375, 0.75), Vector2(0.375, 0.5), Vector2(0.125, 0.75), Vector2(0.125, 0.5), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.625, 1.0), Vector2(0.875, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.625, 1.0), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.375, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.375, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.375, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.375, 1.0), Vector2(0.375, 0.5), Vector2(0.375, 0.75), Vector2(0.125, 0.75), Vector2(0.625, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.0), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.875, 0.5), Vector2(0.875, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.0), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.625, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5)});
+std::vector<std::vector<int>> BONE_texco({{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {9, 10, 11}, {12, 13, 14}, {15, 16, 17}, {18, 19, 20}, {21, 22, 23}, {24, 25, 26}, {27, 28, 29}, {30, 31, 32}, {33, 34, 35}, {36, 37, 38}, {39, 40, 41}, {42, 43, 44}, {45, 46, 47}, {48, 49, 50}, {51, 52, 53}, {54, 55, 56}, {57, 58, 59}, {60, 61, 62}, {63, 64, 65}, {66, 67, 68}, {69, 70, 71}, {72, 73, 74}, {75, 76, 77}, {78, 79, 80}, {81, 82, 83}, {84, 85, 86}, {87, 88, 89}, {90, 91, 92}, {93, 94, 95}, {96, 97, 98}, {99, 100, 101}, {102, 103, 104}, {105, 106, 107}});
+std::vector<std::string> BONE_bones({"Bone", "Bone_001", "Bone_002", "Bone_004", "Bone_003", "Bone_005"});
+std::vector<int> BONE_parent({-1, 0, 1, 1, 2, 3});
+std::vector<Matrix4> BONE_bonetrans({Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 7.54979e-08, 1.0, 7.54979e-08, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)});
+std::vector<Vector3> BONE_bonetips({Vector3(0.0, 1.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0), Vector3(1.0, 0.0, 0.0)});
+std::unordered_set<int> BONE_atips({4, 5});
+std::vector<std::unordered_map<int, float>> BONE_weights({std::unordered_map<int, float>({{0, 0.9123928}, {1, 0.0876072}}), std::unordered_map<int, float>({{0, 0.520787}, {1, 0.4718273}, {2, 0.000967168}, {4, 0.006418466}}), std::unordered_map<int, float>({{0, 0.9132175}, {1, 0.08678251}}), std::unordered_map<int, float>({{0, 0.522971}, {1, 0.4736596}, {4, 0.003369271}}), std::unordered_map<int, float>({{0, 0.8712919}, {1, 0.0564025}, {3, 0.03215259}, {5, 0.04015296}}), std::unordered_map<int, float>({{0, 0.2668086}, {1, 0.2441979}, {3, 0.2332977}, {5, 0.2556956}}), std::unordered_map<int, float>({{0, 0.8648418}, {1, 0.05643308}, {3, 0.03520345}, {5, 0.04352152}}), std::unordered_map<int, float>({{0, 0.2622015}, {1, 0.2389079}, {3, 0.237917}, {5, 0.2609735}}), std::unordered_map<int, float>({{0, 0.002806246}, {2, 0.475099}, {4, 0.5220947}}), std::unordered_map<int, float>({{0, 0.002911031}, {2, 0.4741396}, {4, 0.5229492}}), std::unordered_map<int, float>({{2, 0.0270819}, {3, 0.4278732}, {4, 0.07883459}, {5, 0.4662103}}), std::unordered_map<int, float>({{2, 0.4402776}, {3, 0.009076952}, {4, 0.4806121}, {5, 0.07003325}}), std::unordered_map<int, float>({{2, 0.09057366}, {4, 0.9094263}}), std::unordered_map<int, float>({{2, 0.08392393}, {4, 0.9160761}}), std::unordered_map<int, float>({{2, 0.008004128}, {3, 0.06594222}, {4, 0.8533447}, {5, 0.07270878}}), std::unordered_map<int, float>({{2, 0.08273655}, {4, 0.9172634}}), std::unordered_map<int, float>({{0, 0.04456901}, {1, 0.03612548}, {3, 0.05291193}, {5, 0.8663934}}), std::unordered_map<int, float>({{0, 0.04453325}, {1, 0.0362786}, {3, 0.03940868}, {5, 0.8797794}}), std::unordered_map<int, float>({{3, 0.07510328}, {5, 0.9248967}}), std::unordered_map<int, float>({{2, 0.06885421}, {4, 0.0760138}, {5, 0.8551321}})});
+
+
+	Scene s = scene_blank(true);
+
+	RiggedMesh rmesh(BONE_v, BONE_t, BONE_tex, BONE_texco, BONE_bones, BONE_parent, BONE_bonetrans, BONE_bonetips, BONE_atips, BONE_weights);
+
+	rmesh.deformations[1] = Transform(Vector3(), Rotation3(Vector3(1, 1, 1), M_PI * 0.3)); // If the root transform is fucked up then all the rest will be also.
+	rmesh.deformations[2] = Transform(Vector3(), Rotation3(Vector3(0, -1, 1), M_PI * 0.1)); // If the root transform is fucked up then all the rest will be also.
+	rmesh.deformations[4] = Transform(Vector3(), Rotation3(Vector3(1, 0, 1), M_PI * -0.5)); // If the root transform is fucked up then all the rest will be also.
+	rmesh.deformations[5] = Transform(Vector3(), Rotation3(Vector3(-1, 1, 0), M_PI * 0.2)); // If the root transform is fucked up then all the rest will be also.
 	rmesh.computeAbsoluteTransforms();
 	rmesh.computeVertexLocations();
 
@@ -217,14 +262,75 @@ std::vector<std::unordered_map<int, float>> BONE_weights({std::unordered_map<int
 	std::cout << "Stored\n";
 }
 
+// TEST 9.86 TOXIN (Bone animations)
+void SkinAnim() {
+std::vector<Vector3> BONE_v({Vector3(-1.0, -1.0, -1.0), Vector3(-1.0, -1.0, 1.0), Vector3(-1.0, 1.0, -1.0), Vector3(-1.0, 1.0, 1.0), Vector3(1.0, -1.0, -1.0), Vector3(1.0, -1.0, 1.0), Vector3(1.0, 1.0, -1.0), Vector3(1.0, 1.0, 1.0), Vector3(-1.0, -1.0, 3.0), Vector3(-1.0, 1.0, 3.0), Vector3(1.0, 1.0, 3.0), Vector3(1.0, -1.0, 3.0), Vector3(-1.0, -1.0, 5.0), Vector3(-1.0, 1.0, 5.0), Vector3(1.0, 1.0, 5.0), Vector3(1.0, -1.0, 5.0), Vector3(3.0, 1.0, 1.0), Vector3(3.0, -1.0, 1.0), Vector3(3.0, 1.0, 3.0), Vector3(3.0, -1.0, 3.0)});
+std::vector<std::vector<int>> BONE_t({{1, 2, 0}, {3, 6, 2}, {7, 4, 6}, {5, 0, 4}, {6, 0, 2}, {3, 10, 7}, {10, 15, 11}, {5, 19, 11}, {1, 9, 3}, {5, 8, 1}, {13, 15, 14}, {8, 13, 9}, {11, 12, 8}, {9, 14, 10}, {16, 19, 17}, {11, 18, 10}, {7, 17, 5}, {10, 16, 7}, {1, 3, 2}, {3, 7, 6}, {7, 5, 4}, {5, 1, 0}, {6, 4, 0}, {3, 9, 10}, {10, 14, 15}, {5, 17, 19}, {1, 8, 9}, {5, 11, 8}, {13, 12, 15}, {8, 12, 13}, {11, 15, 12}, {9, 13, 14}, {16, 18, 19}, {11, 19, 18}, {7, 16, 17}, {10, 18, 16}});
+std::vector<Vector2> BONE_tex({Vector2(0.625, 0.0), Vector2(0.375, 0.25), Vector2(0.375, 0.0), Vector2(0.625, 0.25), Vector2(0.375, 0.5), Vector2(0.375, 0.25), Vector2(0.625, 0.5), Vector2(0.375, 0.75), Vector2(0.375, 0.5), Vector2(0.625, 0.75), Vector2(0.375, 1.0), Vector2(0.375, 0.75), Vector2(0.375, 0.5), Vector2(0.125, 0.75), Vector2(0.125, 0.5), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.625, 1.0), Vector2(0.875, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.625, 1.0), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.375, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.375, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.375, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.375, 1.0), Vector2(0.375, 0.5), Vector2(0.375, 0.75), Vector2(0.125, 0.75), Vector2(0.625, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.0), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.875, 0.5), Vector2(0.875, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.0), Vector2(0.625, 0.0), Vector2(0.625, 0.25), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 1.0), Vector2(0.625, 0.25), Vector2(0.625, 0.25), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.75), Vector2(0.625, 0.5), Vector2(0.625, 0.5), Vector2(0.625, 0.5)});
+std::vector<std::vector<int>> BONE_texco({{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {9, 10, 11}, {12, 13, 14}, {15, 16, 17}, {18, 19, 20}, {21, 22, 23}, {24, 25, 26}, {27, 28, 29}, {30, 31, 32}, {33, 34, 35}, {36, 37, 38}, {39, 40, 41}, {42, 43, 44}, {45, 46, 47}, {48, 49, 50}, {51, 52, 53}, {54, 55, 56}, {57, 58, 59}, {60, 61, 62}, {63, 64, 65}, {66, 67, 68}, {69, 70, 71}, {72, 73, 74}, {75, 76, 77}, {78, 79, 80}, {81, 82, 83}, {84, 85, 86}, {87, 88, 89}, {90, 91, 92}, {93, 94, 95}, {96, 97, 98}, {99, 100, 101}, {102, 103, 104}, {105, 106, 107}});
+std::vector<std::string> BONE_bones({"Bone", "Bone_001", "Bone_002", "Bone_004", "Bone_003", "Bone_005"});
+std::vector<int> BONE_parent({-1, 0, 1, 1, 2, 3});
+std::vector<Matrix4> BONE_bonetrans({Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 7.54979e-08, 1.0, 7.54979e-08, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0), Matrix4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)});
+std::vector<Vector3> BONE_bonetips({Vector3(0.0, 1.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0), Vector3(1.0, 0.0, 0.0)});
+std::unordered_set<int> BONE_atips({4, 5});
+std::vector<std::unordered_map<int, float>> BONE_weights({std::unordered_map<int, float>({{0, 0.9123928}, {1, 0.0876072}}), std::unordered_map<int, float>({{0, 0.520787}, {1, 0.4718273}, {2, 0.000967168}, {4, 0.006418466}}), std::unordered_map<int, float>({{0, 0.9132175}, {1, 0.08678251}}), std::unordered_map<int, float>({{0, 0.522971}, {1, 0.4736596}, {4, 0.003369271}}), std::unordered_map<int, float>({{0, 0.8712919}, {1, 0.0564025}, {3, 0.03215259}, {5, 0.04015296}}), std::unordered_map<int, float>({{0, 0.2668086}, {1, 0.2441979}, {3, 0.2332977}, {5, 0.2556956}}), std::unordered_map<int, float>({{0, 0.8648418}, {1, 0.05643308}, {3, 0.03520345}, {5, 0.04352152}}), std::unordered_map<int, float>({{0, 0.2622015}, {1, 0.2389079}, {3, 0.237917}, {5, 0.2609735}}), std::unordered_map<int, float>({{0, 0.002806246}, {2, 0.475099}, {4, 0.5220947}}), std::unordered_map<int, float>({{0, 0.002911031}, {2, 0.4741396}, {4, 0.5229492}}), std::unordered_map<int, float>({{2, 0.0270819}, {3, 0.4278732}, {4, 0.07883459}, {5, 0.4662103}}), std::unordered_map<int, float>({{2, 0.4402776}, {3, 0.009076952}, {4, 0.4806121}, {5, 0.07003325}}), std::unordered_map<int, float>({{2, 0.09057366}, {4, 0.9094263}}), std::unordered_map<int, float>({{2, 0.08392393}, {4, 0.9160761}}), std::unordered_map<int, float>({{2, 0.008004128}, {3, 0.06594222}, {4, 0.8533447}, {5, 0.07270878}}), std::unordered_map<int, float>({{2, 0.08273655}, {4, 0.9172634}}), std::unordered_map<int, float>({{0, 0.04456901}, {1, 0.03612548}, {3, 0.05291193}, {5, 0.8663934}}), std::unordered_map<int, float>({{0, 0.04453325}, {1, 0.0362786}, {3, 0.03940868}, {5, 0.8797794}}), std::unordered_map<int, float>({{3, 0.07510328}, {5, 0.9248967}}), std::unordered_map<int, float>({{2, 0.06885421}, {4, 0.0760138}, {5, 0.8551321}})});
+
+
+	Scene s = scene_blank(true);
+
+	RiggedMesh rmeshx(BONE_v, BONE_t, BONE_tex, BONE_texco, BONE_bones, BONE_parent, BONE_bonetrans, BONE_bonetips, BONE_atips, BONE_weights);
+
+	s.camera.Trans(Transform(Vector3(0, -6, 3), Rotation3(Vector3(1, 0, 0), M_PI * 0.5)));
+
+	s.addMesh(&rmeshx);
+
+	RiggedMesh* rmesh = dynamic_cast<RiggedMesh*>(s.meshes[0]);
+
+	rmesh->deformations[1] = Transform(Vector3(), Rotation3(Vector3(0, 0, 1), M_PI * 0.3)); // If the root transform is fucked up then all the rest will be also.
+	rmesh->deformations[2] = Transform(Vector3(), Rotation3(Vector3(0, 0, 1), M_PI * 0.1)); // If the root transform is fucked up then all the rest will be also.
+	rmesh->deformations[3] = Transform(Vector3(), Rotation3(Vector3(1, 1, 1), M_PI * -0.1)); // If the root transform is fucked up then all the rest will be also.
+
+	rmesh->computeAbsoluteTransforms();
+	rmesh->computeVertexLocations();
+
+	s.render();
+	std::cout << "Prepared\n";
+
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	int LEN = 48;
+
+	for (int i = 0; i < LEN; i++) {
+		rmesh->deformations[0] = Transform(Vector3(), Rotation3(Vector3(1, 1, 1), M_PI * 0.2 * sinf(i * M_PI * 2.0 * 1.0 / LEN)));
+		rmesh->deformations[1] = Transform(Vector3(), Rotation3(Vector3(2, -1, 3), M_PI * 0.1 * sinf((i + LEN / 4) * M_PI * 2.0 * 2.0 / LEN)));
+		rmesh->deformations[2] = Transform(Vector3(), Rotation3(Vector3(5, 3, -4), M_PI * 0.15 * sinf((i + LEN / 2) * M_PI * 2.0 * 4.0 / LEN)));
+		rmesh->deformations[3] = Transform(Vector3(), Rotation3(Vector3(-2, 2, 3), M_PI * 0.05 * sinf((i + LEN * 3 / 8) * M_PI * 2.0 * 3.0 / LEN)));
+		rmesh->deformations[4] = Transform(Vector3(), Rotation3(Vector3(1, -4, 4), M_PI * 0.2 * sinf((i + LEN / 3) * M_PI * 2.0 * 6.0 / LEN)));
+		rmesh->deformations[5] = Transform(Vector3(), Rotation3(Vector3(-4, 3, -5), M_PI * 0.25 * sinf((i + LEN * 1 / 8) * M_PI * 2.0 * 8.0 / LEN)));
+		rmesh->computeAbsoluteTransforms();
+		rmesh->computeVertexLocations();
+
+		s.render();
+
+		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
+
+		std::cout << "FRAME " << i << "DONE\n";
+	}
+}
+
 int main() {
 	std::cout << "BEGIN\n";
 	auto start = std::chrono::high_resolution_clock::now();
 
 	// BoneTreeTest();
 	// CylinderTest();
-
-	SkeletonTest();
+	// SkeletonTest();
+	// SkinTest();
+	SkinAnim();
 
 	/*
 

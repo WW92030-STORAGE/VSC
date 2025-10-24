@@ -196,7 +196,9 @@ class Scene { // CENA!
 		for (int i = 0; i < meshes.size(); i++) {
 			Mesh* m = meshes[i];
 			MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
+			RiggedMesh* rm = dynamic_cast<RiggedMesh*>(m);
 			if (mm) delete mm;
+			else if (rm) delete rm;
 			else delete m; 
 		}
 		
@@ -715,6 +717,7 @@ class Scene { // CENA!
 	// draw a MESH
 
 	void drawMesh(Mesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
+		bool matprovided = material;
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		for (int i = 0; i < m.size; i++) {
@@ -739,10 +742,14 @@ class Scene { // CENA!
 
 			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr: vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
+			delete[] vt;
 		}
+
+		if (!matprovided) delete material;
 	}
 
 	void drawMesh(MorphedMesh& m, BaseMaterial* material = nullptr, bool SMOOTHSHADE = false, bool PHONGSHADE = false, bool INTERPNORM = false, bool BACKFACECULL = false) {
+		bool matprovided = material;
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		for (int i = 0; i < m.size; i++) {
@@ -767,10 +774,14 @@ class Scene { // CENA!
 
 			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr: vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
 			delete[] vn;
+			delete[] vt;
 		}
+
+		if (!matprovided) delete material;
 	}
 
 	void fillMesh(Mesh& m, BaseMaterial* material = nullptr, std::optional<FragShader> shader = std::nullopt, bool SMOOTHSHADE = true, bool PHONGSHADE = true, bool INTERPNORM = false, bool BACKFACECULL = true) {
+		bool matprovided = material;
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
@@ -804,9 +815,12 @@ class Scene { // CENA!
 			delete[] vn;
 			delete[] vt;
 		}
+
+		if (!matprovided) delete material;
 	}
 
 	void fillMesh(MorphedMesh& m, BaseMaterial* material = nullptr, std::optional<FragShader> shader = std::nullopt, bool SMOOTHSHADE = true, bool PHONGSHADE = true, bool INTERPNORM = false, bool BACKFACECULL = true) {
+		bool matprovided = material;
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
@@ -839,6 +853,8 @@ class Scene { // CENA!
 			delete[] vn;
 			delete[] vt;
 		}
+
+		if (!matprovided) delete material;
 	}
 
 	// Queue various meshes and triangles to be drawn. WARNING - This will result in flat shading.

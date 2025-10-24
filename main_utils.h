@@ -19,8 +19,8 @@ std::string VIDEO_PATH = "video";
 
 using namespace std;
 
-Scene scene_blank(bool more_lights = false) {
-		int N = 256;
+Scene scene_blank(bool more_lights = false, int R = 512) {
+	int N = R;
 	Scene s(N, N);
 	float A = 0.1;
 
