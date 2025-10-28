@@ -110,6 +110,10 @@ class Transform {
 	}
 };
 
+inline Transform Rotation(Vector3 a, float t) {
+	return Transform(Vector3(), Rotation3(a, t));
+}
+
 inline Transform RotationAroundPoint(Vector3 p, Vector3 a, float t) {
 	Transform back(p * -1);
 	Transform rot(Vector3(), Rotation3(a, t));

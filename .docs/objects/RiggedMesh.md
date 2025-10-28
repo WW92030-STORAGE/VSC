@@ -53,4 +53,5 @@ Mesh that is controlled by an armature.
 - `bool is_root(int i)` = Is bone index `i` a root? (Returns if `parent[i] < 0`)
 - `void computeAbsoluteTransforms()` = Computes the `absolute_transforms` based on the current `deformations`
 - `void computeVertexLocations()` = Computes the absolute positions of vertices assuming the `absolute_transforms` are up to date.
+- `void deform(std::string name, Transform t)` = Sets the deformation of bone `name` to `t` (use `bone_names` and `bone_names_inv` to convert between names and indices)
 - `std::vector<Mesh> visBones(float R = 0.2)` = Returns meshes that represent bone locations and orientations. You can render these to visualize bones.

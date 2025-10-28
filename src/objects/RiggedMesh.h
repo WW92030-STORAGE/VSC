@@ -89,6 +89,10 @@ class RiggedMesh : public Mesh {
     }
 
     void init() {
+        // Setup bone_names_inv
+
+        for (int i = 0; i < bone_names.size(); i++) bone_names_inv[bone_names[i]] = i;
+
         deformations = std::vector<Transform>(nbones, Transform(Matrix4::eye()));
         absolute_transforms = std::vector<Transform>(rest_transforms);
         absolute_tips = std::vector<Vector3>(tips);
@@ -228,7 +232,7 @@ class RiggedMesh : public Mesh {
         for (int i = 0; i < nbones; i++) {
             if (is_root(i)) {
                 q.push(i);
-                absolute_transforms[i] = deformations[i] * rest_transforms[i];
+                absolute_transforms[i] = rest_transforms[i] * deformations[i];
                 absolute_joints[i] = absolute_transforms[i].origin;
                 absolute_tips[i] = absolute_transforms[i] * tips[i];
             }
@@ -284,6 +288,12 @@ class RiggedMesh : public Mesh {
 	        res.push_back(m3);
         }
         return res;
+    }
+
+    inline void deform(std::string name, Transform t) {
+        if (bone_names_inv.find(name) == bone_names_inv.end()) return;
+        int index = bone_names_inv[name];
+        deformations[index] = t;
     }
 };
 

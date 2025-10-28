@@ -13,6 +13,7 @@ from collections import deque
 + All transforms have been applied, so the binding matrix is identity. (Select all, CTRL+A and then all transforms.)
 + All bones in your armature have distinct names.
 + The armature system is represented as NODES in the <library_visual_scenes> portion of the COLLADA file, and all bones have type JOINT.
++ IMPORTANT: Please ensure there are no materials when exporting. UVs are fine.
 
 - Be aware of any unexpected behavior. For best results export from Blender.
 
@@ -22,8 +23,8 @@ https://www.khronos.org/files/collada_spec_1_4.pdf
 
 # Constants
 
-PREFIX = "../misc"
-FILENAME = "BONES2"
+PREFIX = "../misc"  # Put the input file path here
+FILENAME = "mcrproto_combined_waving"  # Put the input file name here
 OUTPUT = FILENAME + ".dat"
 
 def printout(value, type):
