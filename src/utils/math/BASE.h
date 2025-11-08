@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 
 // Base math methods that only use numerical values
 

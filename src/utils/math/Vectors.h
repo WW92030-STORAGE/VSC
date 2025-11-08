@@ -95,7 +95,7 @@ class Vector2 {
 
 	inline Vector2 proj(Vector2& other) {
 		if (BASE::fzero(other.length())) return Vector2(0, 0);
-		return Vector2(x, y) * (dot(other) / other.length());
+		return other * (dot(other) / other.length());
 	}
 
 	inline Vector2 ortho(Vector2& other) {
@@ -236,7 +236,7 @@ class Vector3 {
 
 	inline Vector3 proj(Vector3& other) {
 		if (BASE::fzero(other.length())) return Vector3(0, 0, 0);
-		return Vector3(x, y, z) * (dot(other) / other.length());
+		return other * (dot(other) / other.length());
 	}
 
 	inline Vector3 ortho(Vector3& other) {
@@ -390,7 +390,7 @@ class Vector4 {
 
 	inline Vector4 proj(Vector4& other) {
 		if (BASE::fzero(other.length())) return Vector4(0, 0, 0, 0);
-		return Vector4(x, y, z, w) * (dot(other) / other.length());
+		return other * (dot(other) / other.length());
 	}
 
 	inline Vector4 ortho(Vector4& other) {

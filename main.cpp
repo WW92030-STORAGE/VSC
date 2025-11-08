@@ -321,7 +321,9 @@ int main() {
 	// SkeletonTest();
 	// SkinTest();
 	// SkinAnim();
-	MCRProtoAnim();
+	// MCRProtoAnim();
+
+	
 
 	/*
 

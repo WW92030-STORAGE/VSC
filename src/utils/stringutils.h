@@ -3,6 +3,12 @@
 
 #include <vector>
 #include <string>
+#include <cwctype>
+#include <algorithm>
+#include <cstdint>
+#include <climits>
+
+#include "Math.h"
 
 inline bool iswhitespace(std::string s) {
 	if (s.length() <= 0) return true;
@@ -48,6 +54,25 @@ inline std::string gradientBlock(float f) {
 		if (f < threshold * i) return res[i];
 	}
 	return res[res.size() - 1];
+}
+
+inline std::string disp(std::vector<Vector2> v) {
+	std::string res = "[";
+	for (int i = 0; i < v.size(); i++) {
+		if (i) res += ", ";
+		res += v[i].to_string();
+	}
+	return res + "]";
+}
+
+template <typename T>
+inline std::string disp(std::vector<T> v) {
+	std::string res = "[";
+	for (int i = 0; i < v.size(); i++) {
+		if (i) res += ", ";
+		res += std::to_string(v[i]);
+	}
+	return res + "]";
 }
 
 #endif
