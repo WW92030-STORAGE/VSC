@@ -15,7 +15,7 @@ class RandomSource {
     }
 
     virtual inline void init(uint64_t seed) {
-
+        
     }
 
     virtual inline uint64_t rand64() {

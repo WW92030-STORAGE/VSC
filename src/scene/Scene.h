@@ -283,9 +283,9 @@ class Scene { // CENA!
 					if (material->specular > 0) {
 
 						Vector3 reflected = normal * (2 * normal.dot(L)) - L;
-						float rv = reflected.normalized().dot((pRay * -1).normalized());
-						if (rv > 0) {
-							float spec = powf(rv, material->specular);
+						float rv_inv = reflected.cosine(pRay);
+						if (rv_inv < 0) {
+							float spec = powf(rv_inv * -1, material->specular);
 							shadedIntensity = shadedIntensity + (pl.intensity * spec);
 						// std::cout << (pl.intensity * spec).to_string() << " " << specular << "\n";
 						}

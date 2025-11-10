@@ -19,12 +19,11 @@ class Quaternion {
 
 	Quaternion() {
 		w = 0;
-		v = Vector3();
 	}
 
 	Quaternion(float s, Vector3 u) {
 		w = s;
-		v = Vector3(u);
+		v = (u);
 	}
 
 	Quaternion(float s, float x, float y, float z) {
@@ -45,7 +44,6 @@ class Quaternion {
 	// https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
 	Quaternion(Matrix3 m) {
 		float T = m.get(0, 0) + m.get(1, 1) + m.get(2, 2);
-		v = Vector3();
 
 		
 		if (T > 0) {

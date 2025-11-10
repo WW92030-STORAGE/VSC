@@ -4,6 +4,10 @@
 #include <cstdint>
 #include <cmath>
 
+#include "Mersenne.h"
+#include "RandomSource.h"
+
+
 class NoiseOctave2 {
     protected:
     RandomSource* rs;

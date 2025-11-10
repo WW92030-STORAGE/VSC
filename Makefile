@@ -33,12 +33,19 @@ profile: $(FILE) preprofile doprofile
 
 # Build for profiling
 preprofile: $(FILE)
-	$(CXX) -pg $(FILE) -o $(TARGET) -w -fcompare-debug-second
+	$(CXX) -pg $(FILE) -o $(TARGET) -Os -w -fcompare-debug-second
 
 # Run and analyze
 doprofile: $(FILE)
 	./$(TARGET)
 	gprof $(TARGET) gmon.out > analysis.txt
+
+# gprof profiling
+profile3: $(FILE) preprofile3 doprofile
+
+# Build for profiling
+preprofile3: $(FILE)
+	$(CXX) -pg $(FILE) -o $(TARGET) -O3 -w -fcompare-debug-second
 
 # Convenience
 

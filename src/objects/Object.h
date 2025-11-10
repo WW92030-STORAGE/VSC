@@ -16,7 +16,7 @@ class Object {
 	}
 
 	Object(const Object& other) {
-		transform = Transform(other.transform);
+		transform = other.transform;
 	}
 
 	// MUST OVERRIDE ME

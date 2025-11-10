@@ -121,7 +121,6 @@ class Plane : public Object {
 		else if (!BASE::fzero(s.y)) p = Vector3(0, -s.w / s.y, 0);
 		else if (!BASE::fzero(s.z)) p = Vector3(0, 0, -s.w / s.z);
 		else {
-			p = Vector3();
 			n = Vector3(1, 0, 0);
 		}
 

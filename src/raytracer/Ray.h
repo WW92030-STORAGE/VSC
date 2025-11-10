@@ -18,7 +18,6 @@ class Ray {
 	Vector3 slope;
 
 	Ray() {
-		point = Vector3();
 		slope = Vector3(1, 0, 0);
 	}
 

@@ -7,6 +7,7 @@
 #include <cfloat>
 
 #include "../Math.h"
+#include "Noise.h"
 
 class PerlinNoise2 : public NoiseOctave2 {
     uint64_t xm;

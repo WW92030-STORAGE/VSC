@@ -43,7 +43,6 @@ class Mesh : public Object {
 	void setupvns() {
 
 		vn = std::vector<Vector3>(nverts);
-		for (int i = 0; i < nverts; i++) vn[i] = Vector3();
 
 		for (int i = 0; i < size; i++) {
 			Triangle3 tri = makeTriangle(i);

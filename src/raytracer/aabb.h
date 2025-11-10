@@ -17,8 +17,7 @@ class AABB {
 	Vector3 MARGIN = Vector3(1, 1, 1) * 0.02;
 
 	AABB() {
-		inferior = Vector3();
-		superior = Vector3();
+		
 	}
 
 	AABB(Vector3 a, Vector3 b) {

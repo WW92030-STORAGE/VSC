@@ -17,7 +17,7 @@ std::pair<std::vector<Triangle3>, std::vector<Triangle3>> TriSplit(Triangle3 t, 
     std::vector<Triangle3> negative;
 
     Vector3 p[3];
-    for (int i = 0; i < 3; i++) p[i] = Vector3(t.p[i]);
+    for (int i = 0; i < 3; i++) p[i] = (t.p[i]);
     bool vpos[3];
     for (int i = 0; i < 3; i++) vpos[i] = splane.distanceFrom(p[i]) > 0;
     int sum = 0;
@@ -116,7 +116,7 @@ std::pair<std::vector<std::vector<T>>, std::vector<std::vector<T>>> TriSplitAttr
 
 
     Vector3 p[3];
-    for (int i = 0; i < 3; i++) p[i] = Vector3(t.p[i]);
+    for (int i = 0; i < 3; i++) p[i] = (t.p[i]);
     bool vpos[3];
     for (int i = 0; i < 3; i++) vpos[i] = splane.distanceFrom(p[i]) > 0;
     int sum = 0;
