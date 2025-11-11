@@ -267,10 +267,19 @@ class TriangleF {
 
 	BaseMaterial* material;
 
+	bool oriented;
+
+	void init() {
+		auto e1 = (p[1].ndc - p[0].ndc);
+		auto e2 = (p[2].ndc - p[0].ndc);
+		oriented = e1.x * e2.y - e1.y * e2.x >= 0;
+	}
+
 	TriangleF() {
 		for (int i = 0; i < 3; i++) p[i] = Fragment(Vector4(i == 0, i == 1, i == 2, 1), Vector3(), 0);
 		N = Vector3(1, 1, 1).normalized();
 		ON = Vector3(1, 1, 1).normalized();
+		init();
 	}
 
 	TriangleF(Fragment a, Fragment b, Fragment c, Vector3 n) {
@@ -279,12 +288,14 @@ class TriangleF {
 		p[2] = (c);
 		N = (n);
 		ON = (n);
+		init();
 	}
 
 	TriangleF(Fragment x[3], Vector3 n) {
 		for (int i = 0; i < 3; i++) p[i] = (x[i]);
 		N = (n);
 		ON = (n);
+		init();
 	}
 
 	TriangleF(const TriangleF& other) {
@@ -293,6 +304,7 @@ class TriangleF {
 		ON = (other.ON);
 
 		material = other.material;
+		oriented = other.oriented;
 	}
 
 	// Orient this triangle so the vertices are in counterclockwise order and the normal has positive z.
@@ -309,20 +321,24 @@ class TriangleF {
 			p[1] = Fragment(p[2]);
 			p[2] = temp;
 		}
+
+		oriented = true;
 	}
 
 	inline bool inside(Vector2 P) {
-		TriangleF T(*this);
+		// no more copy constructor!
 
-		T.orient();
+		int offset = oriented ? 1 : 2;
 
 		// Think of it like this. If a point is inside the triangle then it must be to the left of all three edges, in counterclockwise motion.
 		// This means (P[(i + 1) % 3] - P[i]) ^ (P - p[i]) = (Edge) ^ (Point to vertex) has positive z.
 
 		for (int i = 0; i < 3; i++) {
-			Vector3 v = vec3(P - vec2(T.p[i].ndc));
-			Vector3 e = vec3(T.p[(i + 1) % 3].ndc - T.p[i].ndc);
-			if ((e.cross(v)).z < 0) return false;
+			Vector2 v = (P - vec2(p[i].ndc));
+			Vector4 e = (p[(i + offset) % 3].ndc - p[i].ndc);
+
+			if (e.x * v.y - e.y * v.x < 0) return false; // cross product
+			// if ((e.cross(v)).z < 0) return false;
 		}
 		return true;
 	}

@@ -273,7 +273,7 @@ class Scene { // CENA!
 				Vector3 shadedIntensity(0, 0, 0);
 
 				// Diffuse term
-				float scale = normal.normalized() * L.normalized();
+				float scale = normal.cosine(L);
 				// Only do light contribution if normal is facing light
 				if (scale > 0) {
 					shadedIntensity = shadedIntensity + (pl.intensity * scale);
@@ -477,9 +477,13 @@ class Scene { // CENA!
 
 	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
 		Vector3 b = s.bary(x, y);
-		b = NormSum(b);
-		float zc = s.interp_given_bary(b, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
 		float wc = 1.0 / s.interp_given_bary(b, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
+		// DEPTH TEST!!!!!
+		if (buffer[x][y].depth < wc) return;
+
+
+		float zc = s.interp_given_bary(b, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
+		
 
 		// for (int i = 0; i < 3; i++) std::cout << "UV " << s.p[i].uv.to_string() << " ";
 		// std::cout << "\n";
@@ -489,13 +493,15 @@ class Scene { // CENA!
 		// Interpolate uv TODO - make this perspective correct
 		// u/z and v/z linearly interpolate
 
+		float winv[3] = {1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w};
+
 		Vector2 finaluv;
-		for (int i = 0; i < 3; i++) finaluv = finaluv + ((s.p[i].uv / s.p[i].ndc.w) * b.get(i));
+		for (int i = 0; i < 3; i++) finaluv = finaluv + ((s.p[i].uv * winv[i]) * b.get(i));
 		finaluv = finaluv * wc;
 
 		// And same goes for world space position
 		Vector3 finalwsp(0, 0, 0);
-		for (int i = 0; i < 3; i++) finalwsp = finalwsp + ((s.p[i].wspos) / s.p[i].ndc.w) * b.get(i);
+		for (int i = 0; i < 3; i++) finalwsp = finalwsp + ((s.p[i].wspos) * winv[i]) * b.get(i);
 		finalwsp = finalwsp * wc;
 
 
@@ -505,7 +511,7 @@ class Scene { // CENA!
 		if (PHONGSHADE) {
 			Vector3 point;
 			// for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * b.get(ss));
-			for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] / s.p[ss].ndc.w) * b.get(ss);
+			for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * winv[ss]) * b.get(ss);
 			point = point * wc;
 
 			// std::cout << t.p[0].to_string() << " " << t.p[1].to_string() << " " << t.p[2].to_string() << " + " << b.to_string() << " = " << point.to_string() << "\n";
@@ -539,18 +545,20 @@ class Scene { // CENA!
 		drawFragment(F__F, x, y);
 	}
 
-	// Originally a method using three cross products, now using a variation on Bresenham's method.
+	// Originally a method using three cross products, now using a simple slope method.
 	// https://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
+
+	// In the following two methods: bx1, bx2 are the x positions of the endpoints of the base, by is the y position of the base, (ax, ay) is the tip.
 
 	void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
-		float m1 = float(bx1 - ax) / float(by - ay);
-		float m2 = float(bx2 - ax) / float(by - ay);
+		double m1 = double(bx1 - ax) / double(by - ay);
+		double m2 = double(bx2 - ax) / double(by - ay);
 
-		float cx1 = ax;
-		float cx2 = ax;
+		double cx1 = ax;
+		double cx2 = ax;
 		for (int sy = ay; sy <= by; sy++) {
-			for (int sx = BASE::ifloor(cx1); sx <= BASE::iceil(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE, shader);
+			for (int sx = BASE::ifloor(cx1); sx <= BASE::ifloor(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE, shader);
 			cx1 += m1;
 			cx2 += m2;
 		}
@@ -558,13 +566,13 @@ class Scene { // CENA!
 
 	void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
 		if (bx1 > bx2) std::swap(bx1, bx2);
-		float m1 = float(bx1 - ax) / float(by - ay);
-		float m2 = float(bx2 - ax) / float(by - ay);
+		double m1 = double(bx1 - ax) / double(by - ay);
+		double m2 = double(bx2 - ax) / double(by - ay);
 
-		float cx1 = ax;
-		float cx2 = ax;
-		for (int sy = ay; sy >= by; sy--) {
-			for (int sx = BASE::ifloor(cx1); sx <= BASE::iceil(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE, shader);
+		double cx1 = ax;
+		double cx2 = ax;
+		for (int sy = ay; sy > by; sy--) {
+			for (int sx = BASE::ifloor(cx1); sx <= BASE::ifloor(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE, shader);
 			cx1 -= m1;
 			cx2 -= m2;
 		}
