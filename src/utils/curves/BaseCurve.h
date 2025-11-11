@@ -7,8 +7,6 @@
 #include "../../objects/Mesh.h"
 
 
-// #include <iostream>
-
 /*
 
 Base curve class. This behaves exactly like a Bezier curve.

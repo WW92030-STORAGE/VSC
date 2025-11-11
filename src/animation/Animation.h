@@ -32,8 +32,6 @@
 #include "../raytracer/aabb.h"
 #include "../raytracer/BVH.h"
 
-// #include <iostream>
-
 namespace ANIMI {
     // A set of almost entirely continuous and almost differentiable functions that operate on [0, 1], with F(0) = 0 and F(1) = 1.
     // These functions only take in one parameter. Sorry, budgeting costs.

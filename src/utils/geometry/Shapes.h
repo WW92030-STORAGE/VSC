@@ -9,8 +9,6 @@
 #include <vector>
 #include <utility>
 
-// #include <iostream>
-
 /*
 
 Some generators for basic shapes.

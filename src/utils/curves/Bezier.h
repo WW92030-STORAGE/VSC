@@ -8,8 +8,6 @@
 #include "BaseCurve.h"
 #include "../../objects/Mesh.h"
 
-// #include <iostream>
-
 class BezierCurve : public BaseCurve {
     public:
     

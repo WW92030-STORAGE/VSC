@@ -1,7 +1,6 @@
 #ifndef CAMERA_EXT
 #define CAMERA_EXT
 
-#include <iostream>
 #include <string>
 
 

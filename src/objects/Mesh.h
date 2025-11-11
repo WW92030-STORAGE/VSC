@@ -8,7 +8,6 @@ All meshes are defined to be "watertight" in the sense that you don't really hav
 
 */
 
-// #include <iostream>
 #include <sstream>
 #include <string>
 #include <fstream>

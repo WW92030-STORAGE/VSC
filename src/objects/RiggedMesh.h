@@ -1,8 +1,6 @@
 #ifndef RIGGEDMESH_EXT
 #define RIGGEDMESH_EXT
 
-// #include <iostream>
-
 #include <string>
 #include <vector>
 #include <utility>

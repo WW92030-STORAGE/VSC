@@ -44,8 +44,6 @@ Each subdivision algorithm should be deterministic with respect to the topology.
     
 */
 
-#include <iostream>
-
 namespace subdiv {
 
 template <typename T>
@@ -161,7 +159,7 @@ inline Mesh subdivideLoop(Mesh m, int k = 1) {
     std::vector<Vector2> uv;
     std::map<Vector2, int> uv_inv;
 
-    std::cout << "MESH " << m.size << " TRIS " << m.nverts << " VERTS\n";
+    // std::cout << "MESH " << m.size << " TRIS " << m.nverts << " VERTS\n";
 
     for (int trii = 0; trii < m.size; trii++) {
         auto tri = m.makeTriangle(trii);

@@ -3,7 +3,6 @@
 
 // Colors. Colors (RGBA) aRe stored in Vector4s or in uint32s. The highest bits are red, the lowest ones are alpha.
 
-// #include <iostream>
 #include <cstdint>
 
 #include "../utils/math/Vectors.h"

@@ -9,8 +9,6 @@
 #include "BaseCurve.h"
 #include "../../objects/Mesh.h"
 
-// #include <iostream>
-
 // Uniform cubic B-spline curve
 
 class CubicBSpline : public BaseCurve {

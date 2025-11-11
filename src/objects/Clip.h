@@ -1,8 +1,6 @@
 #ifndef CLIP_EXT
 #define CLIP_EXT
 
-// #include <iostream>
-
 
 
 #include <utility>

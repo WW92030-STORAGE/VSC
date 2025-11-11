@@ -1,7 +1,6 @@
 #ifndef QUATERNION_EXT
 #define QUATERNION_EXT
 
-// #include <iostream>
 
 #include <string>
 

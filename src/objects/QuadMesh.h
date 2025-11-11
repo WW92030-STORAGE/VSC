@@ -11,7 +11,6 @@ They cannot be directly rendered and require triangulating (splitting each quad 
 
 */
 
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <fstream>
