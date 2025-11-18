@@ -85,12 +85,9 @@ Scene class for rasterization
 
 ## Internal Functions
 
-These shouldn't be used by the user.
+These shouldn't be used by the user. Actually they need to be revamped completely. See you in a few years.
 
-- `void LineLow(int x0, int y0, int x1, int y1, uint32_t c)`
-- `void LineHigh(int x0, int y0, int x1, int y1, uint32_t c)`
-- `void fillBotFlat(TriangleF s, Triangle3 t, int bx1, int bx2, int by, int tx, int ty, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr)` = Needs to be improved
-- `void fillTopFlat(TriangleF s, Triangle3 t, int bx1, int bx2, int by, int tx, int ty, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr)` = Needs to be improved
-- `fillTopFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr)`
-- `fillBotFlat(TriangleF s, Triangle3 t, float bx1, float bx2, float by, float tx, float ty, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr)`
-- `fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false, FRAG_SHADER shader = nullptr)`
+- `bool smallEnough(TriangleF s)` = Is a Triangle small enough (to be naive rasterized instead of optimized)?
+- `void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt)` = Optimized rasterization system for larger triangles
+- `Vector2i vec2i(Vector4 v)` = Floor of the `x` and `y` coordinates.
+- `int orient2d(Vector2i a, Vector2i b, Vector2i c)` = Cross products!

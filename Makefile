@@ -28,19 +28,26 @@ video: $(FILE) build run
 clean:
 	rm -f $(TARGET)
 
-# gprof profiling
+# gprof profiling (O0)
 profile: $(FILE) preprofile doprofile
-
-# Build for profiling
-preprofile: $(FILE)
-	$(CXX) -pg $(FILE) -o $(TARGET) -Os -w -fcompare-debug-second
 
 # Run and analyze
 doprofile: $(FILE)
 	./$(TARGET)
 	gprof $(TARGET) gmon.out > analysis.txt
 
-# gprof profiling
+# Build for profiling
+preprofile: $(FILE)
+	$(CXX) -pg $(FILE) -o $(TARGET) -O0 -w -fcompare-debug-second
+
+# gprof profiling (Os)
+profiles: $(FILE) preprofiles doprofile
+
+# Build for profiling
+preprofiles: $(FILE)
+	$(CXX) -pg $(FILE) -o $(TARGET) -Os -w -fcompare-debug-second
+
+# gprof profiling (O3)
 profile3: $(FILE) preprofile3 doprofile
 
 # Build for profiling

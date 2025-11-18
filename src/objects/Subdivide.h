@@ -412,8 +412,8 @@ inline SharpQuadMesh subdivideCC(SharpQuadMesh m, int k = 1) {
         int nNF = 0;
         int numSharps = 0;
 
-        Vector3 F(0, 0, 0);
-        Vector3 R(0, 0, 0);
+        Vector3 __F(0, 0, 0);
+        Vector3 __R(0, 0, 0);
 
         std::set<Vector3> neighbors;
         // Find the faces and neighboring vertices
@@ -424,7 +424,7 @@ inline SharpQuadMesh subdivideCC(SharpQuadMesh m, int k = 1) {
             }
             if (hasface) {
                 nNF++;
-                F = F + facepoints[face];
+                __F = __F + facepoints[face];
                 for (int id = 0; id < 4; id++) {
                     if (m.get(face, id) == original) {
                         neighbors.insert(m.get(face, (id + 1) % 4));
@@ -462,14 +462,14 @@ inline SharpQuadMesh subdivideCC(SharpQuadMesh m, int k = 1) {
             if (i == original) continue;
             nNE++;
             Vector3 mid = (original + i) * 0.5;
-            R = R + mid;
+            __R = __R + mid;
         }
 
-        F = F / nNF;
-        R = R / nNE;
+        __F = __F / nNF;
+        __R = __R / nNE;
 
         // Now to calculate the new point
-        vertpts[v] = (F + R + R + original * (nNF - 3)) * (1.0 / nNF);
+        vertpts[v] = (__F + __R + __R + original * (nNF - 3)) * (1.0 / nNF);
     }
 
     // Create the final mesh using faces
@@ -587,8 +587,8 @@ inline QuadMesh subdivideCC(QuadMesh m, int k = 1) {
         vertpts[v] = Vector3(original);
         int nNF = 0;
 
-        Vector3 F(0, 0, 0);
-        Vector3 R(0, 0, 0);
+        Vector3 __F(0, 0, 0);
+        Vector3 __R(0, 0, 0);
 
         std::set<Vector3> neighbors;
         // Find the faces and neighboring vertices
@@ -599,7 +599,7 @@ inline QuadMesh subdivideCC(QuadMesh m, int k = 1) {
             }
             if (hasface) {
                 nNF++;
-                F = F + facepoints[face];
+                __F = __F + facepoints[face];
                 for (int id = 0; id < 4; id++) {
                     if (m.get(face, id) == original) {
                         neighbors.insert(m.get(face, (id + 1) % 4));
@@ -615,14 +615,14 @@ inline QuadMesh subdivideCC(QuadMesh m, int k = 1) {
             if (i == original) continue;
             nNE++;
             Vector3 mid = (original + i) * 0.5;
-            R = R + mid;
+            __R = __R + mid;
         }
 
-        F = F / nNF;
-        R = R / nNE;
+        __F = __F / nNF;
+        __R = __R / nNE;
 
         // Now to calculate the new point
-        vertpts[v] = (F + R + R + original * (nNF - 3)) * (1.0 / nNF);
+        vertpts[v] = (__F + __R + __R + original * (nNF - 3)) * (1.0 / nNF);
     }
 
     // Create the final mesh using faces

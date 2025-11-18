@@ -48,6 +48,12 @@ Elements are zero-indexed.
 
 ---
 
+# utils/math/Vectors/Vector2i
+
+A similar class to `Vector2` except with integer fields and only constructors. This is mainly used for triangle rasterization.
+
+---
+
 # utils/math/Vectors/Vector3
 
 `class Vector3`

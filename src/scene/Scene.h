@@ -545,65 +545,93 @@ class Scene { // CENA!
 		drawFragment(F__F, x, y);
 	}
 
-	// Originally a method using three cross products, now using a simple slope method.
-	// https://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
+	// A scanline based algorithm 
+	// https://fgiesen.wordpress.com/2013/02/10/optimizing-the-basic-rasterizer/
 
-	// In the following two methods: bx1, bx2 are the x positions of the endpoints of the base, by is the y position of the base, (ax, ay) is the tip.
-
-	void fillTriangleFlatTop(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
-		if (bx1 > bx2) std::swap(bx1, bx2);
-		double m1 = double(bx1 - ax) / double(by - ay);
-		double m2 = double(bx2 - ax) / double(by - ay);
-
-		double cx1 = ax;
-		double cx2 = ax;
-		for (int sy = ay; sy <= by; sy++) {
-			for (int sx = BASE::ifloor(cx1); sx <= BASE::ifloor(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE, shader);
-			cx1 += m1;
-			cx2 += m2;
-		}
+	int orient2d(Vector2i a, Vector2i b, Vector2i c) {
+		return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
 	}
 
-	void fillTriangleFlatBottom(TriangleF s, Triangle3 T, int bx1, int bx2, int by, int ax, int ay, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
-		if (bx1 > bx2) std::swap(bx1, bx2);
-		double m1 = double(bx1 - ax) / double(by - ay);
-		double m2 = double(bx2 - ax) / double(by - ay);
-
-		double cx1 = ax;
-		double cx2 = ax;
-		for (int sy = ay; sy > by; sy--) {
-			for (int sx = BASE::ifloor(cx1); sx <= BASE::ifloor(cx2); sx++) DrawTriFrag(s, T, sx, sy, PHONGSHADE, shader);
-			cx1 -= m1;
-			cx2 -= m2;
-		}
+	inline Vector2i vec2i(Vector4 v) {
+		return Vector2i(BASE::ifloor(v.x), BASE::ifloor(v.y));
 	}
 
 	void fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
-		if (s.p[1].ndc.y < s.p[0].ndc.y) {
-			std::swap(s.p[0], s.p[1]);
-			std::swap(T.p[0], T.p[1]);
-		}
-		if (s.p[2].ndc.y < s.p[0].ndc.y) {
-			std::swap(s.p[2], s.p[0]);
-			std::swap(T.p[2], T.p[0]);
-		}
-		if (s.p[2].ndc.y < s.p[1].ndc.y) {
-			std::swap(s.p[2], s.p[1]);
-			std::swap(T.p[2], T.p[1]);
+		Vector2i v0 = vec2i(s.p[0].ndc);
+		Vector2i v1 = vec2i(s.p[1].ndc);
+		Vector2i v2 = vec2i(s.p[2].ndc);
+
+		
+		Vector2i vv[3] = {v0, v1, v2};
+
+    	Vector2i e01(v0.y - v1.y, v1.x - v0.x);
+		Vector2i e12(v1.y - v2.y, v2.x - v1.x);
+		Vector2i e20(v2.y - v0.y, v0.x - v2.x);
+
+		Vector2i BL = vec2i(s.p[0].ndc);
+		Vector2i TR(BL);
+		for (int i = 1; i < 3; i++) {
+			BL.x = std::min(BL.x, vv[i].x);
+			BL.y = std::min(BL.y, vv[i].y);
+			TR.x = std::max(TR.x, vv[i].x);
+			TR.y = std::max(TR.y, vv[i].y);
 		}
 
-		if (BASE::fequal(s.p[1].ndc.y, s.p[2].ndc.y)) fillTriangleFlatTop(s, T, s.p[1].ndc.x, s.p[2].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE, shader);
-		else if (BASE::fequal(s.p[0].ndc.y, s.p[1].ndc.y)) fillTriangleFlatBottom(s, T, s.p[0].ndc.x, s.p[1].ndc.x, s.p[0].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE, shader);
-	
-		else {
-			float divx = s.p[0].ndc.x + (s.p[2].ndc.x - s.p[0].ndc.x) * (s.p[1].ndc.y - s.p[0].ndc.y) / (s.p[2].ndc.y - s.p[0].ndc.y);
-			fillTriangleFlatBottom(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[2].ndc.x, s.p[2].ndc.y, PHONGSHADE, shader);
-			fillTriangleFlatTop(s, T, divx, s.p[1].ndc.x, s.p[1].ndc.y, s.p[0].ndc.x, s.p[0].ndc.y, PHONGSHADE, shader);
-		}
+		BL.x = std::max(BL.x, 0);
+		BL.y = std::max(BL.y, 0);
+
+		TR.x = std::min(TR.x, W - 1);
+		TR.y = std::min(TR.y, H - 1);
+
+		Vector2i p(BL);
+
+    	int64_t w0_row = orient2d(v1, v2, p);
+    	int64_t w1_row = orient2d(v2, v0, p);
+    	int64_t w2_row = orient2d(v0, v1, p);
+
+		for (p.y = BL.y; p.y <= TR.y; p.y++) {
+        	int64_t w0 = w0_row;
+        	int64_t w1 = w1_row;
+        	int64_t w2 = w2_row;
+        
+        	for (p.x = BL.x; p.x <= TR.x; p.x++) {
+        	    // If p is on or inside all edges, render pixel.
+        	    if ((w0 | w1 | w2) >= 0) {
+					DrawTriFrag(s, T, BASE::ifloor(p.x), BASE::ifloor(p.y), PHONGSHADE, shader);
+				}
+
+        	    // One step to the right
+        	    w0 += e12.x;
+        	    w1 += e20.x;
+        	    w2 += e01.x;
+        	}
+
+        	// One row step
+        	w0_row += e12.y;
+        	w1_row += e20.y;
+        	w2_row += e01.y;
+    	}
 	}
 
-	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt, bool SCAN = false) {
-		if (SCAN) {
+	inline bool smallEnough(TriangleF s) {
+		Vector2 BL = vec2(s.p[0].ndc);
+		Vector2 TR = vec2(s.p[0].ndc);
+
+		for (int i = 0; i < 3; i++) {
+			BL.x = std::min(BL.x, s.p[i].ndc.x);
+			BL.y = std::min(BL.x, s.p[i].ndc.y);
+
+			TR.x = std::max(BL.x, s.p[i].ndc.x);
+			TR.y = std::max(BL.x, s.p[i].ndc.y);
+		}
+
+		const int THRESHOLD = 2;
+
+		return (TR.y - BL.y <= THRESHOLD) && (TR.x - BL.x <= THRESHOLD);
+	}
+
+	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt, bool SCAN = true) {
+		if (SCAN && smallEnough(s)) {
 			fillTriangleFScan(s, T, PHONGSHADE, shader);
 			return;
 		}

@@ -22,11 +22,35 @@ std::pair<std::vector<Triangle3>, std::vector<Triangle3>> TriSplit(Triangle3 t, 
     for (int i = 0; i < 3; i++) sum += vpos[i];
 
     if (sum == 3) {
-        positive.push_back(Triangle3(t));
+        positive.push_back((t));
     } else if (sum == 0) {
-        negative.push_back(Triangle3(t));
+        negative.push_back((t));
     } else if (sum == 2) {
         // Rotate the points so that points[0] is the odd one out
+
+        if (!vpos[0]) {
+
+        } else if (!vpos[1]) {
+            bool temp = vpos[0];
+            Vector3 tev(p[0]);
+            p[0] = p[1];
+            p[1] = p[2];
+            p[2] = tev;
+            vpos[0] = vpos[1];
+            vpos[1] = vpos[2];
+            vpos[2] = temp;
+        } else if (!vpos[2]) {
+            bool temp = vpos[0];
+            Vector3 tev(p[0]);
+            p[0] = p[2];
+            p[2] = p[1];
+            p[1] = tev;
+            vpos[0] = vpos[2];
+            vpos[2] = vpos[1];
+            vpos[1] = temp;
+        }
+
+        /*
         for (int yourmom = 0; yourmom < 6; yourmom++) {
             if (!vpos[0]) break;
             bool temp = vpos[0];
@@ -38,13 +62,14 @@ std::pair<std::vector<Triangle3>, std::vector<Triangle3>> TriSplit(Triangle3 t, 
             vpos[1] = vpos[2];
             vpos[2] = temp;
         }
+        */
 
         Line L1(p[0], p[1] - p[0]);
         Line L2(p[0], p[2] - p[0]);
 
         Vector3 i1 = splane.intersection(L1);
         Vector3 i2 = splane.intersection(L2);
-        if (i1 == NILVEC3 || i2 == NILVEC3) positive.push_back(Triangle3(t));
+        if (i1 == NILVEC3 || i2 == NILVEC3) positive.push_back((t));
         else {
             // p[0] and the two intersections form a triangle.
             negative.push_back(Triangle3(p[0], i1, i2));
@@ -65,8 +90,31 @@ std::pair<std::vector<Triangle3>, std::vector<Triangle3>> TriSplit(Triangle3 t, 
         // for (int i = 0; i < 3; i++) std::cout << p[i].to_string() << " " << vpos[i] << "\n";
     } else if (sum == 1) {
         // Rotate the points so that points[0] is the odd one out
+        if (vpos[0]) {
+
+        } else if (vpos[1]) {
+            bool temp = vpos[0];
+            Vector3 tev(p[0]);
+            p[0] = p[1];
+            p[1] = p[2];
+            p[2] = tev;
+            vpos[0] = vpos[1];
+            vpos[1] = vpos[2];
+            vpos[2] = temp;
+        } else if (vpos[2]) {
+            bool temp = vpos[0];
+            Vector3 tev(p[0]);
+            p[0] = p[2];
+            p[2] = p[1];
+            p[1] = tev;
+            vpos[0] = vpos[2];
+            vpos[2] = vpos[1];
+            vpos[1] = temp;
+        }
+
+        /*
         for (int yourmom = 0; yourmom < 6; yourmom++) {
-            if (vpos[0]) break;
+            if (!vpos[0]) break;
             bool temp = vpos[0];
             Vector3 tev(p[0]);
             p[0] = p[1];
@@ -76,13 +124,14 @@ std::pair<std::vector<Triangle3>, std::vector<Triangle3>> TriSplit(Triangle3 t, 
             vpos[1] = vpos[2];
             vpos[2] = temp;
         }
+        */
 
         Line L1(p[0], p[1] - p[0]);
         Line L2(p[0], p[2] - p[0]);
 
         Vector3 i1 = splane.intersection(L1);
         Vector3 i2 = splane.intersection(L2);
-        if (i1 == NILVEC3 || i2 == NILVEC3) negative.push_back(Triangle3(t));
+        if (i1 == NILVEC3 || i2 == NILVEC3) negative.push_back((t));
         else {
             // p[0] and the two intersections form a triangle.
             positive.push_back(Triangle3(p[0], i1, i2));

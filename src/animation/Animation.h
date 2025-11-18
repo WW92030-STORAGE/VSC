@@ -36,10 +36,14 @@ namespace ANIMI {
     // A set of almost entirely continuous and almost differentiable functions that operate on [0, 1], with F(0) = 0 and F(1) = 1.
     // These functions only take in one parameter. Sorry, budgeting costs.
     typedef float (*INTERP) (float);
+    
+    // Interpolations
 
     float LERP(float x) {
         return x;
     }
+
+    
 
     float SINE(float x) {
         return 0.5 * (1.0 - cosf(x * M_PI));

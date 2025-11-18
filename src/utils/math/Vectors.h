@@ -10,6 +10,31 @@
 
 // Vector methods
 
+// Vector of 2 integers, used for triangle rasterization
+
+class Vector2i {
+	public:
+	int x;
+	int y;
+
+	Vector2i() {
+		x = 0;
+		y = 0;
+	}
+
+	Vector2i(int r, int s) {
+		x = r;
+		y = s;
+	}
+
+	Vector2i(const Vector2i& other) {
+		x = other.x;
+		y = other.y;
+	}
+};
+
+// Vectors of floats
+
 class Vector2 {
 	public:
 	float x;
