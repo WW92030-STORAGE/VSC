@@ -477,7 +477,8 @@ class Scene { // CENA!
 
 	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
 		Vector3 b = s.bary(x, y);
-		float wc = 1.0 / s.interp_given_bary(b, 1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w);
+		float winv[3] = {1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w};
+		float wc = 1.0 / s.interp_given_bary(b, winv[0], winv[1], winv[2]);
 		// DEPTH TEST!!!!!
 		if (buffer[x][y].depth < wc) return;
 
@@ -493,7 +494,7 @@ class Scene { // CENA!
 		// Interpolate uv TODO - make this perspective correct
 		// u/z and v/z linearly interpolate
 
-		float winv[3] = {1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w};
+
 
 		Vector2 finaluv;
 		for (int i = 0; i < 3; i++) finaluv = finaluv + ((s.p[i].uv * winv[i]) * b.get(i));
@@ -597,7 +598,7 @@ class Scene { // CENA!
         	for (p.x = BL.x; p.x <= TR.x; p.x++) {
         	    // If p is on or inside all edges, render pixel.
         	    if ((w0 | w1 | w2) >= 0) {
-					DrawTriFrag(s, T, BASE::ifloor(p.x), BASE::ifloor(p.y), PHONGSHADE, shader);
+					DrawTriFrag(s, T, p.x, p.y, PHONGSHADE, shader);
 				}
 
         	    // One step to the right
@@ -631,7 +632,7 @@ class Scene { // CENA!
 	}
 
 	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt, bool SCAN = true) {
-		if (SCAN && smallEnough(s)) {
+		if (SCAN && !smallEnough(s)) {
 			fillTriangleFScan(s, T, PHONGSHADE, shader);
 			return;
 		}
@@ -959,26 +960,32 @@ class Scene { // CENA!
 
 	void outputFrags(std::string OUTPUT__) {
 		std::ofstream output(OUTPUT__);
+		std::string res = "";
 		for (int y = H - 1; y >= 0; y--) {
 			for (int x = 0; x < W; x++) {
-				output << buffer[x][y].to_string() << ",";
+				res += buffer[x][y].to_string() + ",";
 			}
-			output << "\n";
+			res.push_back('\n');
 		}
+
+		output << res;
 
 		output.close();
 	}
 
 	void outputBuffer(std::string OUTPUT__) {
 		std::ofstream output(OUTPUT__);
-		output << "[" << std::to_string(W) << ", " << std::to_string(H) << "]\n";
+		output << "[" + std::to_string(W) + ", " + std::to_string(H) + "]\n";
+		std::string buf = "";
 
 		for (int y = H - 1; y >= 0; y--) {
 			for (int x = 0; x < W; x++) {
-				output << std::to_string(buffer[x][y].color) << ",";
+				buf += std::to_string(buffer[x][y].color) + ",";
 			}
-			output << "\n";
+			buf.push_back('\n');
 		}
+
+		output << buf;
 
 		output.close();
 	}
@@ -989,6 +996,12 @@ class Scene { // CENA!
 			for (int j = 0; j < H; j++) res[i][j] = buffer[i][j].color;
 		}
 		return res;
+	}
+
+	void setBuffer(std::vector<std::vector<uint32_t>>& res) {
+		for (int i = 0; i < W && i < res.size(); i++) {
+			for (int j = 0; j < H && j < res[i].size(); j++) res[i][j] = buffer[i][j].color;
+		}
 	}
 };
 

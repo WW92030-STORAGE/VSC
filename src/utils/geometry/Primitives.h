@@ -171,12 +171,13 @@ class Plane : public Object {
 	}
 
 	inline float intersectionTime(Line& L) {
-		if (BASE::fzero(n * L.slope)) {
+		float ndotl = n * L.slope;
+		if (BASE::fzero(ndotl)) {
 			if (contains(L.point)) return 0;
 			return NAN;
 		}
 
-		return ( (p - L.point) * n) / (L.slope * n);
+		return ( (p - L.point) * n) / ndotl;
 	}
 
 	inline Vector3 intersection(Line& L) {

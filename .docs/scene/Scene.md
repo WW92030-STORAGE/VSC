@@ -82,6 +82,7 @@ Scene class for rasterization
 - `void outputFrags(std::string OUTPUT__)` = Output the buffer contents to a FILE (NOT RECOMMENDED).
 - `void outputBuffer(std::string OUTPUT__)` = Output the buffer, a matrix of colors, and the dimensions, to an easily-parseable FILE.
 - `std::vector<std::vector<uint32_t>> bufferMatrix()` = Return a matrix of colors corresponding to the buffer.
+- `void setBuffer(std::vector<std::vector<uint32_t>>& res)` = Override the contents of a vector with the buffer. The vector should be larger than the buffer.
 
 ## Internal Functions
 

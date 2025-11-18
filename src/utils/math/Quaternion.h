@@ -132,12 +132,15 @@ class Quaternion {
 	inline Quaternion normalized() {
 		float n = norm();
 		if (BASE::fzero(n)) return Quaternion(1, 0, 0, 0);
-		return Quaternion(w / n, v / n);
+		float ninv = 1.0 / n;
+		return Quaternion(w * ninv, v * ninv);
 	}
 
 	inline Quaternion inv() {
-		if (BASE::fzero(normsquared())) return Quaternion(*this);
-		return conj() / normsquared();
+		float nsq = normsquared();
+		if (BASE::fzero(nsq)) return Quaternion(*this);
+		float nsinv = 1.0 / nsq;
+		return conj() * nsinv;
 	}
 
 	// Convert to rot matrix
@@ -204,7 +207,7 @@ class Quaternion {
 
 inline Quaternion QuaternionAA(Vector3 A, float t) {
 	Vector3 a = A.normalized();
-	return Quaternion(cosf(t / 2), a * sinf(t / 2));
+	return Quaternion(cosf(t * 0.5), a * sinf(t * 0.5));
 }
 
 inline Quaternion lerp(Quaternion a, Quaternion b, float t) {
@@ -227,8 +230,10 @@ Quaternion spherp(Quaternion a, Quaternion b, float t) {
 
 	if (BASE::fzero(s)) return a;
 
-	float A = sinf(theta * (1 - t)) / s;
-	float B = sinf(theta * t) / s;
+	float sinv = 1.0 / s;
+
+	float A = sinf(theta * (1 - t)) * sinv;
+	float B = sinf(theta * t) * sinv;
 
 
 	return ( (a * A) + (b * B) ).normalized();

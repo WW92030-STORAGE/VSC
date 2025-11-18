@@ -70,7 +70,8 @@ class Matrix2 {
 	}
 	inline Matrix2 div(float other) {
 		if (BASE::fzero(other)) return eye();
-		return Matrix2(xAxis / other, yAxis / other);
+		float oo = 1.0 / other;
+		return Matrix2(xAxis * oo, yAxis * oo);
 	}
 
 	// Matrix specific operations
@@ -354,7 +355,8 @@ class Matrix3 {
 	}
 	inline Matrix3 div(float other) {
 		if (other == 0) return eye();
-		return Matrix3(xAxis / other, yAxis / other, zAxis / other);
+		float oo = 1.0 / other;
+		return Matrix3(xAxis * oo, yAxis * oo, zAxis * oo);
 	}
 
 	// Matrix specific operations
@@ -404,8 +406,9 @@ class Matrix3 {
 			}
 
 			float diag = M.get(j, j);
-			M.setRow(j, M.getRow(j) / diag);
-			res.setRow(j, res.getRow(j) / diag);
+			float dinv = 1.0 / diag;
+			M.setRow(j, M.getRow(j) * dinv);
+			res.setRow(j, res.getRow(j) * dinv);
 			for (int r = 0; r < N; r++) {
 				if (r == j) continue;
 				float coeff = -M.get(r, j);
@@ -433,10 +436,12 @@ class Matrix3 {
 		Matrix3 A(*this);
 		Vector3 res(0, 0, 0);
 
+		float dinv = 1.0 / deter;
+
 		for (int i = 0; i < 3; i++) {
 			Vector3 temp = A.getCol(i);
 			A.setCol(i, b);
-			res.set(i, A.det() / deter);
+			res.set(i, A.det() * dinv);
 			A.setCol(i, temp);
 		}
 
@@ -474,8 +479,9 @@ class Matrix3 {
 				b.set(i, tem);
 			}
 			float val = A.get(i, j);
-			A.setRow(i, A.getRow(i) / val);
-			b.set(i, b.get(i) / val);
+			float vinv = 1.0 / val;
+			A.setRow(i, A.getRow(i) * vinv);
+			b.set(i, b.get(i) * vinv);
 
 			for (int r = 0; r < N; r++) {
 				if (r == i) continue;
@@ -708,7 +714,8 @@ class Matrix4 {
 	}
 	inline Matrix4 div(float other) {
 		if (other == 0) return eye();
-		return Matrix4(xAxis / other, yAxis / other, zAxis / other, wAxis / other);
+		float oo = 1.0 / other;
+		return Matrix4(xAxis * oo, yAxis * oo, zAxis * oo, wAxis * oo);
 	}
 
 	// Matrix specific operations
@@ -741,7 +748,8 @@ class Matrix4 {
 				res = -res;
 			}
 			float val = A.get(i, j);
-			A.setRow(i, A.getRow(i) / val);
+			float vinv = 1.0 / val;
+			A.setRow(i, A.getRow(i) * vinv);
 			res *= val;
 
 			for (int r = 0; r < N; r++) {
@@ -800,8 +808,9 @@ class Matrix4 {
 			}
 
 			float diag = M.get(j, j);
-			M.setRow(j, M.getRow(j) / diag);
-			res.setRow(j, res.getRow(j) / diag); // Divide row j by its diagonal element.
+			float dinv = 1.0 / diag;
+			M.setRow(j, M.getRow(j) * dinv);
+			res.setRow(j, res.getRow(j) * dinv); // Divide row j by its diagonal element.
 			for (int r = 0; r < N; r++) { // For row r from 0 to N - 1...
 				if (r == j) continue; // and r != j...
 				float coeff = -M.get(r, j); // Add coeff * row j to row r.
@@ -857,8 +866,9 @@ class Matrix4 {
 				b.set(i, tem);
 			}
 			float val = A.get(i, j);
-			A.setRow(i, A.getRow(i) / val);
-			b.set(i, b.get(i) / val);
+			float vinv = 1.0 / val;
+			A.setRow(i, A.getRow(i) * vinv);
+			b.set(i, b.get(i) * vinv);
 
 			for (int r = 0; r < N; r++) {
 				if (r == i) continue;

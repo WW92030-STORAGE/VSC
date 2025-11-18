@@ -404,8 +404,8 @@ class TriangleF {
 	}
 
 	template <typename T>
-	inline T interp_given_bary(Vector3 bv, T a, T b, T c) {
-		Vector3 r = NormSum(bv);
+	inline T interp_given_bary(Vector3 r, T a, T b, T c, bool ns = false) {
+		if (ns) r = NormSum(r);
 		return a * r.x + b * r.y + c * r.z;
 	}
 
