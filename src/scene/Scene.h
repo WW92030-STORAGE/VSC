@@ -58,6 +58,7 @@ class Scene { // CENA!
 
 	uint64_t TRIANGLE_COUNT = 0;
 	uint64_t TRIFRAG_COUNT = 0;
+	uint64_t TRIFRAG_AVOID = 0;
 
 
 
@@ -483,7 +484,10 @@ class Scene { // CENA!
 		float winv[3] = {1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w};
 		float wc = 1.0 / s.interp_given_bary(b, winv[0], winv[1], winv[2]);
 		// DEPTH TEST!!!!!
-		if (buffer[x][y].depth < wc) return;
+		if (buffer[x][y].depth < wc) {
+			TRIFRAG_AVOID++;
+			return;
+		}
 
 		TRIFRAG_COUNT++;
 
@@ -700,6 +704,10 @@ class Scene { // CENA!
 	}
 
 	void fillTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, std::optional<FragShader> shader = std::nullopt, bool BACKFACECULL = true, bool PHONGSHADE = false, bool INTERPNORM = false, bool edgeclip = true) {
+		if (BACKFACECULL && BackFaceCull(s)) {
+			// std::cout << "CULLED\n";
+			return;
+		}
 		if (edgeclip) {
 			std::vector<Triangle3> tt = TriSplit(s, camera.F).first;
 
@@ -739,10 +747,6 @@ class Scene { // CENA!
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
 		
 		TRIANGLE_COUNT++;
-		if (BACKFACECULL && BackFaceCull(s)) {
-			// std::cout << "CULLED\n";
-			return;
-		}
 		Vector3 cen = s.centroid();
 
 		TriangleF p = project(s);

@@ -2090,6 +2090,7 @@ inline void AnimShader() {
 	std::cout << "Stored\n";
 
 	std::cout << "TRIFRAGS: " << s.TRIFRAG_COUNT << "\n";
+	std::cout << "TRIFRAGS AVOIDED: " << s.TRIFRAG_AVOID << "\n";
 }
 
 
