@@ -470,6 +470,8 @@ class Scene { // CENA!
 			tri.p[i].wspos = s.p[i];
 		}
 
+		tri.setup_edges();
+
 		return tri;
 	}
 
@@ -567,6 +569,10 @@ class Scene { // CENA!
 		return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
 	}
 
+	float orient2dF(Vector2 a, Vector2 b, Vector2i c) {
+		return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+	}
+
 	inline Vector2i vec2i(Vector4 v) {
 		return Vector2i(BASE::ifloor(v.x), BASE::ifloor(v.y));
 	}
@@ -628,6 +634,63 @@ class Scene { // CENA!
     	}
 	}
 
+	void fillTriangleFScanF(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
+		Vector2 v0 = vec2(s.p[0].ndc);
+		Vector2 v1 = vec2(s.p[1].ndc);
+		Vector2 v2 = vec2(s.p[2].ndc);
+
+		
+		Vector2 vv[3] = {v0, v1, v2};
+
+    	Vector2 e01(v0.y - v1.y, v1.x - v0.x);
+		Vector2 e12(v1.y - v2.y, v2.x - v1.x);
+		Vector2 e20(v2.y - v0.y, v0.x - v2.x);
+
+		Vector2i BL = vec2i(s.p[0].ndc);
+		Vector2i TR(BL);
+		for (int i = 1; i < 3; i++) {
+			BL.x = std::min(BL.x, BASE::ifloor(vv[i].x));
+			BL.y = std::min(BL.y, BASE::ifloor(vv[i].y));
+			TR.x = std::max(TR.x, BASE::ifloor(vv[i].x));
+			TR.y = std::max(TR.y, BASE::ifloor(vv[i].y));
+		}
+
+		BL.x = std::max(BL.x, 0);
+		BL.y = std::max(BL.y, 0);
+
+		TR.x = std::min(TR.x, W - 1);
+		TR.y = std::min(TR.y, H - 1);
+
+		Vector2i p(BL);
+
+    	float w0_row = orient2dF(v1, v2, p);
+    	float w1_row = orient2dF(v2, v0, p);
+    	float w2_row = orient2dF(v0, v1, p);
+
+		for (p.y = BL.y; p.y <= TR.y; p.y++) {
+        	float w0 = w0_row;
+        	float w1 = w1_row;
+        	float w2 = w2_row;
+        
+        	for (p.x = BL.x; p.x <= TR.x; p.x++) {
+        	    // If p is on or inside all edges, render pixel.
+        	    if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
+					DrawTriFrag(s, T, p.x, p.y, PHONGSHADE, shader);
+				}
+
+        	    // One step to the right
+        	    w0 += e12.x;
+        	    w1 += e20.x;
+        	    w2 += e01.x;
+        	}
+
+        	// One row step
+        	w0_row += e12.y;
+        	w1_row += e20.y;
+        	w2_row += e01.y;
+    	}
+	}
+
 	inline bool smallEnough(TriangleF s) {
 		Vector2 BL = vec2(s.p[0].ndc);
 		Vector2 TR = vec2(s.p[0].ndc);
@@ -647,7 +710,7 @@ class Scene { // CENA!
 
 	void fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt, bool SCAN = true) {
 		if (SCAN && !smallEnough(s)) {
-			fillTriangleFScan(s, T, PHONGSHADE, shader);
+			fillTriangleFScanF(s, T, PHONGSHADE, shader);
 			return;
 		}
 

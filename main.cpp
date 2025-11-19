@@ -404,7 +404,7 @@ void spinningcube() {
 	Vector3 axis = Vector3(0, 1, 0);
 
 
-	int LEN = 128;
+	int LEN = 512;
 	for (int i = 0; i < LEN; i++) {
 	
   axis = Rotation3(Vector3(0, 0, 1), 0.037) * axis;

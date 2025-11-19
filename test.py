@@ -17,8 +17,8 @@ def runTest():
     result = exec("./main").split()
     return float(result[-10]) # -10 for us, -6 for ms, -2 for sec
 
-NUM_TESTS = 8
-NUM_WARMUP = 2
+NUM_TESTS = 32
+NUM_WARMUP = 4
 
 
 if __name__ == "__main__":

@@ -277,33 +277,31 @@ class TriangleF {
 		return v * mabs;
 	}
 
-	void init() {
-		auto e1 = (p[1].ndc - p[0].ndc);
-		auto e2 = (p[2].ndc - p[0].ndc);
-		oriented = e1.x * e2.y - e1.y * e2.x >= 0;
-
+	void setup_edges() {
 		/*
 		
 		Given a point (x, y) and an edge (x1, y1) --> (x2, y2), we can compute side of (x, y) using cross product:
-		Let (xv, yv) = (x2 - x1, y2 - y1) and (xd, yd) = (x - x1, y - y1). (x, y) is left side of the edge if and only if (xv, yv) cross (xd, yd) is positive:
+		Let e = (xe, ye) = (x2 - x1, y2 - y1) and v = (xv, yv) = (x - x1, y - y1). (x, y) is left side of the edge if and only if (xe, ye) cross (xv, yv) is positive:
 
-		(xv * yd) - (yv * xd) > 0
+		(xe, ye) cross (xv, yv) = [xe, yv] - [xv, ye] where [a, b] = a * b for readability
 
-		Simplify:
-
-		(x2 - x1) * (y - y1) - (y2 - y1) * (x - x1) = [x2, y] - [x1, y] - [x2, y1] + [x1, y1] - [y2, x] + [y1, x] + [y2, x1] - [y1, x1] (where the commas denote products for readability)
-		= y(x2 - x1) + x(y1 - y2) + [x1, y2] - [y1, x2]
-
-		so an edge function is a Vector3(y1 - y2, x2 - x1, x1y2 - y1x2) which evaluates a given point (x, y) as (x, y, 1) dot (edge coefficients)
-
-		We can also scale up and down these coefficients so we divide by the strongest magnitude for stability.
+		[x2 - x1, y - y1] - [x - x1, y2 - y1] = [x2, y] - [x1, y] - [x2, y1] + [x1, y1] - [x, y2] + [x1, y2] + [x, y1] - [x1, y1]
+		= ([x2, y] - [x1, y]) + ([x, y1] - [x, y2]) + ([x1, y2] - [x2, y1])
 		
+		We can also scale up and down these coefficients so we divide by the strongest magnitude for stability.
+
 		*/
 		for (int i = 0; i < 3; i++) {
 			int next = (i + 1) % 3;
 
 			edges[i] = mutualize(Vector3(p[i].ndc.y - p[next].ndc.y, p[next].ndc.x - p[i].ndc.x, p[i].ndc.x * p[next].ndc.y - p[next].ndc.x * p[i].ndc.y));
 		}
+	}
+
+	void init() {
+		auto e1 = (p[1].ndc - p[0].ndc);
+		auto e2 = (p[2].ndc - p[0].ndc);
+		oriented = e1.x * e2.y - e1.y * e2.x >= 0;
 	}
 
 	TriangleF() {
@@ -356,11 +354,6 @@ class TriangleF {
 		}
 
 		oriented = true;
-		for (int i = 0; i < 3; i++) {
-			int next = (i + 1) % 3;
-
-			edges[i] = mutualize(Vector3(p[i].ndc.y - p[next].ndc.y, p[next].ndc.x - p[i].ndc.x, p[i].ndc.x * p[next].ndc.y - p[next].ndc.x * p[i].ndc.y));
-		}
 	}
 
 	inline bool inside(Vector2 P) {		
@@ -371,11 +364,11 @@ class TriangleF {
 			if ((e.cross(v)).z < 0) return false;
 			*/
 
-			auto v = P - vec2(p[i].ndc);
-			auto e = p[(i + 1) % 3].ndc - p[i].ndc;
-			if (e.x * v.y - e.y * v.x < 0) return false;
+			// auto v = P - vec2(p[i].ndc);
+			// auto e = p[(i + 1) % 3].ndc - p[i].ndc;
+			// if (e.x * v.y - e.y * v.x < 0) return false;
 
-			// if (P.x * edges[i].x + P.y * edges[i].y + edges[i].z < 0) return false;
+			if (P.x * edges[i].x + P.y * edges[i].y + edges[i].z < 0) return false;
 		}
 		return true;
 	}
