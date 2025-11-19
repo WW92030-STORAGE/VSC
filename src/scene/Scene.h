@@ -685,6 +685,16 @@ class Scene { // CENA!
 		return true;
 	}
 
+	inline int intersectsPlane(Triangle3& tri, Plane& p) {
+		int count = 0;
+		for (int i = 0; i < 3; i++) {
+			Vector3 v = tri.p[i];
+			if ((v - p.p).dot(p.n) >= 0) count++;
+		}
+
+		return count;
+	}
+
 	// Right now this always draws triangles using the base color.
 	void drawTriangle(Triangle3 s, BaseMaterial* material = nullptr, Vector3* vn = nullptr, Vector2* uv = nullptr, bool BACKFACECULL = false, bool PHONGSHADE = false, bool INTERPNORM = false) {
 		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
@@ -716,8 +726,11 @@ class Scene { // CENA!
 
 			std::vector<Triangle3> vv;
 			for (auto i : tt) {
-				auto uu = TriSplit(i, arr[ii]).first;
-				for (auto j : uu) vv.push_back(j);
+				int count = intersectsPlane(i, arr[ii]);
+				if (count == 1 || count == 2) {
+					auto uu = TriSplit(i, arr[ii]).first;
+					for (auto j : uu) vv.push_back(j);
+				} else if (count == 3) vv.push_back(i);
 			}
 			std::swap(tt, vv);
 			vv.clear();
