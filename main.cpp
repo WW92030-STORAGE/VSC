@@ -373,6 +373,63 @@ std::vector<std::unordered_map<int, float>> BONE_weights({std::unordered_map<int
 	std::cout << "Stored\n";
 }
 
+// Spinning cube test
+void spinningcube() {
+	#define SCREEN_L 64
+	#define SCREEN_H 32
+
+	Scene s(SCREEN_L, SCREEN_H);
+
+	Mesh proto = cube(1);
+  proto = cube6(1);
+
+  Transform forwards(Vector3(0, 0, -3.5), Rotation3(Vector3(0, 1, 0), M_PI / 4));
+  proto.Trans(forwards);
+
+  	float A = 0.2;
+
+  float S = sqrtf(3);
+
+  PointLight PL(Vector3(1, 1, 1), A);
+	PL.Trans(Transform(Vector3(-S, 1, 0)));
+	s.lights.push_back(PL);
+
+	PointLight PL2(Vector3(1,1, 1), A);
+	PL2.Trans(Transform(Vector3(S, 1, 0)));
+	s.lights.push_back(PL2);
+
+  PointLight PL3(Vector3(1, 1, 1), A);
+	PL3.Trans(Transform(Vector3(0, -2, 0)));
+	s.lights.push_back(PL3);
+	Vector3 axis = Vector3(0, 1, 0);
+
+
+	int LEN = 128;
+	for (int i = 0; i < LEN; i++) {
+	
+  axis = Rotation3(Vector3(0, 0, 1), 0.037) * axis;
+
+  Transform t(Vector3(0, 0, 0), Rotation3(axis, 0.1));
+  Transform goback(proto.transform.origin, Matrix3::eye());
+  Transform gofore = goback.inv();
+
+  proto.Trans(goback * t * gofore);
+
+  ImageTexture mat = ImageTexture(rgbcube2);
+
+  s.clearBuffer();
+  s.fillMesh(proto, &mat, std::nullopt, true, true, false);
+
+  		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
+
+		std::cout << "FRAME " << i << "DONE\n";
+	}
+
+		std::ofstream len(VIDEO_PATH + "/LEN");
+	len << LEN;
+	len.close();
+}
+
 int main() {
 	std::cout << "BEGIN\n";
 	auto start = std::chrono::high_resolution_clock::now();
@@ -385,6 +442,7 @@ int main() {
 	// MCRProtoAnim();
 
 	AnimShader();
+	// spinningcube();
 
 	
 

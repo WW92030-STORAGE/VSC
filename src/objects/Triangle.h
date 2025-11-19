@@ -285,13 +285,13 @@ class TriangleF {
 		/*
 		
 		Given a point (x, y) and an edge (x1, y1) --> (x2, y2), we can compute side of (x, y) using cross product:
-		Let (xv, yv) = (x2 - x1, y2 - y1) and (xd, yd) = (x - x2, y - y2). (x, y) is left side of the edge if and only if (xv, yv) cross (xd, yd) is positive:
+		Let (xv, yv) = (x2 - x1, y2 - y1) and (xd, yd) = (x - x1, y - y1). (x, y) is left side of the edge if and only if (xv, yv) cross (xd, yd) is positive:
 
 		(xv * yd) - (yv * xd) > 0
 
 		Simplify:
 
-		(x2 - x1) * (y - y2) - (y2 - y1) * (x - x2) = [x2, y] - [x1, y] - [x2, y2] + [x1, y2] - [y2, x] + [y1, x] + [y2, x2] - [y1, x2] (where the commas denote products for readability)
+		(x2 - x1) * (y - y1) - (y2 - y1) * (x - x1) = [x2, y] - [x1, y] - [x2, y1] + [x1, y1] - [y2, x] + [y1, x] + [y2, x1] - [y1, x1] (where the commas denote products for readability)
 		= y(x2 - x1) + x(y1 - y2) + [x1, y2] - [y1, x2]
 
 		so an edge function is a Vector3(y1 - y2, x2 - x1, x1y2 - y1x2) which evaluates a given point (x, y) as (x, y, 1) dot (edge coefficients)
@@ -336,6 +336,8 @@ class TriangleF {
 
 		material = other.material;
 		oriented = other.oriented;
+
+		for (int i = 0; i < 3; i++) edges[i] = other.edges[i];
 	}
 
 	// Orient this triangle so the vertices are in counterclockwise order and the normal has positive z.
@@ -354,12 +356,26 @@ class TriangleF {
 		}
 
 		oriented = true;
+		for (int i = 0; i < 3; i++) {
+			int next = (i + 1) % 3;
+
+			edges[i] = mutualize(Vector3(p[i].ndc.y - p[next].ndc.y, p[next].ndc.x - p[i].ndc.x, p[i].ndc.x * p[next].ndc.y - p[next].ndc.x * p[i].ndc.y));
+		}
 	}
 
-	inline bool inside(Vector2 P) {
-		// remember edge functions on a point P = (x, y) are (x, y, 1) dot (edge coefficients)
+	inline bool inside(Vector2 P) {		
 		for (int i = 0; i < 3; i++) {
-			if (P.x * edges[i].x + P.y * edges[i].y + edges[i].z < 0) return false;
+			/*
+			Vector3 v = vec3(P - vec2(p[i].ndc));
+			Vector3 e = vec3(vec2(p[(i + 1) % 3].ndc - p[i].ndc));
+			if ((e.cross(v)).z < 0) return false;
+			*/
+
+			auto v = P - vec2(p[i].ndc);
+			auto e = p[(i + 1) % 3].ndc - p[i].ndc;
+			if (e.x * v.y - e.y * v.x < 0) return false;
+
+			// if (P.x * edges[i].x + P.y * edges[i].y + edges[i].z < 0) return false;
 		}
 		return true;
 	}
