@@ -31,6 +31,10 @@ class Vector2i {
 		x = other.x;
 		y = other.y;
 	}
+
+	std::string to_string() {
+		return "Vector2i[" + std::to_string(x) + ", " + std::to_string(y) + "]";
+	}
 };
 
 // Vectors of floats

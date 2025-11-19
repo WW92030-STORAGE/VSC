@@ -28,6 +28,8 @@ if __name__ == "__main__":
     # Do a few warmups to do stuff
     for i in range(NUM_WARMUP):
         runTest()
+
+    print("BEGIN FIELD TESTS")
     
     res = 0.0
     for i in range(NUM_TESTS):

@@ -96,7 +96,10 @@ Vector3 hsv2rgb(Vector3 hsv) {
 	float chroma = saturation * value;
 	float hprime = hue * 6;
 
-	float x = chroma * (1 - fabs(BASE::frem(hprime, 2) - 1));
+	float bling = hprime;
+	while (bling > 2) bling -= 2;
+
+	float x = chroma * (1 - fabs(bling - 1));
 
 	Vector3 res(0, 0, 0);
 

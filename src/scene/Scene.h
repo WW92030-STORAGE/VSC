@@ -39,6 +39,8 @@ Base scene class. Supports the rendering of individual meshes, but also the bulk
 
 */
 
+#include <iostream>
+
 class Scene { // CENA!
 	public:
 	std::vector<Mesh*> meshes;
@@ -55,6 +57,7 @@ class Scene { // CENA!
 	int SIDE;
 
 	uint64_t TRIANGLE_COUNT = 0;
+	uint64_t TRIFRAG_COUNT = 0;
 
 
 
@@ -221,7 +224,7 @@ class Scene { // CENA!
 	void fillScreen(int32_t c) {
 		for (int i = 0; i < W; i++) {
 			for (int j = 0; j < H; j++) {
-				buffer[i][j] = ReducedFrag();
+				buffer[i][j].depth = FLT_MAX;
 				buffer[i][j].color = c;
 			}
 		}
@@ -231,7 +234,6 @@ class Scene { // CENA!
 
 	inline void drawPixel(int x, int y, uint32_t z) {
 		if (x < 0 || y < 0 || x >= W || y >= H) return;
-		buffer[x][y] = ReducedFrag(buffer[x][y]);
 		buffer[x][y].color = z;
 	}
 
@@ -239,7 +241,9 @@ class Scene { // CENA!
 		if (x < 0 || y < 0 || x >= W || y >= H) return;
 		if (F.ndc.z < -2 || F.ndc.z > 2) return;
 		if (buffer[x][y].depth < F.ndc.w) return;
-		buffer[x][y] = ReducedFrag(F.ndc.w, F.color);
+		buffer[x][y].depth = F.ndc.w;
+		buffer[x][y].color = F.color;
+		// buffer[x][y] = ReducedFrag(F.ndc.w, F.color);
 	}
 
 	// Get color from material
@@ -268,15 +272,14 @@ class Scene { // CENA!
 
 		for (auto light : lights) {
 			if (light.TYPE == POINT) {
-				Light pl = light;
-				Vector3 L = pl.transform.origin - position;
+				Vector3 L = light.transform.origin - position;
 				Vector3 shadedIntensity(0, 0, 0);
 
 				// Diffuse term
 				float scale = normal.cosine(L);
 				// Only do light contribution if normal is facing light
 				if (scale > 0) {
-					shadedIntensity = shadedIntensity + (pl.intensity * scale);
+					shadedIntensity = shadedIntensity + (light.intensity * scale);
 
 					// Specular term
 
@@ -286,14 +289,14 @@ class Scene { // CENA!
 						float rv_inv = reflected.cosine(pRay);
 						if (rv_inv < 0) {
 							float spec = powf(rv_inv * -1, material->specular);
-							shadedIntensity = shadedIntensity + (pl.intensity * spec);
+							shadedIntensity = shadedIntensity + (light.intensity * spec);
 						// std::cout << (pl.intensity * spec).to_string() << " " << specular << "\n";
 						}
 					}
 
 				}
 
-				shadedIntensity = shadedIntensity / fmax(pl.attenuation * L.length(), 1);
+				shadedIntensity = shadedIntensity / fmax(light.attenuation * L.length(), 1);
 				
 				I = I + shadedIntensity;
 			}
@@ -475,12 +478,14 @@ class Scene { // CENA!
 		drawTriangle(t, c);
 	}
 
-	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt) {
+	void DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE = false, std::optional<FragShader> shader = std::nullopt, bool INTERP__ = true) {
 		Vector3 b = s.bary(x, y);
 		float winv[3] = {1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w};
 		float wc = 1.0 / s.interp_given_bary(b, winv[0], winv[1], winv[2]);
 		// DEPTH TEST!!!!!
 		if (buffer[x][y].depth < wc) return;
+
+		TRIFRAG_COUNT++;
 
 
 		float zc = s.interp_given_bary(b, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
@@ -497,12 +502,14 @@ class Scene { // CENA!
 
 
 		Vector2 finaluv;
-		for (int i = 0; i < 3; i++) finaluv = finaluv + ((s.p[i].uv * winv[i]) * b.get(i));
+		if (INTERP__) finaluv = s.interp_given_bary(b, s.p[0].uv * winv[0], s.p[1].uv * winv[1], s.p[2].uv * winv[2]);
+		else for (int i = 0; i < 3; i++) finaluv = finaluv + ((s.p[i].uv * winv[i]) * b.get(i));
 		finaluv = finaluv * wc;
 
 		// And same goes for world space position
 		Vector3 finalwsp(0, 0, 0);
-		for (int i = 0; i < 3; i++) finalwsp = finalwsp + ((s.p[i].wspos) * winv[i]) * b.get(i);
+		if (INTERP__) finalwsp = s.interp_given_bary(b, s.p[0].wspos * winv[0], s.p[1].wspos * winv[1], s.p[2].wspos * winv[2]);
+		else for (int i = 0; i < 3; i++) finalwsp = finalwsp + ((s.p[i].wspos) * winv[i]) * b.get(i);
 		finalwsp = finalwsp * wc;
 
 
@@ -512,7 +519,8 @@ class Scene { // CENA!
 		if (PHONGSHADE) {
 			Vector3 point;
 			// for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * b.get(ss));
-			for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * winv[ss]) * b.get(ss);
+			if (INTERP__) point = s.interp_given_bary(b, t.p[0] * winv[0], t.p[1] * winv[1], t.p[2] * winv[2]);
+			else for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * winv[ss]) * b.get(ss);
 			point = point * wc;
 
 			// std::cout << t.p[0].to_string() << " " << t.p[1].to_string() << " " << t.p[2].to_string() << " + " << b.to_string() << " = " << point.to_string() << "\n";
@@ -520,13 +528,15 @@ class Scene { // CENA!
 
 
 			Vector3 interpnormal;
-			for (int ss = 0; ss < 3; ss++) interpnormal = interpnormal + s.p[ss].normal * b.get(ss);
+			if (INTERP__) interpnormal = s.interp_given_bary(b, s.p[0].normal, s.p[1].normal, s.p[2].normal);
+			else for (int ss = 0; ss < 3; ss++) interpnormal = interpnormal + s.p[ss].normal * b.get(ss);
 			interpnormal = interpnormal.normalized();
 
 			// std::cout << s.material.to_string() << "\n";
 			c = rgb(illuminate(point, point, interpnormal, finaluv, s.material));
 		} else {
-			c = rgb(illuminate(t.centroid(), t.centroid(), s.N, finaluv, s.material));
+			auto centroid = t.centroid();
+			c = rgb(illuminate(centroid, centroid, s.N, finaluv, s.material));
 		}
 		Fragment F__F(Vector4(x, y, zc, wc), (s.ON), c, finaluv, oc);
 		F__F.screenUV = Vector2((float)(x) / W, (float)(y) / H);
@@ -626,7 +636,7 @@ class Scene { // CENA!
 			TR.y = std::max(BL.x, s.p[i].ndc.y);
 		}
 
-		const int THRESHOLD = 2;
+		const int THRESHOLD = 4;
 
 		return (TR.y - BL.y <= THRESHOLD) && (TR.x - BL.x <= THRESHOLD);
 	}
@@ -975,8 +985,8 @@ class Scene { // CENA!
 
 	void outputBuffer(std::string OUTPUT__) {
 		std::ofstream output(OUTPUT__);
-		output << "[" + std::to_string(W) + ", " + std::to_string(H) + "]\n";
-		std::string buf = "";
+		std::string buf = "[" + std::to_string(W) + ", " + std::to_string(H) + "]\n";
+		
 
 		for (int y = H - 1; y >= 0; y--) {
 			for (int x = 0; x < W; x++) {

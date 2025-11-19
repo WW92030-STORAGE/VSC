@@ -262,6 +262,7 @@ class Triangle3 : public Object {
 class TriangleF {
 	public:
 	Fragment p[3];
+	Vector3 edges[3]; // Edge functions, from p[i] to p[i + 1]
 	Vector3 N;
 	Vector3 ON;
 
@@ -269,10 +270,40 @@ class TriangleF {
 
 	bool oriented;
 
+	Vector3 mutualize(Vector3 v) {
+		float mabs = std::max(fabs(v.x), std::max(fabs(v.y), fabs(v.z)));
+		if (BASE::fzero(mabs)) return v;
+		mabs = 1.0 / mabs;
+		return v * mabs;
+	}
+
 	void init() {
 		auto e1 = (p[1].ndc - p[0].ndc);
 		auto e2 = (p[2].ndc - p[0].ndc);
 		oriented = e1.x * e2.y - e1.y * e2.x >= 0;
+
+		/*
+		
+		Given a point (x, y) and an edge (x1, y1) --> (x2, y2), we can compute side of (x, y) using cross product:
+		Let (xv, yv) = (x2 - x1, y2 - y1) and (xd, yd) = (x - x2, y - y2). (x, y) is left side of the edge if and only if (xv, yv) cross (xd, yd) is positive:
+
+		(xv * yd) - (yv * xd) > 0
+
+		Simplify:
+
+		(x2 - x1) * (y - y2) - (y2 - y1) * (x - x2) = [x2, y] - [x1, y] - [x2, y2] + [x1, y2] - [y2, x] + [y1, x] + [y2, x2] - [y1, x2] (where the commas denote products for readability)
+		= y(x2 - x1) + x(y1 - y2) + [x1, y2] - [y1, x2]
+
+		so an edge function is a Vector3(y1 - y2, x2 - x1, x1y2 - y1x2) which evaluates a given point (x, y) as (x, y, 1) dot (edge coefficients)
+
+		We can also scale up and down these coefficients so we divide by the strongest magnitude for stability.
+		
+		*/
+		for (int i = 0; i < 3; i++) {
+			int next = (i + 1) % 3;
+
+			edges[i] = mutualize(Vector3(p[i].ndc.y - p[next].ndc.y, p[next].ndc.x - p[i].ndc.x, p[i].ndc.x * p[next].ndc.y - p[next].ndc.x * p[i].ndc.y));
+		}
 	}
 
 	TriangleF() {
@@ -326,19 +357,9 @@ class TriangleF {
 	}
 
 	inline bool inside(Vector2 P) {
-		// no more copy constructor!
-
-		int offset = oriented ? 1 : 2;
-
-		// Think of it like this. If a point is inside the triangle then it must be to the left of all three edges, in counterclockwise motion.
-		// This means (P[(i + 1) % 3] - P[i]) ^ (P - p[i]) = (Edge) ^ (Point to vertex) has positive z.
-
+		// remember edge functions on a point P = (x, y) are (x, y, 1) dot (edge coefficients)
 		for (int i = 0; i < 3; i++) {
-			Vector2 v = (P - vec2(p[i].ndc));
-			Vector4 e = (p[(i + offset) % 3].ndc - p[i].ndc);
-
-			if (e.x * v.y - e.y * v.x < 0) return false; // cross product
-			// if ((e.cross(v)).z < 0) return false;
+			if (P.x * edges[i].x + P.y * edges[i].y + edges[i].z < 0) return false;
 		}
 		return true;
 	}
@@ -392,20 +413,24 @@ class TriangleF {
 	// Interpolate on the vertices
 
 	inline float interp(int x, int y, float f0, float f1, float f2) {
-		Vector3 F__F(f0, f1, f2);
-		return NormSum(bary(x, y)) * F__F;
+		Vector3 r = (bary(x, y));
+		return f0 + r.y * (f1 - f0) + r.z * (f2 - f0);
+
+		// Vector3 F__F(f0, f1, f2);
+		// return r * F__F;
 	}
 
 	template <typename T>
 	inline T interp(int x, int y, T a, T b, T c) {
-		Vector3 r = NormSum(bary(x, y));
-
+		Vector3 r = (bary(x, y));
+		// return a + (b - a) * r.y + (c - a) * r.z;
 		return a * r.x + b * r.y + c * r.z;
 	}
 
 	template <typename T>
 	inline T interp_given_bary(Vector3 r, T a, T b, T c, bool ns = false) {
 		if (ns) r = NormSum(r);
+		// return a + (b - a) * r.y + (c - a) * r.z;
 		return a * r.x + b * r.y + c * r.z;
 	}
 

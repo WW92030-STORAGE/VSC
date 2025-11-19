@@ -1950,7 +1950,7 @@ inline void ShaderTest3() {
 
 // TEST 9.83E PROTOTRACER VI (Multiple cameras + shaders, also a stress test if needed)
 inline void AnimShader() {
-	int N = 512;
+	int N =512;
 	int D = 1;
 
 	// RayTracer s(D, N, N);
@@ -2088,6 +2088,8 @@ inline void AnimShader() {
 	}
 	animation.encodeLength(VIDEO_PATH + "/LEN");
 	std::cout << "Stored\n";
+
+	std::cout << "TRIFRAGS: " << s.TRIFRAG_COUNT << "\n";
 }
 
 
