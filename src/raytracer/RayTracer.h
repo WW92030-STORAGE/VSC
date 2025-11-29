@@ -248,7 +248,8 @@ class RayTracer : public Scene {
 	}
 
 	// Remember: pixels go from BOTTOM LEFT TO TOP RIGHT. This means you will have to reverse the Y direction when outputting.
-	virtual void render(bool LIT = true, int depth = 0) {
+	virtual void render(bool LIT = true, int depth = -1) {
+		if (depth < 0) depth = DEPTH;
 		if (UseBVH) createBVH();
 		for (int x = 0; x < W; x++) {
 			// std::cout << x << "\n";

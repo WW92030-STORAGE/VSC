@@ -22,9 +22,16 @@ inline bool fzero(float f) {
 	return (-E < f && f < E);
 }
 
+// Is a float nan?
+
+bool fnan(float f) {
+    return std::isnan(f);
+}
+
 // Are they equal?
 
 inline bool fequal(float f, float g) {
+    if (fnan(f) && fnan(g)) return true;
     if (f == g) return true;
     return fzero(f - g);
 }
@@ -152,7 +159,7 @@ float newton(float (*f)(float)) {
     float minim = f(0);
     
     for (int i = -BOUND; i < BOUND; i++) {
-        if (f(i) == NAN || f(i) == -NAN) continue;
+        if (fnan(f(i))) continue;
         if (fabs(f(i)) < fabs(minim)) {
             minim = f(i);
             x = i;
