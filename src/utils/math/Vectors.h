@@ -10,35 +10,6 @@
 
 // Vector methods
 
-// Vector of 2 integers, used for triangle rasterization
-
-class Vector2i {
-	public:
-	int x;
-	int y;
-
-	Vector2i() {
-		x = 0;
-		y = 0;
-	}
-
-	Vector2i(int r, int s) {
-		x = r;
-		y = s;
-	}
-
-	Vector2i(const Vector2i& other) {
-		x = other.x;
-		y = other.y;
-	}
-
-	std::string to_string() {
-		return "Vector2i[" + std::to_string(x) + ", " + std::to_string(y) + "]";
-	}
-};
-
-// Vectors of floats
-
 class Vector2 {
 	public:
 	float x;
@@ -87,8 +58,7 @@ class Vector2 {
 	}
 	inline Vector2 div(float other) {
 		if (BASE::fzero(other)) return Vector2(0, 0);
-		float oo = 1.0 / other;
-		return Vector2(x * oo, y * oo);
+		return Vector2(x / other, y / other);
 	}
 
 	// Vector specific operations
@@ -110,8 +80,7 @@ class Vector2 {
 	inline Vector2 normalized() {
 		float len = length();
 		if (BASE::fzero(len)) return Vector2(1, 0);
-		float LL = 1.0 / len;
-		return Vector2(x * LL, y * LL);
+		return Vector2(x / len, y / len);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal
@@ -126,7 +95,7 @@ class Vector2 {
 
 	inline Vector2 proj(Vector2& other) {
 		if (BASE::fzero(other.length())) return Vector2(0, 0);
-		return other * (dot(other) / other.length());
+		return other * (dot(other) / (other.normsquared()));
 	}
 
 	inline Vector2 ortho(Vector2& other) {
@@ -230,8 +199,7 @@ class Vector3 {
 	}
 	inline Vector3 div(float other) {
 		if (BASE::fzero(other)) return Vector3(0, 0, 0);
-		float oo = 1.0 / other;
-		return Vector3(x * oo, y * oo, z * oo);
+		return Vector3(x / other, y / other, z / other);
 	}
 
 	// Vector specific operations
@@ -253,8 +221,7 @@ class Vector3 {
 	inline Vector3 normalized() {
 		float len = length();
 		if (BASE::fzero(len)) return Vector3(1, 0, 0);
-		float LL = 1.0 / len;
-		return Vector3(x * LL, y * LL, z * LL);
+		return Vector3(x / len, y / len, z / len);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal
@@ -269,7 +236,7 @@ class Vector3 {
 
 	inline Vector3 proj(Vector3& other) {
 		if (BASE::fzero(other.length())) return Vector3(0, 0, 0);
-		return other * (dot(other) / other.length());
+		return other * (dot(other) / other.normsquared());
 	}
 
 	inline Vector3 ortho(Vector3& other) {
@@ -386,8 +353,7 @@ class Vector4 {
 	}
 	inline Vector4 div(float other) {
 		if (BASE::fzero(other)) return Vector4(0, 0, 0, 0);
-		float oo = 1.0 / other;
-		return Vector4(x * oo, y * oo, z * oo, w * oo);
+		return Vector4(x / other, y / other, z / other, w / other);
 	}
 
 	// Vector specific operations
@@ -409,8 +375,7 @@ class Vector4 {
 	inline Vector4 normalized() {
 		float len = length();
 		if (BASE::fzero(len)) return Vector4(1, 0, 0, 0);
-		float LL = 1.0 / len;
-		return Vector4(x * LL, y * LL, z * LL, w * LL);
+		return Vector4(x / len, y / len, z / len, w / len);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal
@@ -425,7 +390,7 @@ class Vector4 {
 
 	inline Vector4 proj(Vector4& other) {
 		if (BASE::fzero(other.length())) return Vector4(0, 0, 0, 0);
-		return other * (dot(other) / other.length());
+		return other * (dot(other) / other.normsquared());
 	}
 
 	inline Vector4 ortho(Vector4& other) {
