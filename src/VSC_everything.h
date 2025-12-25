@@ -67,4 +67,8 @@
 
 #include "animation/Animation.h"
 
+// Physics
+
+#include "physics/Physics.h"
+
 #endif
