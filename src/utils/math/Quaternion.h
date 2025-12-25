@@ -31,7 +31,7 @@ class Quaternion {
 	}
 
 	static Quaternion eye() {
-		return Quaternion(1, Vector3(0, 0, 0));
+		return Quaternion(1, 0, 0, 0);
 	}
 
 	// WARNING - The Vector4 import of a quaternion has the scalar (w) component LAST.
@@ -141,6 +141,13 @@ class Quaternion {
 		if (BASE::fzero(nsq)) return Quaternion(*this);
 		float nsinv = 1.0 / nsq;
 		return conj() * nsinv;
+	}
+
+	// Add a scaled vector
+	inline Quaternion addScaled(Vector3 v, float scale) {
+		Quaternion q(0, v * scale);
+		q = q * (*this);
+		return (*this) + q * 0.5;
 	}
 
 	// Convert to rot matrix

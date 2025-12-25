@@ -281,6 +281,14 @@ class Matrix3 {
 		return Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 1);
 	}
 
+	inline static Matrix3 eye_scaled(float f) {
+		return Matrix3(f, 0, 0, 0, f, 0, 0, 0, f);
+	}
+
+	inline static Matrix3 diagonal(float a, float b, float c) {
+		return Matrix3(a, 0, 0, 0, b, 0, 0, 0, c);
+	}
+
 	// get a (row, column)
 	float get(int a, int b) {
 		if (b == 0) {

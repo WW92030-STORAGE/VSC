@@ -45,4 +45,15 @@ std::vector<float> ket(int n, int k) {
 	return res;
 }
 
+// Slice a vector! (Between two points, inclusive)
+
+template <typename T>
+std::vector<T> vec_slice(std::vector<T> value, int start = 0, int end = -1) {
+	if (end < 0) end = value.size() - end;
+
+	std::vector<T> res;
+	for (int i = start; i <= end; i++) res.push_back(value[i]);
+	return res;
+}
+
 #endif
