@@ -10,6 +10,33 @@
 
 // Vector methods
 
+// Vector of 2 integers, used for triangle rasterization
+
+class Vector2i {
+	public:
+	int x;
+	int y;
+
+	Vector2i() {
+		x = 0;
+		y = 0;
+	}
+
+	Vector2i(int r, int s) {
+		x = r;
+		y = s;
+	}
+
+	Vector2i(const Vector2i& other) {
+		x = other.x;
+		y = other.y;
+	}
+
+	std::string to_string() {
+		return "Vector2i[" + std::to_string(x) + ", " + std::to_string(y) + "]";
+	}
+};
+
 class Vector2 {
 	public:
 	float x;
@@ -178,6 +205,12 @@ class Vector3 {
 		if (r == 0) x = f;
 		else if (r == 1) y = f;
 		else z = f;
+	}
+
+	inline void override(float a, float b, float c) {
+		x = a;
+		y = b;
+		z = c;
 	}
 
 	// Operations
@@ -433,6 +466,8 @@ class Vector4 {
 Vector2 NILVEC2 = Vector2(NAN, NAN);
 Vector3 NILVEC3 = Vector3(NAN, NAN, NAN);
 Vector4 NILVEC4 = Vector4(NAN, NAN, NAN, NAN);
+
+Vector3 VEC3_ZERO = Vector3(0, 0, 0);
 
 // FUNCTIONS
 

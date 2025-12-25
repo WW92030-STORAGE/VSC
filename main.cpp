@@ -16,6 +16,7 @@ using namespace std;
 #include "misctests.h"
 #include "main_utils.h" // definitions of paths and some things
 #include "black_box_tests.h"
+#include "physicstests.h"
 
 #include <chrono>
 
@@ -430,6 +431,8 @@ void spinningcube() {
 	len.close();
 }
 
+
+
 int main() {
 	std::cout << "BEGIN\n";
 	auto start = std::chrono::high_resolution_clock::now();
@@ -441,12 +444,25 @@ int main() {
 	// SkinAnim();
 	// MCRProtoAnim();
 
-	AnimShader();
+	// AnimShader();
 	// AnimRTX();
 	// spinningcube();
 
-	
+	// Particle0();
+	// Particle1();
+	// Particle2();
+	// RotatingSpring();
 
+	// GroundCollisionTest();
+	// GroundSpring();
+	// CableTest();
+
+	// SquareRods();
+
+	// RigidBody0();
+	// RigidBody1();
+	RigidBody2();
+	
 	/*
 
 
