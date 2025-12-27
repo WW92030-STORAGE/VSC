@@ -15,7 +15,7 @@ using namespace std;
 
 // #include "misctests.h"
 
-// #include "black_box_tests.h"
+#include "black_box_tests.h"
 #include "physicstests.h"
 
 #include <chrono>
@@ -31,7 +31,7 @@ int main() {
 	// SkinAnim();
 	// MCRProtoAnim();
 
-	// AnimShader();
+	AnimShader();
 	// AnimRTX();
 	// spinningcube();
 
@@ -48,7 +48,7 @@ int main() {
 
 	// RigidBody0();
 	// RigidBody1();
-	RigidBody2();
+	// RigidBody2();
 	
 	/*
 

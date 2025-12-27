@@ -1,6 +1,6 @@
 # Definitions
 CXX = g++
-CXXFLAGS = -O3 -w -fcompare-debug-second -MMD -MP
+CXXFLAGS = -O3 -w -fcompare-debug-second -MMD -MP -flto
 CXXFLAGS_0 = -w -fcompare-debug-second -MMD -MP
 INCLUDES = -Iinclude
 
@@ -24,11 +24,12 @@ DEPS = $(OBJS:.o=.d)
 # Default rule: build the target executable
 all: $(TARGET)
 
-run: $(TARGET) && ./$(TARGET)
+run: $(TARGET)
+	./$(TARGET)
 
 # LINK IT UP!!!
 $(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET)
+	$(CXX) $(OBJS) $(CXXFLAGS) -o $(TARGET)
 
 # automatically compile some source file
 $(BUILD_DIR)/%.o: %.cpp
