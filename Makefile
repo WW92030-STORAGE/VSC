@@ -1,7 +1,7 @@
 # Definitions
 CXX = g++
 CXXFLAGS = -O3 -w -fcompare-debug-second -MMD -MP -flto
-CXXFLAGS_0 = -w -fcompare-debug-second -MMD -MP
+CXXFLAGS_0 = -w -fcompare-debug-second -MMD -MP -flto
 INCLUDES = -Iinclude
 
 TARGET = main
@@ -21,11 +21,21 @@ OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
 # Dependencies
 DEPS = $(OBJS:.o=.d)
 
-# Default rule: build the target executable
-all: $(TARGET)
+# Build!
+build: $(TARGET)
 
-run: $(TARGET)
+# Run!
+run: 
 	./$(TARGET)
+	python3 $(PY)
+
+# Build and run!
+all: build run
+
+# Build, run, and visualize frames into video
+video: $(FILE) build run
+	python3 $(PY_VIDEO)
+	python3 $(PY_GIF)
 
 # LINK IT UP!!!
 $(TARGET): $(OBJS)
@@ -42,6 +52,12 @@ $(BUILD_DIR)/%.o: %.cpp
 # Cleanup
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
+
+# Convenience
+
+collada: 
+	cd python && python3 colladaparser.py
+
 
 # failsafe
 .PHONY: all clean

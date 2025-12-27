@@ -31,7 +31,7 @@ int main() {
 	// SkinAnim();
 	// MCRProtoAnim();
 
-	AnimShader();
+	// AnimShader();
 	// AnimRTX();
 	// spinningcube();
 
@@ -48,7 +48,7 @@ int main() {
 
 	// RigidBody0();
 	// RigidBody1();
-	// RigidBody2();
+	RigidBody2();
 	
 	/*
 
