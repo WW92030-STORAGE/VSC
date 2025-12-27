@@ -74,6 +74,8 @@ Indices of rows and columns are zero-indexed.
 ## Functions
 
 - `static Matrix3 eye()` = Identity matrix.
+- `static Matrix3 eye_scaled(float F)` = `eye() * F`
+- `static Matrix3 diagonal(float a, float b, float c)` = Diagonal with entries `(a, b, c)`
 - `float get(int a, int b)` = Gets element at row `a` and column `b`.
 - `Vector3 getRow(int a)`
 - `void set(int a, int b, float v)` = Sets element `[a, b]` to `v`.

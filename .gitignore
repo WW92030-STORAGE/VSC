@@ -7,6 +7,7 @@ misc/*.obj
 misc/*.dae
 tests/*
 deprecated/*
+build/*
 
 OUT
 BUFFER

@@ -2,6 +2,6 @@
 #define wrapperforeverythinginsrc
 
 // Header file to include all the headers.
-#include "src/VSC_everything.h"
+#include "include/VSC_everything.h"
 
 #endif

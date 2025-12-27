@@ -1,0 +1,1059 @@
+#include <string>
+#include <cstdint>
+#include <fstream>
+#include <vector>
+#include <queue>
+#include <utility>
+#include <cfloat>
+#include <climits>
+#include <unordered_map>
+
+#include "../../include/objects/Mesh.h"
+#include "../../include/objects/MorphedMesh.h"
+#include "../../include/objects/RiggedMesh.h"
+#include "../../include/objects/Triangle.h"
+#include "../../include/objects/Object.h"
+#include "../../include/objects/Clip.h"
+
+#include "../../include/camera/Camera.h"
+#include "../../include/utils/geometry/Fragment.h"
+
+#include "../../include/scene/Color.h"
+#include "../../include/material/Material.h"
+#include "../../include/material/ImageTexture.h"
+
+#include "../../include/lighting/Light.h"
+#include "../../include/lighting/PointLight.h"
+#include "../../include/lighting/DirectionalLight.h"
+
+#include "../../include/scene/Shader.h"
+
+
+#include "../../include/scene/Scene.h"
+
+#include <optional>
+
+/*
+
+Base scene class. Supports the rendering of individual meshes, but also the bulk storage and rendering of meshes.
+
+*/
+
+	/*
+	
+	WHAT IS HERE IS ORITINALLY TAKEN FROM RAYTRACER AND GENERALIZED
+	
+	*/
+
+	// Add a mesh to the system. WARNING - This copies the mesh in question.
+	void Scene::addMesh(Mesh* mesh, BaseMaterial* mat, bool INTERPNORM, std::string name, std::optional<FragShader> frag_shader) {
+		if (name == "") name = "Mesh" + std::to_string(meshes.size());
+		frag_shaders.push_back(frag_shader);
+
+		names.push_back(name);
+		names_inv[name] = meshes.size();
+
+		MorphedMesh* morphed = dynamic_cast<MorphedMesh*>(mesh);
+		RiggedMesh* rigged = dynamic_cast<RiggedMesh*>(mesh);
+		if (morphed != nullptr) meshes.push_back(new MorphedMesh(*morphed));
+		else if (rigged) meshes.push_back(new RiggedMesh(*rigged));
+		else meshes.push_back(new Mesh(*mesh));
+
+		if (mat != nullptr) {
+			ImageTexture* imgtex = dynamic_cast<ImageTexture*>(mat);
+			if (imgtex != nullptr) materials.push_back(new ImageTexture(*imgtex));
+			else materials.push_back(new BaseMaterial(*mat));
+		}
+		else materials.push_back(new BaseMaterial(BASEMAT_WHITE));
+		NormInterps.push_back(INTERPNORM);
+	}
+
+	// Get the mesh of a name
+	int Scene::getMesh(std::string name) {
+		if (names_inv.find(name) == names_inv.end()) return -1;
+		return names_inv[name];
+	}
+
+	// Render the scene, assuming what is stored in meshes, etc. are the desired objects
+	void Scene::render(bool LIT, int depth, std::optional<FragShader> shader) {
+		clearBuffer();
+		global_shader = shader;
+		for (int index = 0; index < meshes.size(); index++) {
+			fillMesh(*(meshes[index]), materials[index], frag_shaders[index], true, LIT, NormInterps[index], true); 
+		}
+	}
+
+		// Object Modification
+
+	void Scene::morph(int index, std::vector<float> states) {
+		if (index < 0 || index >= meshes.size()) return;
+
+		Mesh* m = meshes[index];
+		MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
+		if (mm == nullptr) return;
+		mm->morph(states);
+	}
+
+	void Scene::morphToState(int index, int state) {
+		if (index < 0 || index >= meshes.size()) return;
+
+		Mesh* m = meshes[index];
+		MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
+		if (mm == nullptr) return;
+		mm->morphToState(state);
+	}
+
+	uint64_t Scene::countTriangles() {
+		uint64_t res = 0;
+		for (auto i : meshes) res += i->triindices.size();
+		return res;
+	}
+
+
+
+	/*
+	
+	EVERYTHING ELSE HERE IS BASICALLY COPIED FROM THE LEGACY SCENE
+	
+	*/
+	
+	void Scene::initBuffer() {
+		SIDE = H > W ? H : W;
+		buffer = new ReducedFrag*[W];
+		for (int i = 0; i < W; i++) buffer[i] = new ReducedFrag[H];
+		for (int i = 0; i < W; i++) {
+			for (int j =- 0; j < H; j++) buffer[i][j] = ReducedFrag();
+		}
+	}
+
+	// Sorry but you're only getting these 2 constructors. Do the rest of it yourself.
+	Scene::Scene() {
+		camera = Camera();
+		cameras.push_back(camera);
+		// numObjs = 0;
+
+		W = 256;
+		H = 256;
+
+		SIDE = H > W ? H : W;
+
+		initBuffer();
+	}
+
+	Scene::Scene(int w, int h) {
+		camera = Camera();
+		cameras.push_back(camera);
+		// numObjs = 0;
+
+		W = w;
+		H = h;
+
+		SIDE = H > W ? H : W;
+
+		initBuffer();
+	}
+
+	void Scene::setActiveCamera(int x) {
+		active_camera = x;
+		camera = cameras[x];
+	}
+
+	void Scene::kill() {
+		for (int i = 0; i < W; i++) delete[] buffer[i];
+		delete[] buffer;
+		for (int i = 0; i < meshes.size(); i++) {
+			Mesh* m = meshes[i];
+			MorphedMesh* mm = dynamic_cast<MorphedMesh*>(m);
+			RiggedMesh* rm = dynamic_cast<RiggedMesh*>(m);
+			if (mm) delete mm;
+			else if (rm) delete rm;
+			else delete m; 
+		}
+		
+		for (int i = 0; i < materials.size(); i++) {
+			BaseMaterial* bm = materials[i];
+			ImageTexture* im = dynamic_cast<ImageTexture*>(bm);
+			if (im) delete im;
+			else delete bm;
+		}
+	}
+
+	Scene::~Scene() {
+		kill();
+	}
+
+	void Scene::clearBuffer() {
+		fillScreen(0x000000FF);
+	}
+
+	void Scene::fillScreen(int32_t c) {
+		for (int i = 0; i < W; i++) {
+			for (int j = 0; j < H; j++) {
+				buffer[i][j].depth = FLT_MAX;
+				buffer[i][j].color = c;
+			}
+		}
+	}
+
+	// Draw 2d primitives
+
+	void Scene::drawPixel(int x, int y, uint32_t z) {
+		if (x < 0 || y < 0 || x >= W || y >= H) return;
+		buffer[x][y].color = z;
+	}
+
+	void Scene::drawFragment(Fragment& F, int x, int y) {
+		if (x < 0 || y < 0 || x >= W || y >= H) return;
+		if (F.ndc.z < -2 || F.ndc.z > 2) return;
+		if (buffer[x][y].depth < F.ndc.w) return;
+		buffer[x][y].depth = F.ndc.w;
+		buffer[x][y].color = F.color;
+		// buffer[x][y] = ReducedFrag(F.ndc.w, F.color);
+	}
+
+	// Get color from material
+
+	uint32_t Scene::getColor(BaseMaterial* material, Vector2 uv) {
+		if (material->TYPE == BaseMaterial::IMAGE) {
+			ImageTexture* imgtex = dynamic_cast<ImageTexture*>(material);
+			if (imgtex) return imgtex->getColor(uv);
+		}
+		return material->getColor(uv);
+	}
+
+	// Handle the lighting: compute the illumination of a given point.
+	// Params: pRay = source ray direction (from the light source)
+	// position = position in EUCLIDEAN space
+	// material = Material used to do the calcs
+	// LIT = debug
+
+	Vector3 Scene::shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT) {
+		// std::cout << pRay.to_string() << " " << position.to_string() << " " << normal.to_string() << "\n";
+		
+		Vector3 col = rgb(getColor(material, uv));
+		if (!LIT) return col;
+		
+		Vector3 I(ambientLight);
+
+		for (auto light : lights) {
+			if (light.TYPE == POINT) {
+				Vector3 L = light.transform.origin - position;
+				Vector3 shadedIntensity(0, 0, 0);
+
+				// Diffuse term
+				float scale = normal.cosine(L);
+				// Only do light contribution if normal is facing light
+				if (scale > 0) {
+					shadedIntensity = shadedIntensity + (light.intensity * scale);
+
+					// Specular term
+
+					if (material->specular > 0) {
+
+						Vector3 reflected = normal * (2 * normal.dot(L)) - L;
+						float rv_inv = reflected.cosine(pRay);
+						if (rv_inv < 0) {
+							float spec = powf(rv_inv * -1, material->specular);
+							shadedIntensity = shadedIntensity + (light.intensity * spec);
+						// std::cout << (pl.intensity * spec).to_string() << " " << specular << "\n";
+						}
+					}
+
+				}
+
+				shadedIntensity = shadedIntensity / fmax(light.attenuation * L.length(), 1);
+				
+				I = I + shadedIntensity;
+			}
+			if (I.x > 1) I.x = 1;
+			if (I.y > 1) I.y = 1;
+			if (I.z > 1) I.z = 1;
+		}
+
+		// std::cout << position.to_string() << " = " << I.to_string() << "\n";
+
+
+		Vector3 res(col.x * I.x, col.y * I.y, col.z * I.z);
+		return res;
+	}
+
+	uint32_t Scene::shadeInt(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT) {
+		return rgb(shade(pRay, position, normal, uv, material, LIT));
+	}
+
+	// Actual raytracing. The pRay is the slope of the ray, the position is the intersection point.
+	Vector3 Scene::illuminate(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT) {
+		return shade(pRay, position, normal, uv, material, LIT);
+	}
+
+	uint32_t Scene::illuminateInt(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT) {
+		return rgb(illuminate(pRay, position, normal, uv, material, LIT));
+	}
+
+	// The rest of this class deals with drawing primitives such as triangles.
+
+	// Bresanham's method
+
+	// Draw a line going right at a shallow slope
+	void Scene::LineLow(int x0, int y0, int x1, int y1, uint32_t c) {
+		int dx = x1 - x0;
+		int dy = y1 - y0;
+
+		int yi = 1;
+
+		if (dy < 0) {
+			yi = -1;
+			dy = -dy;
+		}
+
+		int D = 2 * dy - dx;
+
+		int y = y0;
+
+		for (int x = x0; x <= x1; x++) {
+			drawPixel(x, y, c);
+			if (D > 0) {
+				y += yi;
+				D += 2 * (dy - dx);
+			}
+			else {
+				D += 2 * dy;
+			}
+		}
+	}
+
+	// Draw a line going up at a steep slope
+	void Scene::LineHigh(int x0, int y0, int x1, int y1, uint32_t c) {
+		int dx = x1 - x0;
+		int dy = y1 - y0;
+
+		int xi = 1;
+
+		if (dx < 0) {
+			xi = -1;
+			dx = -dx;
+		}
+
+		int D = 2 * dx - dy;
+
+		int x = x0;
+
+		for (int y = y0; y <= y1; y++) {
+			drawPixel(x, y, c);
+			if (D > 0) {
+				x += xi;
+				D += 2 * (dx - dy);
+			}
+			else {
+				D += 2 * dx;
+			}
+		}
+	}
+
+	void Scene::drawLine(int x0, int y0, int x1, int y1, uint32_t c)  {
+		if (x0 == x1) {
+			for (int y = BASE::min(y0, y1); y <= BASE::max(y0, y1); y++) drawPixel(x0, y, c);
+			return;
+		}
+		else if (y0 == y1) {
+			for (int x = BASE::min(x0, x1); x <= BASE::max(x0, x1); x++) drawPixel(x, y0, c);
+		}
+		if (abs(y1 - y0) < abs(x1 - x0)) {
+        	if (x0 > x1) LineLow(x1, y1, x0, y0, c);
+        	else LineLow(x0, y0, x1, y1, c);
+		}
+    	else {
+        	if (y0 > y1) LineHigh(x1, y1, x0, y0, c);
+        	else LineHigh(x0, y0, x1, y1, c);
+		}
+	}
+
+	void Scene::drawLine(Vector2& a, Vector2& b, uint32_t c) {
+		drawLine(round(a.x), round(a.y), round(b.x), round(b.y), c);
+	}
+
+	// Draw a TRIANGLE
+
+	void Scene::drawTriangle(Triangle2 s, uint32_t c) {
+		for (int i = 0; i < 3; i++) drawLine(s.p[i], s.p[(i + 1) % 3], c);
+	}
+
+	// Draw a TRIANGLE with the insides colored in
+	
+	void Scene::fillTriangle(Triangle2& s, uint32_t c) {
+		int x0 = s.p[0].x;
+		int x1 = x0;
+		int y0 = s.p[0].y;
+		int y1 = y0;
+
+		for (int i = 0; i < 3; i++) {
+			if (x0 > s.p[i].x) x0 = s.p[i].x;
+			if (x1 < s.p[i].x) x1 = s.p[i].x;
+			if (y0 > s.p[i].y) y0 = s.p[i].y;
+			if (y1 < s.p[i].y) y1 = s.p[i].y;
+		}
+
+		for (int x = x0; x <= x1; x++) {
+			for (int y = y0; y <= y1; y++) {
+				if (s.inside(Vector2(x, y))) drawPixel(x, y, c);
+			}
+		}
+	}
+
+	// Draw and Fill Triangles in 3D!!!
+
+	// Backface cull
+	bool Scene::BackFaceCull(Triangle3 s) {
+		return (s.N * (s.p[0] - camera.transform.origin)) >= 0;
+	}
+
+	// The updated version takes a Triangle3 and returns a triangle of fragments.
+	// The fragments for now only have normalized device coordinates, the original triangle normal, the color, and teh uvs of the original triangle.
+	// The triangle is returned with the coordinates as they are represented in NDC. However
+	// However the x and y coordinates are transformed to fit in the buffer.
+	TriangleF Scene::project(Triangle3 s, uint32_t c) {
+		
+		Vector4 res[3];
+
+		for (int i = 0; i < 3; i++) {
+			Vector4 v = vec4(s.p[i]);
+			v.w = 1;
+			Vector4 vv = camera.glFrustum(v);
+			res[i] = vv;
+
+			res[i].x = (res[i].x + 1) * 0.5 * SIDE - 0.5 * (SIDE - W);
+			res[i].y = (res[i].y + 1) * 0.5 * SIDE - 0.5 * (SIDE - H);
+		}
+
+		TriangleF tri;
+
+		tri.ON = (s.normal());
+
+		for (int i = 0; i < 3; i++) {
+			tri.p[i] = Fragment(res[i], s.N, c, s.uv[i]);
+			tri.p[i].wspos = s.p[i];
+		}
+
+		tri.setup_edges();
+
+		return tri;
+	}
+
+	// Draw fragment triangles. We will expand this in the future.
+	void Scene::drawTriangle(TriangleF s, uint32_t c) {
+		Triangle2 t(vec2(s.p[0].ndc), vec2(s.p[1].ndc), vec2(s.p[2].ndc));
+		drawTriangle(t, c);
+	}
+
+	void Scene::DrawTriFrag(TriangleF s, Triangle3 t, int x, int y, bool PHONGSHADE, std::optional<FragShader> shader, bool INTERP__) {
+		Vector3 b = s.bary(x, y);
+		float winv[3] = {1.0 / s.p[0].ndc.w, 1.0 / s.p[1].ndc.w, 1.0 / s.p[2].ndc.w};
+		float wc = 1.0 / s.interp_given_bary(b, winv[0], winv[1], winv[2]);
+		// DEPTH TEST!!!!!
+		if (buffer[x][y].depth < wc) {
+			TRIFRAG_AVOID++;
+			return;
+		}
+
+		TRIFRAG_COUNT++;
+
+
+		float zc = s.interp_given_bary(b, s.p[0].ndc.z, s.p[1].ndc.z, s.p[2].ndc.z);
+		
+
+		// for (int i = 0; i < 3; i++) std::cout << "UV " << s.p[i].uv.to_string() << " ";
+		// std::cout << "\n";
+		
+		// std::cout << s.to_string() << " " << x <<  " " << y << " = " << b.to_string() << "\n\n";
+
+		// Interpolate uv TODO - make this perspective correct
+		// u/z and v/z linearly interpolate
+
+
+
+		Vector2 finaluv;
+		if (INTERP__) finaluv = s.interp_given_bary(b, s.p[0].uv * winv[0], s.p[1].uv * winv[1], s.p[2].uv * winv[2]);
+		else for (int i = 0; i < 3; i++) finaluv = finaluv + ((s.p[i].uv * winv[i]) * b.get(i));
+		finaluv = finaluv * wc;
+
+		// And same goes for world space position
+		Vector3 finalwsp(0, 0, 0);
+		if (INTERP__) finalwsp = s.interp_given_bary(b, s.p[0].wspos * winv[0], s.p[1].wspos * winv[1], s.p[2].wspos * winv[2]);
+		else for (int i = 0; i < 3; i++) finalwsp = finalwsp + ((s.p[i].wspos) * winv[i]) * b.get(i);
+		finalwsp = finalwsp * wc;
+
+
+		uint32_t c = getColor(s.material, finaluv);
+		uint32_t oc = c;
+		// std::cout << finaluv.to_string() << " " << c << " " << (s.material.TYPE == BaseMaterial::IMAGE) << "\n";
+		if (PHONGSHADE) {
+			Vector3 point;
+			// for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * b.get(ss));
+			if (INTERP__) point = s.interp_given_bary(b, t.p[0] * winv[0], t.p[1] * winv[1], t.p[2] * winv[2]);
+			else for (int ss = 0; ss < 3; ss++) point = point + (t.p[ss] * winv[ss]) * b.get(ss);
+			point = point * wc;
+
+			// std::cout << t.p[0].to_string() << " " << t.p[1].to_string() << " " << t.p[2].to_string() << " + " << b.to_string() << " = " << point.to_string() << "\n";
+
+
+
+			Vector3 interpnormal;
+			if (INTERP__) interpnormal = s.interp_given_bary(b, s.p[0].normal, s.p[1].normal, s.p[2].normal);
+			else for (int ss = 0; ss < 3; ss++) interpnormal = interpnormal + s.p[ss].normal * b.get(ss);
+			interpnormal = interpnormal.normalized();
+
+			// std::cout << s.material.to_string() << "\n";
+			c = rgb(illuminate(point, point, interpnormal, finaluv, s.material));
+		} else {
+			auto centroid = t.centroid();
+			c = rgb(illuminate(centroid, centroid, s.N, finaluv, s.material));
+		}
+		Fragment F__F(Vector4(x, y, zc, wc), (s.ON), c, finaluv, oc);
+		F__F.screenUV = Vector2((float)(x) / W, (float)(y) / H);
+		F__F.wspos = (finalwsp);
+
+		// std::cout << "DrawTriFrag " << (uint64_t)(shader) << "\n";
+
+		if (shader.has_value()) {
+			// std::cout << "SHADER DETECTED " << F__F.to_string() << "\n";
+			F__F = shader.value()(F__F);
+		}
+		if (global_shader.has_value()) {
+			F__F = global_shader.value()(F__F);
+		}
+
+		// std::cout << s.bary(x, y).to_string() << " " << F.ndc.z << " " << F.ndc.w << " = " << F.color << "\n";
+		drawFragment(F__F, x, y);
+	}
+
+	// A scanline based algorithm 
+	// https://fgiesen.wordpress.com/2013/02/10/optimizing-the-basic-rasterizer/
+
+	int Scene::orient2d(Vector2i a, Vector2i b, Vector2i c) {
+		return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+	}
+
+	float Scene::orient2dF(Vector2 a, Vector2 b, Vector2i c) {
+		return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+	}
+
+	Vector2i Scene::vec2i(Vector4 v) {
+		return Vector2i(BASE::ifloor(v.x), BASE::ifloor(v.y));
+	}
+
+	void Scene::fillTriangleFScan(TriangleF s, Triangle3 T, bool PHONGSHADE, std::optional<FragShader> shader) {
+		Vector2i v0 = vec2i(s.p[0].ndc);
+		Vector2i v1 = vec2i(s.p[1].ndc);
+		Vector2i v2 = vec2i(s.p[2].ndc);
+
+		
+		Vector2i vv[3] = {v0, v1, v2};
+
+    	Vector2i e01(v0.y - v1.y, v1.x - v0.x);
+		Vector2i e12(v1.y - v2.y, v2.x - v1.x);
+		Vector2i e20(v2.y - v0.y, v0.x - v2.x);
+
+		Vector2i BL = vec2i(s.p[0].ndc);
+		Vector2i TR(BL);
+		for (int i = 1; i < 3; i++) {
+			BL.x = std::min(BL.x, vv[i].x);
+			BL.y = std::min(BL.y, vv[i].y);
+			TR.x = std::max(TR.x, vv[i].x);
+			TR.y = std::max(TR.y, vv[i].y);
+		}
+
+		BL.x = std::max(BL.x, 0);
+		BL.y = std::max(BL.y, 0);
+
+		TR.x = std::min(TR.x, W - 1);
+		TR.y = std::min(TR.y, H - 1);
+
+		Vector2i p(BL);
+
+    	int64_t w0_row = orient2d(v1, v2, p);
+    	int64_t w1_row = orient2d(v2, v0, p);
+    	int64_t w2_row = orient2d(v0, v1, p);
+
+		for (p.y = BL.y; p.y <= TR.y; p.y++) {
+        	int64_t w0 = w0_row;
+        	int64_t w1 = w1_row;
+        	int64_t w2 = w2_row;
+        
+        	for (p.x = BL.x; p.x <= TR.x; p.x++) {
+        	    // If p is on or inside all edges, render pixel.
+        	    if ((w0 | w1 | w2) >= 0) {
+					DrawTriFrag(s, T, p.x, p.y, PHONGSHADE, shader);
+				}
+
+        	    // One step to the right
+        	    w0 += e12.x;
+        	    w1 += e20.x;
+        	    w2 += e01.x;
+        	}
+
+        	// One row step
+        	w0_row += e12.y;
+        	w1_row += e20.y;
+        	w2_row += e01.y;
+    	}
+	}
+
+	void Scene::fillTriangleFScanF(TriangleF s, Triangle3 T, bool PHONGSHADE, std::optional<FragShader> shader) {
+		Vector2 v0 = vec2(s.p[0].ndc);
+		Vector2 v1 = vec2(s.p[1].ndc);
+		Vector2 v2 = vec2(s.p[2].ndc);
+
+		
+		Vector2 vv[3] = {v0, v1, v2};
+
+    	Vector2 e01(v0.y - v1.y, v1.x - v0.x);
+		Vector2 e12(v1.y - v2.y, v2.x - v1.x);
+		Vector2 e20(v2.y - v0.y, v0.x - v2.x);
+
+		Vector2i BL = vec2i(s.p[0].ndc);
+		Vector2i TR(BL);
+		for (int i = 1; i < 3; i++) {
+			BL.x = std::min(BL.x, BASE::ifloor(vv[i].x));
+			BL.y = std::min(BL.y, BASE::ifloor(vv[i].y));
+			TR.x = std::max(TR.x, BASE::ifloor(vv[i].x));
+			TR.y = std::max(TR.y, BASE::ifloor(vv[i].y));
+		}
+
+		BL.x = std::max(BL.x, 0);
+		BL.y = std::max(BL.y, 0);
+
+		TR.x = std::min(TR.x, W - 1);
+		TR.y = std::min(TR.y, H - 1);
+
+		Vector2i p(BL);
+
+    	float w0_row = orient2dF(v1, v2, p);
+    	float w1_row = orient2dF(v2, v0, p);
+    	float w2_row = orient2dF(v0, v1, p);
+
+		for (p.y = BL.y; p.y <= TR.y; p.y++) {
+        	float w0 = w0_row;
+        	float w1 = w1_row;
+        	float w2 = w2_row;
+        
+        	for (p.x = BL.x; p.x <= TR.x; p.x++) {
+        	    // If p is on or inside all edges, render pixel.
+        	    if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
+					DrawTriFrag(s, T, p.x, p.y, PHONGSHADE, shader);
+				}
+
+        	    // One step to the right
+        	    w0 += e12.x;
+        	    w1 += e20.x;
+        	    w2 += e01.x;
+        	}
+
+        	// One row step
+        	w0_row += e12.y;
+        	w1_row += e20.y;
+        	w2_row += e01.y;
+    	}
+	}
+
+	bool Scene::smallEnough(TriangleF s) {
+		Vector2 BL = vec2(s.p[0].ndc);
+		Vector2 TR = vec2(s.p[0].ndc);
+
+		for (int i = 0; i < 3; i++) {
+			BL.x = std::min(BL.x, s.p[i].ndc.x);
+			BL.y = std::min(BL.x, s.p[i].ndc.y);
+
+			TR.x = std::max(BL.x, s.p[i].ndc.x);
+			TR.y = std::max(BL.x, s.p[i].ndc.y);
+		}
+
+		const int THRESHOLD = 4;
+
+		return (TR.y - BL.y <= THRESHOLD) && (TR.x - BL.x <= THRESHOLD);
+	}
+
+	void Scene::fillTriangle(TriangleF s, Triangle3 T, bool PHONGSHADE, std::optional<FragShader> shader, bool SCAN) {
+		if (SCAN && !smallEnough(s)) {
+			fillTriangleFScanF(s, T, PHONGSHADE, shader);
+			return;
+		}
+
+		int x0 = s.p[0].ndc.x;
+		int x1 = x0;
+		int y0 = s.p[0].ndc.y;
+		int y1 = y0;
+
+		for (int i = 0; i < 3; i++) {
+			if (x0 > s.p[i].ndc.x) x0 = s.p[i].ndc.x;
+			if (x1 < s.p[i].ndc.x) x1 = s.p[i].ndc.x;
+			if (y0 > s.p[i].ndc.y) y0 = s.p[i].ndc.y;
+			if (y1 < s.p[i].ndc.y) y1 = s.p[i].ndc.y;
+		}
+
+		// std::cout << "FillTriangleF " << (uint64_t)(shader ) << "\n";
+
+		for (int x = BASE::max(x0, 0); x <= x1 && x < W; x++) {
+			for (int y = BASE::max(y0, 0); y <= y1 && y < H; y++) {
+				if (!s.inside(Vector2(x, y))) continue;
+				// std::cout << "FillTriangleF " << (uint64_t)(shader ) << "\n";
+				DrawTriFrag(s, T, x, y, PHONGSHADE, shader);
+			}
+		}
+	}
+
+	// Draw 3d triangles
+
+	bool Scene::clip(TriangleF p) {
+		return false;
+		// return p.centroid().z > 1 || p.centroid().z < -1;
+		for (int i = 0; i < 3; i++) {
+			if (p.p[i].ndc.z >= -1 && p.p[i].ndc.z <= 1) return false;
+		}
+		return true;
+	}
+
+	int Scene::intersectsPlane(Triangle3& tri, Plane& p) {
+		int count = 0;
+		for (int i = 0; i < 3; i++) {
+			Vector3 v = tri.p[i];
+			if ((v - p.p).dot(p.n) >= 0) count++;
+		}
+
+		return count;
+	}
+
+	// Right now this always draws triangles using the base color.
+	void Scene::drawTriangle(Triangle3 s, BaseMaterial* material, Vector3* vn, Vector2* uv, bool BACKFACECULL, bool PHONGSHADE, bool INTERPNORM) {
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
+		TRIANGLE_COUNT++;
+		if (BACKFACECULL && BackFaceCull(s)) return;
+		Vector3 cen = s.centroid();
+		auto p = project(s);
+		p.material = material;
+		if (!uv) uv = new Vector2[3] {Vector2(), Vector2(), Vector2()};
+		if (!vn) PHONGSHADE = false;
+		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
+		if (uv) for (int i = 0; i < 3; i++) p.p[i].uv = uv[i];
+		for (int i = 0; i < 3; i++) p.p[i].color = rgb(illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material));
+		if (clip(p)) return;
+		drawTriangle(p, rgb(material->baseColor));
+	}
+
+	void Scene::fillTriangle(Triangle3 s, BaseMaterial* material, Vector3* vn, Vector2* uv, std::optional<FragShader> shader, bool BACKFACECULL, bool PHONGSHADE, bool INTERPNORM, bool edgeclip) {
+		if (BACKFACECULL && BackFaceCull(s)) {
+			// std::cout << "CULLED\n";
+			return;
+		}
+		if (edgeclip) {
+			std::vector<Triangle3> tt = TriSplit(s, camera.F).first;
+
+			Plane arr[5] = {camera.N, camera.U, camera.L, camera.D, camera.R};
+			for (int ii = 0; ii < 5; ii++) {
+
+			std::vector<Triangle3> vv;
+			for (auto i : tt) {
+				int count = intersectsPlane(i, arr[ii]);
+				if (count == 1 || count == 2) {
+					auto uu = TriSplit(i, arr[ii]).first;
+					for (auto j : uu) vv.push_back(j);
+				} else if (count == 3) vv.push_back(i);
+			}
+			std::swap(tt, vv);
+			vv.clear();
+
+			}
+			Vector3* i_vn = nullptr;
+			Vector2* i_uv = nullptr;
+			if (vn) i_vn = new Vector3[3];
+			if (uv) i_uv = new Vector2[3];
+
+			for (auto ii : tt) {
+
+				for (int i = 0; i < 3; i++) {
+					Vector3 point(ii.p[i]);
+					if (vn) i_vn[i] = s.interp<Vector3>(point, vn[0], vn[1], vn[2]);
+					if (uv) i_uv[i] = s.interp<Vector2>(point, uv[0], uv[1], uv[2]);
+				}
+				fillTriangle(ii, material, i_vn, i_uv, shader, BACKFACECULL, PHONGSHADE, INTERPNORM, false);
+			}
+
+			delete[] i_vn;
+			delete[] i_uv;
+
+
+			return;
+		}
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
+		TRIANGLE_COUNT++;
+		Vector3 cen = s.centroid();
+
+		TriangleF p = project(s);
+		p.material = material;
+		if (!uv) uv = new Vector2[3] {Vector2(), Vector2(), Vector2()};
+		if (!vn) PHONGSHADE = false;
+		if (vn) for (int i = 0; i < 3; i++) p.p[i].normal = INTERPNORM ? vn[i] : s.N;
+		if (uv) for (int i = 0; i < 3; i++) p.p[i].uv = uv[i];
+
+		for (int i = 0; i < 3; i++) p.p[i].color = rgb(illuminate(s.p[i], s.p[i], p.p[i].normal, uv[i], p.material));
+		
+		if (clip(p)) return;
+		// std::cout << "FillTriangle3 " << (uint64_t)(shader) << "\n";
+		fillTriangle(p, s, PHONGSHADE, shader);
+	}
+
+
+
+	// draw a MESH
+
+	void Scene::drawMesh(Mesh& m, BaseMaterial* material, bool SMOOTHSHADE, bool PHONGSHADE, bool INTERPNORM, bool BACKFACECULL) {
+		bool matprovided = material;
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
+		for (int i = 0; i < m.size; i++) {
+			Vector3* vn = new Vector3[3];
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+			// std::cout << "normals " << vn[0].to_string() << " " << vn[1].to_string() << " " << vn[2].to_string() << "\n";
+			Vector2* vt = new Vector2[3];
+			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
+
+			// std::cout << "tex " << vt[0].to_string() << " " << vt[1].to_string() << " " << vt[2].to_string() << "\n";
+
+			bool isna = false;
+			for (int s = 0; s < 3; s++) {
+				if (vn[s] == VEC3_ZERO) isna = true;
+			}
+			isna |= SMOOTHSHADE;
+
+			bool isnat = false;
+			for (int s = 0; s < 3; s++) {
+				if (vt[s] == NILVEC2) isnat = true;
+			}
+
+			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr: vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			delete[] vn;
+			delete[] vt;
+		}
+
+		if (!matprovided) delete material;
+	}
+
+	void Scene::drawMesh(MorphedMesh& m, BaseMaterial* material, bool SMOOTHSHADE, bool PHONGSHADE, bool INTERPNORM, bool BACKFACECULL) {
+		bool matprovided = material;
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
+		for (int i = 0; i < m.size; i++) {
+			Vector3* vn = new Vector3[3];
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+			// std::cout << "normals " << vn[0].to_string() << " " << vn[1].to_string() << " " << vn[2].to_string() << "\n";
+			Vector2* vt = new Vector2[3];
+			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
+
+			// std::cout << "tex " << vt[0].to_string() << " " << vt[1].to_string() << " " << vt[2].to_string() << "\n";
+
+			bool isna = false;
+			for (int s = 0; s < 3; s++) {
+				if (vn[s] == VEC3_ZERO) isna = true;
+			}
+			isna |= SMOOTHSHADE;
+
+			bool isnat = false;
+			for (int s = 0; s < 3; s++) {
+				if (vt[s] == NILVEC2) isnat = true;
+			}
+
+			drawTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr: vt, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			delete[] vn;
+			delete[] vt;
+		}
+
+		if (!matprovided) delete material;
+	}
+
+	void Scene::fillMesh(Mesh& m, BaseMaterial* material, std::optional<FragShader> shader, bool SMOOTHSHADE, bool PHONGSHADE, bool INTERPNORM, bool BACKFACECULL) {
+		bool matprovided = material;
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
+		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
+		// std::cout << "\n" << m.nverts << "\n";
+		for (int i = 0; i < m.size; i++) {
+			// if (i % 64 == 0) std::cout << i << "/" << m.size << "...\n";
+			Vector3* vn = new Vector3[3];
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+
+			Vector2* vt = new Vector2[3];
+			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
+			// for (int s = 0; s < 3; s++) std::cout << vt[s].to_string() << " ";
+			/*
+			std::cout << "\n";
+			for (int t = 0; t < 3; t++) std::cout << m.tris[i].p[t].to_string() << " / " << vn[t].to_string() << "\n";
+			std::cout << "\n" << m.tris[i].N.to_string() << "\n\n";
+			*/
+			
+			bool isna = false;
+			for (int s = 0; s < 3; s++) {
+				if (vn[s] == VEC3_ZERO) isna = true;
+			}
+			isna |= !SMOOTHSHADE;
+
+
+			bool isnat = false;
+			for (int s = 0; s < 3; s++) {
+				if (vt[s] == NILVEC2) isnat = true;
+			}
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr : vt, shader, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			delete[] vn;
+			delete[] vt;
+		}
+
+		if (!matprovided) delete material;
+	}
+
+	void Scene::fillMesh(MorphedMesh& m, BaseMaterial* material, std::optional<FragShader> shader, bool SMOOTHSHADE, bool PHONGSHADE, bool INTERPNORM, bool BACKFACECULL) {
+		bool matprovided = material;
+		if (!material) material = new BaseMaterial(BASEMAT_WHITE);
+		
+		// for (int i = 0; i < m.nverts; i++) std::cout << m.verts[i].to_string() << ".";
+		// std::cout << "\n" << m.nverts << "\n";
+		for (int i = 0; i < m.size; i++) {
+			// if (i % 64 == 0) std::cout << i << "/" << m.size << "...\n";
+			Vector3* vn = new Vector3[3];
+			for (int s = 0; s < 3; s++) vn[s] = m.getVertexNormal(m.triindices[i][s]);
+
+			Vector2* vt = new Vector2[3];
+			for (int s = 0; s < 3; s++) vt[s] = m.getVertexUV(i, s);
+			/*
+			std::cout << "\n";
+			for (int t = 0; t < 3; t++) std::cout << m.tris[i].p[t].to_string() << " / " << vn[t].to_string() << "\n";
+			std::cout << "\n" << m.tris[i].N.to_string() << "\n\n";
+			*/
+			
+			bool isna = false;
+			for (int s = 0; s < 3; s++) {
+				if (vn[s] == VEC3_ZERO) isna = true;
+			}
+			isna |= !SMOOTHSHADE;
+
+
+			bool isnat = false;
+			for (int s = 0; s < 3; s++) {
+				if (vt[s] == NILVEC2) isnat = true;
+			}
+			fillTriangle(m.makeTriangle(i), material, isna ? nullptr : vn, isnat ? nullptr : vt, shader, BACKFACECULL, PHONGSHADE, INTERPNORM);
+			delete[] vn;
+			delete[] vt;
+		}
+
+		if (!matprovided) delete material;
+	}
+
+	// Queue various meshes and triangles to be drawn. WARNING - This will result in flat shading.
+
+	void Scene::QueueTriangle(Triangle3 s, BaseMaterial* material, bool FILL, bool BACKFACECULL) {
+		if (BACKFACECULL && BackFaceCull(s)) return;
+		triqueue.push({s, {material, FILL}});
+	}
+
+	void Scene::QueueMesh(Mesh& m, BaseMaterial* material, bool FILL) {
+		for (int i = 0; i < m.size; i++) QueueTriangle(m.makeTriangle(i), material, FILL);
+	}
+
+	void Scene::drawQueue() {
+		while (triqueue.size()) {
+			auto p = triqueue.front();
+			triqueue.pop();
+
+			if (p.second.second) fillTriangle(p.first, p.second.first);
+			else drawTriangle(p.first, p.second.first);
+		}
+	}
+
+
+	// Resolution of a fragment or color in grayscale. https://en.wikipedia.org/wiki/Luma_(video)
+
+	float Scene::getResolution(Vector4 s) {
+		float res = 0.2126 * s.x + 0.7152 * s.y + 0.0722 * s.z;
+		// // std::cout << s.to_string() << "\n" << res << "\n";
+		return res;
+	}
+	float Scene::getResolution(uint32_t c) {
+		return getResolution(rgba(c));
+	}
+
+	std::string Scene::to_string() {
+		std::string res = "";
+
+		for (int y = H - 1; y >= 0; y--) {
+			for (int x = 0; x < W; x++) {
+				float f = getResolution(buffer[x][y].color);
+
+				if (f < 0.2) res = res + "#";
+				else if (f < 0.4) res = res + "X";
+				else if (f < 0.6) res = res + "O";
+				else if (f < 0.8) res = res + ".";
+				else res = res + " ";
+			}
+			res = res + "\n";
+		}
+		return res;
+	}
+
+	std::string Scene::buffer_data() {
+		std::string res = "[" + std::to_string(W) + ", " + std::to_string(H) + "]\n";
+
+		for (int y = H - 1; y >= 0; y--) {
+			// std::cout << y << "\n";
+			for (int x = 0; x < W; x++) {
+				res = res + std::to_string(buffer[x][y].color) + ",";
+			}
+			res = res + "\n";
+		}
+		return res;
+	}
+
+	void Scene::outputFrags(std::string OUTPUT__) {
+		std::ofstream output(OUTPUT__);
+		std::string res = "";
+		for (int y = H - 1; y >= 0; y--) {
+			for (int x = 0; x < W; x++) {
+				res += buffer[x][y].to_string() + ",";
+			}
+			res.push_back('\n');
+		}
+
+		output << res;
+
+		output.close();
+	}
+
+	void Scene::outputBuffer(std::string OUTPUT__) {
+		std::ofstream output(OUTPUT__);
+		std::string buf = "[" + std::to_string(W) + ", " + std::to_string(H) + "]\n";
+		
+
+		for (int y = H - 1; y >= 0; y--) {
+			for (int x = 0; x < W; x++) {
+				buf += std::to_string(buffer[x][y].color) + ",";
+			}
+			buf.push_back('\n');
+		}
+
+		output << buf;
+
+		output.close();
+	}
+
+	std::vector<std::vector<uint32_t>> Scene::bufferMatrix() {
+		std::vector<std::vector<uint32_t>> res(W, std::vector<uint32_t>(H, 0));
+		for (int i = 0; i < W; i++) {
+			for (int j = 0; j < H; j++) res[i][j] = buffer[i][j].color;
+		}
+		return res;
+	}
+
+	void Scene::setBuffer(std::vector<std::vector<uint32_t>>& res) {
+		for (int i = 0; i < W && i < res.size(); i++) {
+			for (int j = 0; j < H && j < res[i].size(); j++) res[i][j] = buffer[i][j].color;
+		}
+	}

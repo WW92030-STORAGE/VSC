@@ -79,6 +79,7 @@ Elements are zero-indexed.
 
 - `float get(int a)` = Get element at index `a`.
 - `void set(int a, float f)` = Set element at index `a` to value `f`.
+- `void override(float a, b, c)` = `set(0, a) set(1, b) set(2, c)`
 - `Vector3 add(const Vector3& other)`
 - `Vector3 inv()`
 - `Vector3 sub(const Vector3& other)`

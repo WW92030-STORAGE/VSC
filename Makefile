@@ -1,60 +1,46 @@
+# Definitions
 CXX = g++
-CXXFLAGS = -O3 -w -fcompare-debug-second
+CXXFLAGS = -O3 -w -fcompare-debug-second -MMD -MP
+CXXFLAGS_0 = -w -fcompare-debug-second -MMD -MP
+INCLUDES = -Iinclude
 
 TARGET = main
 FILE = main.cpp
+BUILD_DIR = build
+
+# Python files for subsequent operations
 PY = render.py
 PY_VIDEO = video.py
 PY_GIF = gif.py
 
-# Build and run
-all: $(FILE) build run
+SRCS = $(FILE) $(shell find src -name '*.cpp')
 
-# Build (compile)
-build: $(FILE)
-	$(CXX) $(FILE) -o $(TARGET) $(CXXFLAGS) 
+# List of desired objects from sources
+OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
 
-# Run and visualize
-run: $(FILE)
-	./$(TARGET)
-	python3 $(PY)
+# Dependencies
+DEPS = $(OBJS:.o=.d)
 
-# Build, run, and visualize frames into video
-video: $(FILE) build run
-	python3 $(PY_VIDEO)
-	python3 $(PY_GIF)
+# Default rule: build the target executable
+all: $(TARGET)
 
-# clean
+run: $(TARGET) && ./$(TARGET)
+
+# LINK IT UP!!!
+$(TARGET): $(OBJS)
+	$(CXX) $(OBJS) -o $(TARGET)
+
+# automatically compile some source file
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+# idk what this does, include dependencies?
+-include $(DEPS)
+
+# Cleanup
 clean:
-	rm -f $(TARGET)
+	rm -rf $(BUILD_DIR) $(TARGET)
 
-# gprof profiling (O0)
-profile: $(FILE) preprofile doprofile
-
-# Run and analyze
-doprofile: $(FILE)
-	./$(TARGET)
-	gprof $(TARGET) gmon.out > analysis.txt
-
-# Build for profiling
-preprofile: $(FILE)
-	$(CXX) -pg $(FILE) -o $(TARGET) -O0 -w -fcompare-debug-second
-
-# gprof profiling (Os)
-profiles: $(FILE) preprofiles doprofile
-
-# Build for profiling
-preprofiles: $(FILE)
-	$(CXX) -pg $(FILE) -o $(TARGET) -Os -w -fcompare-debug-second
-
-# gprof profiling (O3)
-profile3: $(FILE) preprofile3 doprofile
-
-# Build for profiling
-preprofile3: $(FILE)
-	$(CXX) -pg $(FILE) -o $(TARGET) -O3 -w -fcompare-debug-second
-
-# Convenience
-
-collada: 
-	cd python && python3 colladaparser.py
+# failsafe
+.PHONY: all clean
