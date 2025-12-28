@@ -808,6 +808,8 @@ void RigidBody3() {
 void RigidBody4() {
 	Scene s = scene_blank();
 
+	const bool FIX_ONE = false;
+
 	float R = 0.2;
 
 	RigidBody p;
@@ -820,14 +822,25 @@ void RigidBody4() {
 	RigidBodyGroup pg;
 
 	pg.addRigidBody(p);
+	if (FIX_ONE) {
+		p.global_velocity = Vector3(0, 0, 0);
+		p.global_position = Vector3(0, 0, -2);
+	} else {
+		p.global_velocity = Vector3(0, -4, 0);
+		p.global_position = Vector3(1, 0, -2);
+	}
+	pg.addRigidBody(p);
 
 	// Forces!
 
-	RigidBodyPointSpringForce rsf(Vector3(0, 0, -2), 64 * p.mass, 1.0, Vector3(R, 0, 0));
-	pg.forces.push_back({&rsf, 0});
+	RigidBodySpringForce rsf0(pg.bodies[1], 64 * p.mass, 1.0, Vector3(0, R, 0), Vector3(0, -R, 0));
+	RigidBodySpringForce rsf1(pg.bodies[0], 64 * p.mass, 1.0, Vector3(0, -R, 0), Vector3(0, R, 0));
+	pg.forces.push_back({&rsf0, 0}); // Remember: the index is which body is affected.
+	if (!FIX_ONE) pg.forces.push_back({&rsf1, 1});
 
 	Mesh m = icosphere(R, 0);
 
+	s.addMesh(&m);
 	s.addMesh(&m);
 
 	s.render();
@@ -842,10 +855,12 @@ void RigidBody4() {
 	int LEN = 144;
 
 	for (int i = 0; i < LEN; i++) {
-		Transform original = s.meshes[0]->transform;
-		Transform transform = pg.bodies[0]->transform * original.inv();
-		s.meshes[0]->Trans(transform);
-		std::cout << s.meshes[0]->transform.to_string() << "\n";
+		for (int mi = 0; mi < pg.bodies.size(); mi++) {
+			Transform original = s.meshes[mi]->transform;
+			Transform transform = pg.bodies[mi]->transform * original.inv();
+			s.meshes[mi]->Trans(transform);
+		// std::cout << s.meshes[mi]->transform.to_string() << "\n";
+		}
 		s.render();
 
 		pg.integrate_forces();

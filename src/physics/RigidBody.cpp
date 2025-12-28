@@ -110,8 +110,8 @@
         auto A_t = global_net_force * mass_inv;
         auto AL_t = inertia_inv * global_net_torque;
 
-        std::cout << "1. " << global_net_force.to_string() << " " << global_net_torque.to_string() << "\n";
-        std::cout << "2. " << A_t.to_string() << " " << AL_t.to_string() << "\n";
+        // std::cout << "1. " << global_net_force.to_string() << " " << global_net_torque.to_string() << "\n";
+        // std::cout << "2. " << A_t.to_string() << " " << AL_t.to_string() << "\n";
 
         // 1. v(t + 0.5dt) : v(t) + 0.5A(t) dt
         auto halfv = global_velocity + A_t * 0.5 * delta;
@@ -132,8 +132,8 @@
         auto A_tprime = global_net_force * mass_inv;
         auto AL_tprime = inertia_inv * global_net_torque;
 
-        std::cout << "3. " << global_net_force.to_string() << " " << global_net_torque.to_string() << "\n";
-        std::cout << "4. " << A_tprime.to_string() << " " << AL_tprime.to_string() << "\n";
+        // std::cout << "3. " << global_net_force.to_string() << " " << global_net_torque.to_string() << "\n";
+        // std::cout << "4. " << A_tprime.to_string() << " " << AL_tprime.to_string() << "\n";
 
         // 4. v(t + dt) = halfv + 0.5A(t + dt)dt
 

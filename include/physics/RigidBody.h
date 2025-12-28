@@ -8,7 +8,7 @@
 #include "../utils/Math.h"
 #include "Constants.h"
 
-#include <iostream>
+// #include <iostream>
 
 struct RigidBody {
     Vector3 global_position = Vector3(0, 0, 0);
