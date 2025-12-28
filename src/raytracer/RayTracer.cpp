@@ -243,7 +243,7 @@ Reflections are also supported but not refractions/translucent objects yet.
 
 	// Remember: pixels go from BOTTOM LEFT TO TOP RIGHT. This means you will have to reverse the Y direction when outputting.
 	void RayTracer::render(bool LIT, int depth) {
-		if (depth < 0) depth = DEPTH;
+		if (depth < 0) depth = 0;
 		if (UseBVH) createBVH();
 		for (int x = 0; x < W; x++) {
 			// std::cout << x << "\n";
