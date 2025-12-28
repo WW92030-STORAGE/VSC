@@ -548,6 +548,8 @@ void SquareRods() {
 	len.close();
 }
 
+// VSC 9.92 - NORMAN
+
 // VSC 9.92A - Rigid Body, direct force application
 void RigidBody0() {
 	Scene s = scene_blank();
@@ -755,7 +757,7 @@ void RigidBody2() {
 	len.close();
 }
 
-// VSC 9.922 - Rigid body group
+// VSC 9.922A - Rigid body group
 void RigidBody3() {
 	Scene s = scene_blank();
 
@@ -787,6 +789,61 @@ void RigidBody3() {
 	for (int i = 0; i < LEN; i++) {
 		Transform original = s.meshes[0]->transform;
 		Transform transform = Transform(pg.bodies[0]->global_position) * original.inv();
+		s.meshes[0]->Trans(transform);
+		std::cout << s.meshes[0]->transform.to_string() << "\n";
+		s.render();
+
+		pg.integrate_forces();
+		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(i));
+
+		std::cout << "FRAME " << i << "DONE\n";
+	}
+
+		std::ofstream len(VIDEO_PATH + "/LEN");
+	len << LEN;
+	len.close();
+}
+
+// VSC 9.922B - Rigid body group
+void RigidBody4() {
+	Scene s = scene_blank();
+
+	float R = 0.2;
+
+	RigidBody p;
+	p.set_mass(40);
+	p.set_inertia(Inertia::sphere_solid(p.mass, R));
+	p.global_velocity = Vector3(0, 4, 0);
+	p.global_position = Vector3(-1, 0, -2);
+	p.gravity = Vector3(0, 0, 0);
+
+	RigidBodyGroup pg;
+
+	pg.addRigidBody(p);
+
+	// Forces!
+
+	RigidBodyPointSpringForce rsf(Vector3(0, 0, -2), 64 * p.mass, 1.0, Vector3(R, 0, 0));
+	pg.forces.push_back({&rsf, 0});
+
+	Mesh m = icosphere(R, 0);
+
+	s.addMesh(&m);
+
+	s.render();
+	std::cout << "Prepared\n";
+
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	int LEN = 144;
+
+	for (int i = 0; i < LEN; i++) {
+		Transform original = s.meshes[0]->transform;
+		Transform transform = pg.bodies[0]->transform * original.inv();
 		s.meshes[0]->Trans(transform);
 		std::cout << s.meshes[0]->transform.to_string() << "\n";
 		s.render();

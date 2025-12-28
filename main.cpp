@@ -24,6 +24,8 @@ int main() {
 	std::cout << "BEGIN\n";
 	auto start = std::chrono::high_resolution_clock::now();
 
+	// RTexBVH();
+
 	// BoneTreeTest();
 	// CylinderTest();
 	// SkeletonTest();
@@ -48,7 +50,9 @@ int main() {
 
 	// RigidBody0();
 	// RigidBody1();
-	RigidBody2();
+	// RigidBody2();
+
+	RigidBody4();
 	
 	/*
 
