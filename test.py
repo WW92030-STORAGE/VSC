@@ -23,7 +23,7 @@ NUM_WARMUP = 4
 
 if __name__ == "__main__":
     # Compile the program
-    exec("g++ main.cpp -o main -O3 -w -fcompare-debug-second".split())
+    exec("make clean all".split())
 
     # Do a few warmups to do stuff
     for i in range(NUM_WARMUP):

@@ -388,7 +388,7 @@ inline void RTexBVH() {
 
 	float SP = 64;
 	ImageTexture mat(cubemap);
-	mat.reflective = 1.0;
+	// mat.reflective = 1.0;
 	ImageTexture texproto(mcrproto); // use this on the proto mesh
 	BaseMaterial red(0xFF000000, SP, 1);
 	BaseMaterial green(0x00FF0000, SP, 1);
