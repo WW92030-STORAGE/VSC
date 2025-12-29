@@ -103,12 +103,20 @@ class Triangle3 : public Object {
 
 	template <typename T>
 	T interp(Vector3 pos, T a, T b, T c);
+
+	template <typename T>
+	T interp_given_bary(Vector3 pos, T a, T b, T c);
 };
 
 
 	template <typename T>
 	T Triangle3::interp(Vector3 pos, T a, T b, T c) {
 		Vector3 r = NormSum(bary(pos));
+		return a * r.x + b * r.y + c * r.z;
+	}
+
+	template <typename T>
+	T Triangle3::interp_given_bary(Vector3 r, T a, T b, T c) {
 		return a * r.x + b * r.y + c * r.z;
 	}
 

@@ -144,10 +144,11 @@ Reflections are also supported but not refractions/translucent objects yet.
 					mat = material;
 					N = t.normal();
 					Vector3 pp = r.get(time);
+					Vector3 bary = triangle.bary(pp);
 					if (NormInterps[objind]) {
-						N = mesh.getInterpolatedNormal(pp, triind);
+						N = mesh.getInterpolatedNormal_bary(bary, triind, triangle);
 					}
-					uv = mesh.getUV(pp, triind);
+					uv = mesh.getUV_bary(bary, triind, triangle);
 				}
 			}
 		}

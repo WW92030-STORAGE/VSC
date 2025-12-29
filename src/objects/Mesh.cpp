@@ -306,6 +306,15 @@ All meshes are defined to be "watertight" in the sense that you don't really hav
 		return (tri.interp<Vector3>(pos, getVertexNormal(ind, 0), getVertexNormal(ind, 1), getVertexNormal(ind, 2))).normalized();
 	}
 
+	Vector3 Mesh::getInterpolatedNormal_bary(Vector3 bary, int ind) {
+		Triangle3 tri = makeTriangle(ind);
+
+		return (tri.interp_given_bary<Vector3>(bary, getVertexNormal(ind, 0), getVertexNormal(ind, 1), getVertexNormal(ind, 2))).normalized();
+	}
+	Vector3 Mesh::getInterpolatedNormal_bary(Vector3 bary, int ind, Triangle3& tri) {
+		return (tri.interp_given_bary<Vector3>(bary, getVertexNormal(ind, 0), getVertexNormal(ind, 1), getVertexNormal(ind, 2))).normalized();
+	}
+
 	// Get texture coord for triangle index
 	Vector2 Mesh::getVertexUV(int i, int s) {
 		if (i < 0 || i >= texcoords.size()) {
@@ -331,6 +340,15 @@ All meshes are defined to be "watertight" in the sense that you don't really hav
 
 		return tri.interp<Vector2>(pos, getVertexUV(ind, 0), getVertexUV(ind, 1), getVertexUV(ind, 2));
 	}
+	Vector2 Mesh::getUV_bary(Vector3 bary, int ind) {
+		Triangle3 tri = makeTriangle(ind);
+
+		return tri.interp_given_bary<Vector2>(bary, getVertexUV(ind, 0), getVertexUV(ind, 1), getVertexUV(ind, 2));
+	}
+	Vector2 Mesh::getUV_bary(Vector3 bary, int ind, Triangle3& tri) {
+		return tri.interp_given_bary<Vector2>(bary, getVertexUV(ind, 0), getVertexUV(ind, 1), getVertexUV(ind, 2));
+	}
+
 
 
 

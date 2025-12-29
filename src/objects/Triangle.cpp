@@ -141,6 +141,13 @@ Triangles are formed of three points and represent the plane the three points go
 
 	// Is a point inside the infinite prism with cross section this triangle and direction the normal?
 	bool Triangle3::inside(Vector3 s) {
+		constexpr bool USE_BARY = true;
+
+		if (USE_BARY) {
+			Vector3 b = bary(s);
+			return b.x >= 0 && b.y >= 0 && b.z >= 0;
+		}
+
 		for (int i = 0; i < 3; i++) {
 			Vector3 e1 = p[(i + 1) % 3] - p[i];
 			Vector3 e2 = s - p[i];
@@ -151,6 +158,30 @@ Triangles are formed of three points and represent the plane the three points go
 	}
 
 	float Triangle3::intersectionTime(Line L) {
+		constexpr bool MOLLER = true;
+
+		if (MOLLER) {
+			Vector3 e1 = p[1] - p[0];
+			Vector3 e2 = p[2] - p[0];
+
+			Vector3 Lxe2 = L.slope.cross(e2);
+			float det = e1.dot(Lxe2);
+
+			if (BASE::fzero(det)) return NAN; // parallel to plane = THAT'S NO GOOD
+
+			float det_inv = 1.0 / det;
+			Vector3 s = L.point - p[0];
+			float u = det_inv * s.dot(Lxe2);
+
+			if (u < 0 || u > 1) return NAN; // First barycentric inside criteria
+
+			Vector3 sxe1 = s.cross(e1);
+			float v = det_inv * L.slope.dot(sxe1);
+			if (v < 0 || u + v > 1) return NAN; // Second barycentric inside criteria
+
+			return det_inv * e2.dot(sxe1);
+		}
+
 		Plane PP(p[0], normal());
 		float f = PP.intersectionTime(L);
 		if (std::isnan(f)) return NAN;
@@ -219,7 +250,21 @@ Triangles are formed of three points and represent the plane the three points go
 		return 0.5 * (p[1] - p[0]).cross(p[2] - p[0]).length();
 	}
 
+	// For information on the method used here please read TriangleF::bary...
 	Vector3 Triangle3::bary(Vector3 pos) {
+		constexpr bool LINALG = true;
+
+		if (LINALG) {
+			Matrix2 A2(p[0].x - p[2].x, p[1].x - p[2].x, p[0].y - p[2].y, p[1].y - p[2].y);
+
+			if (!BASE::fzero(A2.det())) {
+				Vector2 res = A2.inv() * Vector2(pos.x - p[2].x, pos.y - p[2].y);
+				return Vector3(res.x, res.y, 1 - res.x - res.y);
+			}
+
+			Matrix3 A(p[0], p[1], p[2]);
+			return NormSum(A.solve(pos));
+		}
 
 		float ss[3];
 		for (int i = 0; i < 3; i++) ss[i] = Triangle3(pos, p[(i + 1) % 3], p[(i + 2) % 3]).area();

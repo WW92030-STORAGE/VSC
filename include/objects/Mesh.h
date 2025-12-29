@@ -72,12 +72,15 @@ class Mesh : public Object {
 
 	// Get normal for point in triangle, interpolated
 	Vector3 getInterpolatedNormal(Vector3 pos, int ind);
+	Vector3 getInterpolatedNormal_bary(Vector3 bary, int ind);
+	Vector3 getInterpolatedNormal_bary(Vector3 bary, int ind, Triangle3& tri);
 
 	// Get texture coord for triangle index
 	Vector2 getVertexUV(int i, int s);
 	// get UV of a point in a triangle
 	Vector2 getUV(Vector3 pos, int ind);
-
+	Vector2 getUV_bary(Vector3 bary, int ind);
+	Vector2 getUV_bary(Vector3 bary, int ind, Triangle3& tri);
 
 
 	~Mesh();
