@@ -6,7 +6,7 @@
 
 #include "../../include/material/ImageTexture.h"
 
-	ImageTexture::ImageTexture(int w, int h) {
+	ImageTexture::ImageTexture(int w, int h) : BaseMaterial() {
 		W = w;
 		H = h;
 
@@ -15,7 +15,7 @@
 		TYPE = IMAGE;
 	}
 
-	ImageTexture::ImageTexture(std::vector<std::vector<uint32_t>> tex) {
+	ImageTexture::ImageTexture(std::vector<std::vector<uint32_t>> tex) : BaseMaterial() {
 		// std::cout << "IMG\n";
 		W = tex.size();
 		H = tex[0].size();
@@ -30,7 +30,7 @@
 		TYPE = IMAGE;
 	}
 
-	ImageTexture::ImageTexture(ImageTexture& other) {
+	ImageTexture::ImageTexture(ImageTexture& other) : BaseMaterial(other) {
 		W = other.W;
 		H = other.H;
 

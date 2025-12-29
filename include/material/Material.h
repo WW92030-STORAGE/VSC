@@ -9,11 +9,11 @@
 
 struct BaseMaterial {
 	public:
-	Vector3 baseColor;
-	float specular;
-	float reflective;
+	Vector3 baseColor = Vector3(1, 1, 1);
+	float specular = 1.0;
+	float reflective = 0.0;
 	bool refractive = false;
-	float refraction;
+	float refraction = 0.0;
 
 	enum MaterialType {
 		BASE = 0,

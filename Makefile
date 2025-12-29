@@ -1,7 +1,7 @@
 # Definitions
 CXX = g++
-CXXFLAGS = -O3 -w -fcompare-debug-second -MMD -MP -flto
-CXXFLAGS_0 = -w -fcompare-debug-second -MMD -MP -flto
+CXXFLAGS = -O3 -fcompare-debug-second -MMD -MP -flto
+CXXFLAGS_0 = -fcompare-debug-second -MMD -MP -flto
 INCLUDES = -Iinclude
 
 TARGET = main
@@ -53,6 +53,11 @@ $(BUILD_DIR)/%.o: %.cpp
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
+# Testing
+
+vg:
+	valgrind ./main --track-origins=yes
+
 # Convenience
 
 collada: 
@@ -61,3 +66,5 @@ collada:
 
 # failsafe
 .PHONY: all clean
+
+

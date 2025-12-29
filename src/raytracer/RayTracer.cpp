@@ -33,15 +33,11 @@
 
 #include "../../include/raytracer/RayTracer.h"
 
-
-
-// #include <iostream>
-
 /*
 
 VSC PART II - FINAL DESTINATION
 
-RayTracer.h is a subclass of Scene.h that supports both rasterization and ray tracing.
+RayTracer is a subclass of Scene that supports both rasterization and ray tracing.
 Currently we support Phong shading of objects and the casting of shadows.
 Reflections are also supported but not refractions/translucent objects yet.
 
@@ -189,6 +185,8 @@ Reflections are also supported but not refractions/translucent objects yet.
 		if (depth > DEPTH) return Vector3(0, 0, 0);
 		IntersectionPoint ip = intersectRay(r);
 
+		// std::cout << ip.to_string() << "\n";
+
 		if (!ip.valid()) return Vector3(0, 0, 0);
 
 		// std::cout << ip.material->to_string() << "\n";
@@ -202,6 +200,7 @@ Reflections are also supported but not refractions/translucent objects yet.
 		Vector3 point = r.get(ip.time);
 
 		if (ip.material->reflective > 0 && !BASE::fzero(ip.material->reflective)) {
+			// if (ip.material->reflective > 1) std::cout << (uint64_t)(ip.material) << " = " << ip.material->to_string() << "\n";
 			Vector3 incident = r.slope.normalized() * -1;
 			Vector3 refl_dir = (ip.N * 2 * (ip.N * incident) - incident).normalized();
 

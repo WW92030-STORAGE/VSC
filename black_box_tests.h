@@ -332,7 +332,7 @@ inline void RTexTest() {
 	std::cout << "Stored\n";
 }
 
-// TEST 9.3 WHEEZIE (Raytracer Textures + Morphed Mesh + BVH)
+// TEST 9.3 WHEEZIE (Raytracer Textures + Morphed Mesh + BVH. Also could be a stress test.)
 inline void RTexBVH() {
 	int N = 512;
 	int D = 0;
@@ -365,6 +365,12 @@ inline void RTexBVH() {
 	Mesh cube1 = cube(0.5);
 	Mesh cube2 = cube(0.5);
 
+	const bool STRESS = true;
+
+	if (STRESS) {
+	cube2 = icosphere(0.25, 3); // stress
+	}
+	
 	Transform back(Vector3(0, -1, -5), Rotation3(Vector3(0, 1, 0), -0.4 + M_PI));
 	wheezie.Trans(back);
 
@@ -382,6 +388,7 @@ inline void RTexBVH() {
 
 	float SP = 64;
 	ImageTexture mat(cubemap);
+	mat.reflective = 1.0;
 	ImageTexture texproto(mcrproto); // use this on the proto mesh
 	BaseMaterial red(0xFF000000, SP, 1);
 	BaseMaterial green(0x00FF0000, SP, 1);
@@ -391,13 +398,13 @@ inline void RTexBVH() {
 
 	s.addMesh(&wheezie, &mat, false);
 	s.addMesh(&cube1, &red, false);
-	s.addMesh(&cube2, &cyan, false);
+	s.addMesh(&cube2, &cyan, STRESS); // !!!!
 	s.addMesh(&floor, &white, false);
 	s.addMesh(&proto, &texproto, false);
 	
 	s.morph(0, std::vector<float>{0, 1});
 
-	s.DEPTH = 1;
+	s.DEPTH = 2;
 
 	std::cout << "Prepared\n";
 
