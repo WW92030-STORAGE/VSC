@@ -76,7 +76,7 @@ class RayTracer : public Scene {
 	uint32_t tracePixel(Vector2 NDC, bool LIT = false, int depth = 0);
 
 	// Remember: pixels go from BOTTOM LEFT TO TOP RIGHT. This means you will have to reverse the Y direction when outputting.
-	uint32_t tracePixel(int x, int y, bool LIT = true, int depth = 0);
+	uint32_t tracePixel(int x, int y, bool LIT = true, int depth = 0, float inv_side = -1);
 
 	void createBVH();
 

@@ -226,13 +226,15 @@ Reflections are also supported but not refractions/translucent objects yet.
 	}
 
 	// Remember: pixels go from BOTTOM LEFT TO TOP RIGHT. This means you will have to reverse the Y direction when outputting.
-	uint32_t RayTracer::tracePixel(int x, int y, bool LIT, int depth) {
+	uint32_t RayTracer::tracePixel(int x, int y, bool LIT, int depth, float inv_side) {
+		if (inv_side < 0) inv_side = 1.0 / SIDE;
+		
 		// In this engine the screen is centered on the center of the NDC space. 
 		// If the screen is rectangular then we chop off the sides instead of distorting.
-		float Nx = float(2 * x - W) / SIDE;
-		float Ny = float(2 * y - H) / SIDE;
+		float Nx = float(2 * x - W) * inv_side;
+		float Ny = float(2 * y - H) * inv_side;
 
-		float pixelSize = 1.0 / SIDE;
+		float pixelSize = inv_side;
 
 		Nx += 0.5 * pixelSize;
 		Ny += 0.5 * pixelSize;
@@ -249,11 +251,11 @@ Reflections are also supported but not refractions/translucent objects yet.
 	void RayTracer::render(bool LIT, int depth) {
 		if (depth < 0) depth = 0;
 		if (UseBVH) createBVH();
-
+		float inv_side = 1.0 / SIDE;
 		for (int x = 0; x < W; x++) {
 			// std::cout << x << "\n";
 			for (int y = 0; y < H; y++) {
-				buffer[x][y] = ReducedFrag(0, tracePixel(x, y, LIT, depth));
+				buffer[x][y] = ReducedFrag(0, tracePixel(x, y, LIT, depth, inv_side));
 			}
 		}
 	}
