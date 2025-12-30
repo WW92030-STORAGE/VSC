@@ -150,7 +150,7 @@ static void awaken(BVHNode* node, std::vector<TriangleData> v) {
     for (auto data : v) ddv.push_back({data.get().centroid().get(axis), data});
     int N = ddv.size();
 
-    const bool SAH = false;
+    const bool SAH = true;
 
     if (SAH) {
     // Surface area partition

@@ -6,6 +6,7 @@
 #include <utility>
 #include <cfloat>
 #include <climits>
+#include <chrono>
 
 
 
@@ -32,6 +33,7 @@
 
 
 #include "../../include/raytracer/RayTracer.h"
+
 
 /*
 
@@ -75,13 +77,15 @@ Reflections are also supported but not refractions/translucent objects yet.
 
 				// WARNING - Need to compute a shadow ray
 
-				Ray r(position + L.normalized() * RAY_EPSILON, L);
+				Vector3 Lnorm = L.normalized();
+
+				Ray r(position + Lnorm * RAY_EPSILON, L);
 
 				IntersectionPoint pp = intersectRay(r);
 				if (pp.valid()) continue;
 
 				// Diffuse term
-				float scale = normal.normalized() * L.normalized();
+				float scale = normal * Lnorm;
 				// Only do light contribution if normal is facing light
 				if (scale > 0) {
 					shadedIntensity = shadedIntensity + (pl.intensity * scale);
@@ -245,6 +249,7 @@ Reflections are also supported but not refractions/translucent objects yet.
 	void RayTracer::render(bool LIT, int depth) {
 		if (depth < 0) depth = 0;
 		if (UseBVH) createBVH();
+
 		for (int x = 0; x < W; x++) {
 			// std::cout << x << "\n";
 			for (int y = 0; y < H; y++) {

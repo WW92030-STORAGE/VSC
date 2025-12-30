@@ -139,7 +139,7 @@ Triangles are formed of three points and represent the plane the three points go
 		return (e1.cross(e2)).normalized();
 	}
 
-	// Is a point inside the infinite prism with cross section this triangle and direction the normal?
+	// Is a point inside the infinite prism with cross section this triangle and direction the normal? (Most reliable when the point is in the plane of the triangle)
 	bool Triangle3::inside(Vector3 s) {
 		constexpr bool USE_BARY = true;
 

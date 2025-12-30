@@ -335,7 +335,7 @@ inline void RTexTest() {
 // TEST 9.3 WHEEZIE (Raytracer Textures + Morphed Mesh + BVH. Also could be a stress test.)
 inline void RTexBVH() {
 	int N = 512;
-	int D = 0;
+	int D = 2;
 
 	RayTracer s(D, N, N);
 
@@ -404,11 +404,20 @@ inline void RTexBVH() {
 	
 	s.morph(0, std::vector<float>{0, 1});
 
-	s.DEPTH = 2;
+	s.DEPTH = D;
 
 	std::cout << "Prepared\n";
 
 	s.UseBVH = true; // feel free to toggle this if uncertain
+
+	auto start = std::chrono::high_resolution_clock::now();
+
+	s.createBVH();
+
+	auto end = std::chrono::high_resolution_clock::now();
+	auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+	std::cout << dur.count() << " uS TO CREATE BVH\n";
 
 	s.render(true);
 
@@ -654,7 +663,7 @@ inline void BVHSponge() {
 inline void BVHStanford() {
 	
 	int N = 128;
-	int D = 1;
+	int D = 0;
 
 	RayTracer s(D, N, N);
 
@@ -696,7 +705,7 @@ inline void BVHStanford() {
 
 	s.UseBVH = true;
 
-	s.DEPTH = 0;
+	s.DEPTH = D;
 
 	std::cout << "Prepared " << s.countTriangles() << " Triangles\n";
 

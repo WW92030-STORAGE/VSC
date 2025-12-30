@@ -134,12 +134,13 @@ The only thing owned by the BVH are its nodes and bounding boxes.
                 if (std::isnan(time)) time = INF;
                 else if (time < 0) time = INF;
                 else {
-                    Vector3 normal(trix.normal());
+                    Vector3 normal;
                     Vector3 pp = r.get(time);
 
                     Vector3 bary = trix.bary(pp);
 
                     if (obj.interpnorms) normal = obj.mesh->getInterpolatedNormal_bary(bary, obj.tri, trix);
+                    else normal = trix.normal();
 
                     Vector2 uv = obj.mesh->getUV_bary(bary, obj.tri, trix);
 
@@ -161,9 +162,9 @@ The only thing owned by the BVH are its nodes and bounding boxes.
 
         IntersectionPoint ip;
 
-        IntersectionPoint confirmation = simpleIntersection(r);
+        float time = box.IntersectRay(r);
         // std::cout << confirmation.to_string() << "\n";
-        if (confirmation.time != INF) {
+        if (time != INF) {
             IntersectionPoint LI = L->IntersectRay(r);
             IntersectionPoint RI = R->IntersectRay(r);
             if (LI.time < ip.time && LI.time > 0) ip = LI;
