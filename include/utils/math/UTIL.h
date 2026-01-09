@@ -1,10 +1,11 @@
 #ifndef MATH_UTIL_EXT
 #define MATH_UTIL_EXT
 
-// Math methods that use discrete structures
+// Math methods that use Vector2-4s
 
 #include "Vectors.h"
 #include "BASE.h"
+#include <vector>
 
 // Solves the quadratic equation ax^2 + bx + c = 0
 // https://people.csail.mit.edu/bkph/articles/Quadratics.pdf

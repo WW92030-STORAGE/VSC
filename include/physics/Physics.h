@@ -19,4 +19,6 @@
 
 #include "Inertia.h"
 
+#include "Collisions.h"
+
 #endif

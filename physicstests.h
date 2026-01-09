@@ -875,5 +875,20 @@ void RigidBody4() {
 }
 
 
+void BoundingVolumes1() {
+	BoundingSphere s1(Vector3(0, 0, 0), 2.9);
+	BoundingSphere s2(Vector3(4, 0, 0), 1);
+	cout << testBVCollision(s1, s2);
+
+	BoundingAABB aabb1(Vector3(0, 0, 0), Vector3(1, 2, 3));
+	BoundingAABB aabb2(Vector3(2, 3, 4), Vector3(0.9, 1, 1));
+	cout << aabb1.overlaps(&aabb2) << endl;
+
+	BoundingOBB obb1(Vector3(0, 0, 0), Rotation3(Vector3(1, 0, 0), M_PI / 4), Vector3(1, 1, 1));
+	BoundingOBB obb2(Vector3(0, sqrtf(2) + sqrtf(2) + 0.00001, 0), Rotation3(Vector3(0, 0, 1), M_PI / 4), Vector3(1, 1, 1));
+	cout << obb1.overlaps(&obb2) << " " << obb2.overlaps(&obb1) << endl;
+}
+
+
 
 #endif

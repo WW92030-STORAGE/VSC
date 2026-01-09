@@ -236,6 +236,7 @@ const Vector3 NILVEC3 = Vector3(NAN, NAN, NAN);
 const Vector4 NILVEC4 = Vector4(NAN, NAN, NAN, NAN);
 
 const Vector3 VEC3_ZERO = Vector3(0, 0, 0);
+const Vector3 VEC3_ONE = Vector3(1, 1, 1);
 
 // FUNCTIONS
 

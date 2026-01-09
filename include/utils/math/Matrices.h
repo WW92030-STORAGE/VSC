@@ -115,6 +115,7 @@ class Matrix3 {
 	Vector3 getRow(int a);
 
 	void setRow(int a, Vector3 v);
+	void scaleRow(int a, float f);
 
 	// Operations
 
@@ -124,6 +125,9 @@ class Matrix3 {
 	Matrix3 div(float other);
 
 	// Matrix specific operations
+	bool isDiagonal();
+
+	float trace();
 
 	float det();
 

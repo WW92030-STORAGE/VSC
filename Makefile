@@ -1,7 +1,6 @@
 # Definitions
 CXX = g++
-CXXFLAGS = -O3 -fcompare-debug-second -MMD -MP -flto
-CXXFLAGS_0 = -fcompare-debug-second -MMD -MP -flto
+CXXFLAGS = -O3 -fcompare-debug-second -MMD -MP -flto -pg
 INCLUDES = -Iinclude
 
 TARGET = main
@@ -53,10 +52,14 @@ $(BUILD_DIR)/%.o: %.cpp
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
-# Testing
+# Testing and profiling (some things might require modifying the flags)
 
 vg:
 	valgrind ./main --track-origins=yes
+
+doprofile: $(FILE)
+	./$(TARGET)
+	gprof $(TARGET) gmon.out > analysis.txt
 
 # Convenience
 

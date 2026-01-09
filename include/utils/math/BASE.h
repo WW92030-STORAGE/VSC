@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
+#include <climits>
+#include <limits>
 
 // Base math methods that only use numerical values
 
@@ -18,7 +20,7 @@ namespace BASE {
 // Is it zero?
 static inline bool fzero(float f) {
     if (f == 0.0) return true;
-	float E = 0.000001;
+	constexpr float E = std::numeric_limits<float>::epsilon();
 	return (-E < f && f < E);
 }
 

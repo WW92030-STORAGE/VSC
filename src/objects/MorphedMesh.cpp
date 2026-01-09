@@ -182,17 +182,18 @@
 	*/
 
 	void MorphedMesh::morph(std::vector<float> coeff, bool interpnorms) {
-		coeffs = std::vector<float>(coeff);
 		float sum = 0;
 		for (auto i : coeff) sum += i;
 
 		if (BASE::fzero(sum)) sum = 1; // no div by zero
 
+		for (int i = 0; i < coeff.size(); i++) coeff[i] /= sum;
+
 		for (int i = 0; i < nverts; i++) {
 			verts[i] = Vector3(0, 0, 0);
 			for (int j = 0; j < coeff.size() && j < nstates; j++) {
-				verts[i] = verts[i] + mverts[j][i] * (coeff[j] / sum);
-				if (interpnorms) vn[i] = vn[i] + mvn[j][i] * (coeff[j] / sum);
+				verts[i] = verts[i] + mverts[j][i] * (coeff[j]);
+				if (interpnorms) vn[i] = vn[i] + mvn[j][i] * (coeff[j]);
 			}
 		}
 
@@ -202,7 +203,6 @@
 	}
 
 	void MorphedMesh::morph(float* coeff, int n, bool interpnorms) {
-		coeffs = std::vector<float>(coeff, coeff + n);
 		float sum = 0;
 		for (int i = 0; i < n; i++) sum += coeff[i];
 

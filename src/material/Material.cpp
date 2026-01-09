@@ -30,7 +30,7 @@
 	}
 
 	BaseMaterial::BaseMaterial(const BaseMaterial& other) {
-		baseColor = Vector3(other.baseColor);
+		baseColor = (other.baseColor);
 		specular = other.specular;
 		reflective = other.reflective;
 		refractive = other.refractive;

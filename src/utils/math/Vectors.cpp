@@ -75,7 +75,8 @@
 	}
 	Vector2 Vector2::div(float other) {
 		if (BASE::fzero(other)) return Vector2(0, 0);
-		return Vector2(x / other, y / other);
+		float f = 1.0 / other;
+		return Vector2(x * f, y * f);
 	}
 
 	// Vector specific operations
@@ -97,7 +98,8 @@
 	Vector2 Vector2::normalized() {
 		float len = length();
 		if (BASE::fzero(len)) return Vector2(1, 0);
-		return Vector2(x / len, y / len);
+		float l_inv = 1.0 / len;
+		return Vector2(x * l_inv, y * l_inv);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal
@@ -215,7 +217,8 @@
 	}
 	Vector3 Vector3::div(float other) {
 		if (BASE::fzero(other)) return Vector3(0, 0, 0);
-		return Vector3(x / other, y / other, z / other);
+		float f = 1.0 / other;
+		return Vector3(x * f, y * f, z * f);
 	}
 
 	// Vector specific operations
@@ -237,7 +240,8 @@
 	Vector3 Vector3::normalized() {
 		float len = length();
 		if (BASE::fzero(len)) return Vector3(1, 0, 0);
-		return Vector3(x / len, y / len, z / len);
+		float l_inv = 1.0 / len;
+		return Vector3(x * l_inv, y * l_inv, z * l_inv);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal
@@ -361,7 +365,8 @@
 	}
 	Vector4 Vector4::div(float other) {
 		if (BASE::fzero(other)) return Vector4(0, 0, 0, 0);
-		return Vector4(x / other, y / other, z / other, w / other);
+		float f = 1.0 / other;
+		return Vector4(x * f, y * f, z * f, w * f);
 	}
 
 	// Vector specific operations
@@ -383,7 +388,8 @@
 	Vector4 Vector4::normalized() {
 		float len = length();
 		if (BASE::fzero(len)) return Vector4(1, 0, 0, 0);
-		return Vector4(x / len, y / len, z / len, w / len);
+		float l_inv = 1.0 / len;
+		return Vector4(x * l_inv, y * l_inv, z * l_inv, w * l_inv);
 	}
 
 	// relative to another vector: cosine of the angle, then angle, then projection, then orthogonal

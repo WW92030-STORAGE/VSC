@@ -24,7 +24,7 @@ int main() {
 	std::cout << "BEGIN\n";
 	auto start = std::chrono::high_resolution_clock::now();
 
-	RTexBVH();
+	// RTexBVH();
 
 	// BoneTreeTest();
 	// CylinderTest();
@@ -53,6 +53,14 @@ int main() {
 	// RigidBody2();
 
 	// RigidBody4();
+
+	BoundingVolumes1();
+
+	/*
+	Matrix3 A(1, 3, 2, 3, 2, 1, 2, 1, 3);
+	auto p = eigen3_sym(A);
+	cout << p.first.to_string() << "\n" << p.second.sprintf() << endl;
+	*/
 	
 	/*
 

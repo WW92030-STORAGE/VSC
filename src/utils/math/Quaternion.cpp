@@ -71,9 +71,10 @@
 		}
 
 		float ss = w * w + v.normsquared();
+		float sqinv_ss = 1.0 / sqrtf(ss);
 		if (!BASE::fzero(ss)) {
-			w /= sqrtf(ss);
-			v = v / sqrtf(ss);
+			w *= sqinv_ss;
+			v = v * sqinv_ss;
 		}
 	}
 
@@ -114,7 +115,8 @@
 
 	Quaternion Quaternion::div(const float other) {
 		if (BASE::fzero(other)) return Quaternion(1, 0, 0, 0);
-		return Quaternion(w * other, v * other);
+		float f = 1.0 / other;
+		return Quaternion(w * f, v * f);
 	}
 
 	float Quaternion::normsquared() {

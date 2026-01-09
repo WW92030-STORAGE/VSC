@@ -127,4 +127,34 @@ static Vector3 hsv2rgb(Vector3 hsv) {
 	return res + (Vector3(1, 1, 1) * (value - chroma));
 }
 
+static uint32_t getRed(uint32_t c) {
+	return c>>24;
+}
+
+static uint32_t getGreen(uint32_t c) {
+	return (c>>16) & 255;
+}
+
+static uint32_t getBlue(uint32_t c) {
+	return (c>>8) & 255;
+}
+
+static uint32_t getAlpha(uint32_t c) {
+	return c & 255;
+}
+
+static uint32_t setRGBA(uint32_t r, uint32_t g, uint32_t b, uint32_t a) {
+	return (r<<24) + (g<<16) + (b<<8) + a;
+}
+
+static uint32_t addScaled(uint32_t target, uint32_t added, float sc, bool aa = true) {
+	uint32_t r = getRed(target) + sc * getRed(added);
+	uint32_t g = getGreen(target) + sc * getGreen(added);
+	uint32_t b = getBlue(target) + sc * getBlue(added);
+	uint32_t alpha = getAlpha(target);
+	if (aa) alpha += sc * getAlpha(added);
+	
+	return setRGBA(BASE::clamp(r, 0, 255), BASE::clamp(g, 0, 255), BASE::clamp(b, 0, 255), BASE::clamp(alpha, 0, 255));
+}
+
 #endif

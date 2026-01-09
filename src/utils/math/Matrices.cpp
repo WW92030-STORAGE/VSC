@@ -11,6 +11,8 @@
 
 #include "../../../include/utils/math/Matrices.h"
 
+#include <iostream>
+
 // Matrix methods
 
 // Matrix2
@@ -335,9 +337,39 @@
 	}
 
 	void Matrix3::setRow(int a, Vector3 v) {
-		set(a, 0, v.x);
-		set(a, 1, v.y);
-		set(a, 2, v.z);
+		if (a == 0) {
+			xAxis.x = v.x;
+			yAxis.x = v.y;
+			zAxis.x = v.z;
+		}
+		if (a == 1) {
+			xAxis.y = v.x;
+			yAxis.y = v.y;
+			zAxis.y = v.z;
+		}
+		else {
+			xAxis.z = v.x;
+			yAxis.z = v.y;
+			zAxis.z = v.z;
+		}
+	}
+
+	void Matrix3::scaleRow(int a, float f) {
+		if (a == 0) {
+			xAxis.x *= f;
+			yAxis.x *= f;
+			zAxis.x *= f;
+		}
+		if (a == 1) {
+			xAxis.y *= f;
+			yAxis.y *= f;
+			zAxis.y *= f;
+		}
+		else {
+			xAxis.z *= f;
+			yAxis.z *= f;
+			zAxis.z *= f;
+		}
 	}
 
 	// Operations
@@ -359,6 +391,17 @@
 
 	// Matrix specific operations
 
+	bool Matrix3::isDiagonal() {
+		if (!BASE::fzero(xAxis.y) || !BASE::fzero(xAxis.z)) return false;
+		if (!BASE::fzero(yAxis.x) || !BASE::fzero(yAxis.z)) return false;
+		if (!BASE::fzero(zAxis.x) || !BASE::fzero(zAxis.y)) return false;
+		return true;
+	}
+
+	float Matrix3::trace() {
+		return xAxis.x + yAxis.y + zAxis.z;
+	}
+
 	float Matrix3::det() {
 		float p1 = xAxis.x * (yAxis.y * zAxis.z - yAxis.z * zAxis.y);
 		float p2 = yAxis.x * (zAxis.y * xAxis.z - zAxis.z * xAxis.y);
@@ -372,7 +415,7 @@
 
 	// Inverse of a 3x3 matrix.
 	Matrix3 Matrix3::inv() {
-		const int N = 3;
+		constexpr int N = 3;
 		Matrix3 M(*this);
 		float d = det();
 		if (BASE::fzero(d)) return eye();
@@ -429,7 +472,10 @@
 	// Specialized solve method using Cramer's rule because gprof says this gets called a lot
 	Vector3 Matrix3::solve(Vector3 b) {
 		float deter = det();
-		if (BASE::fzero(deter)) return solve2(b);
+		if (BASE::fzero(deter)) {
+			// std::cout << to_string() << "\n" << deter << "\n";
+			return solve2(b);
+		}
 
 		Matrix3 A(*this);
 		Vector3 res(0, 0, 0);
@@ -452,7 +498,7 @@
 	Vector3 Matrix3::solve2(Vector3 b) {
 		// const bool DEBUG = false;
 		Matrix3 A(*this);
-		int N = 3;
+		constexpr int N = 3;
 
 		int i = 0;
 		int j = 0;
@@ -461,8 +507,9 @@
 			int k = -1;
 			float minim = 0;
 			for (int ii = i; ii < N; ii++) {
-				if (fabs(A.get(ii, j)) > fabs(minim)) {
-					minim = fabs(A.get(ii, j));
+				float test = fabs(A.get(ii, j));
+				if (test > minim) {
+					minim = test;
 					k = ii;
 				}
 			}
@@ -499,7 +546,7 @@
 
 		// if (DEBUG) std::cout << "END " << A.sprintf() << "\n" << res.to_string() << "\n";
 
-		bool* frvr = (bool*)(malloc(sizeof(bool) * N));
+		bool frvr[N];
 		for (int c = 0; c < N; c++) {
 			bool fff = true;
 			for (int r = N - 1; r >= 0; r--) {
@@ -531,7 +578,6 @@
 			res.set(i, val / A.get(row, i));
 			row--;
 		}
-		free(frvr);
 
 		return res;
 	}
@@ -712,7 +758,7 @@
 
 	float Matrix4::det() {
 		Matrix4 A(*this);
-		const int N = 4;
+		constexpr int N = 4;
 		// const bool DEBUG = false;
 
 		float res = 1;
@@ -766,7 +812,7 @@
 
 	// Inverse of a 4x4 matrix.
 	Matrix4 Matrix4::inv() {
-		const int N = 4;
+		constexpr int N = 4;
 		Matrix4 M(*this);
 		float d = det();
 		if (BASE::fzero(d)) return eye();
@@ -831,7 +877,7 @@
 	Vector4 Matrix4::solve(Vector4 b) {
 		// const bool DEBUG = false;
 		Matrix4 A(*this);
-		int N = 4;
+		constexpr int N = 4;
 
 		int i = 0;
 		int j = 0;
@@ -878,7 +924,7 @@
 
 		// if (DEBUG) std::cout << "END " << A.sprintf() << "\n" << res.to_string() << "\n";
 
-		bool* frvr = (bool*)(malloc(sizeof(bool) * N));
+		bool frvr[N];
 		for (int c = 0; c < N; c++) {
 			bool fff = true;
 			for (int r = N - 1; r >= 0; r--) {
@@ -910,8 +956,6 @@
 			res.set(i, val / A.get(row, i));
 			row--;
 		}
-		free(frvr);
-
 		return res;
 	}
 

@@ -61,10 +61,6 @@ Reflections are also supported but not refractions/translucent objects yet.
 
 	Vector3 RayTracer::shade(Vector3 pRay, Vector3 position, Vector3 normal, Vector2 uv, BaseMaterial* material, bool LIT) {
 		Vector3 col = rgb(getColor(material, uv));
-		if (material->TYPE == BaseMaterial::IMAGE) {
-			ImageTexture* ii = dynamic_cast<ImageTexture*>(material);
-			// std::cout << col.to_string() << "\n";
-		}
 		if (!LIT) return col;
 		
 		Vector3 I(ambientLight);
@@ -124,8 +120,6 @@ Reflections are also supported but not refractions/translucent objects yet.
 	// Ray Tracing
 
 	IntersectionPoint RayTracer::intersectRayNaive(Ray r) {
-
-		Triangle3 t;
 		float minTime = INF;
 		BaseMaterial* mat = materials[0];
 		Vector3 N(NILVEC3);
@@ -135,24 +129,23 @@ Reflections are also supported but not refractions/translucent objects yet.
 			BaseMaterial* material = materials[objind];
 			Mesh mesh = *meshes[objind];
 			for (int triind = 0; triind < mesh.triindices.size(); triind++) {
-				Triangle3 triangle = mesh.makeTriangle(triind);
+				Triangle3 t = mesh.makeTriangle(triind);
 
-				if (triangle.N * r.slope > 0) continue; // Backface culling
+				if (t.N * r.slope > 0) continue; // Backface culling
 
-				float time = r.intersectTriangle(triangle);
+				float time = r.intersectTriangle(t);
 				if (time < 0) continue;
 				if (std::isnan(time)) continue;
 				if (time < minTime) {
 					minTime = time;
-					t = Triangle3(triangle);
 					mat = material;
 					N = t.normal();
 					Vector3 pp = r.get(time);
-					Vector3 bary = triangle.bary(pp);
+					Vector3 bary = t.bary(pp);
 					if (NormInterps[objind]) {
-						N = mesh.getInterpolatedNormal_bary(bary, triind, triangle);
+						N = mesh.getInterpolatedNormal_bary(bary, triind, t);
 					}
-					uv = mesh.getUV_bary(bary, triind, triangle);
+					uv = mesh.getUV_bary(bary, triind, t);
 				}
 			}
 		}

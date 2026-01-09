@@ -24,13 +24,10 @@ static Fragment identity(Fragment f) {
 
 static Fragment invert(Fragment f) {
     Fragment res(f);
-    Vector3 color = rgb(f.color);
-    color.x = 1 - color.x;
-    color.y = 1 - color.y;
-    color.z = 1 - color.z;
-
-    res.color = rgb(color);
-    return res;
+    
+    uint32_t newcolor = f.color;
+    res.color = setRGBA(255 - getRed(newcolor), 255 - getGreen(newcolor), 255 - getBlue(newcolor), getAlpha(newcolor));
+    return res; // TODO figure this one out
 }
 
 static Fragment hue_offset(Fragment f, float offset = 0.5) {
