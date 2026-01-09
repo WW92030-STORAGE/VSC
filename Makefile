@@ -1,7 +1,9 @@
 # Definitions
 CXX = g++
-CXXFLAGS = -O3 -fcompare-debug-second -MMD -MP -flto -pg
+CXXFLAGS = -O3 -fcompare-debug-second -MMD -MP -flto
 INCLUDES = -Iinclude
+
+# add -pg to CXXFLAGS to enable gprof
 
 TARGET = main
 FILE = main.cpp
