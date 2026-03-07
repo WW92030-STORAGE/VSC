@@ -19,8 +19,4 @@ bool testBVCollision(BoundingSphere x1, BoundingSphere x2) {
     return x1.overlaps(&x2);
 }
 
-bool testBVCollision(BoundingOBB a, BoundingOBB b) {
-    return a.overlaps(&b);
-}
-
 #endif

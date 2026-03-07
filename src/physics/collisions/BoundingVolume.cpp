@@ -6,7 +6,9 @@
 
 
 #include "../../../include/physics/collisions/BoundingVolume.h"
+#include "../../../include/physics/collisions/BoundingVolumeCreation.h"
 
+#define BV_MERGE_MARGIN 0
 
 // BoundingVolume
 
@@ -26,13 +28,29 @@ bool BoundingVolume::overlaps(const BoundingVolume* other) {
     return 0;
 }
 
+void BoundingVolume::expand(float f) {
+
+}
+
+void BoundingVolume::merge(BoundingVolume* a, BoundingVolume* b) {
+    
+}
+
+float BoundingVolume::getSize() {
+    return 0;
+}
+
+float BoundingVolume::getGrowth(const BoundingVolume& other) {
+    return 0;
+}
+
 // BoundingSphere
 
 BoundingSphere::BoundingSphere() : BoundingVolume() {
     radius = 1;
 }
 
-BoundingSphere::BoundingSphere(Vector3 p = VEC3_ZERO, float r = 1.0) : BoundingVolume(p) {
+BoundingSphere::BoundingSphere(Vector3 p, float r = 1.0) : BoundingVolume(p) {
     radius = r;
 }
 
@@ -46,12 +64,39 @@ bool BoundingSphere::overlaps(const BoundingSphere* other) {
     return disp.normsquared() <= rsum * rsum;
 }
 
+void BoundingSphere::expand(float f) {
+    radius = std::max(0.0f, radius + f);
+}
+
+void BoundingSphere::merge(BoundingSphere* a, BoundingSphere* b) {
+    Vector3 disp = (b->position - a->position);
+    Vector3 disp_n = disp.normalized();
+
+    Vector3 pa = a->position - disp_n * a->radius;
+    Vector3 pb = b->position + disp_n * b->radius;
+
+    position = (pa + pb) * 0.5;
+    radius = (pb - position).length() + BV_MERGE_MARGIN;
+}
+
+float BoundingSphere::getSize() {
+    constexpr float coeff = M_PI * 4.0 / 3.0;
+    return coeff * radius * radius * radius;
+}
+
+float BoundingSphere::getGrowth(const BoundingSphere& ss) {
+    float diameter = (position - ss.position).length() + radius + ss.radius;
+    float rr = 0.5 * diameter + BV_MERGE_MARGIN;
+    return rr * rr - radius * radius;
+}
+
+
 // BoundingAABB
 
 BoundingAABB::BoundingAABB() : BoundingVolume() {
     halfrad = VEC3_ONE;
 }
-BoundingAABB::BoundingAABB(Vector3 p = VEC3_ZERO, Vector3 r = VEC3_ONE) : BoundingVolume(p) {
+BoundingAABB::BoundingAABB(Vector3 p, Vector3 r = VEC3_ONE) : BoundingVolume(p) {
     halfrad = r;
 }
 
@@ -69,100 +114,38 @@ bool BoundingAABB::overlaps(const BoundingAABB* other) {
     return true;
 }
 
-
-// BoundingOBB
-
-BoundingOBB::BoundingOBB(Vector3 p, Matrix3 q, Vector3 r) : BoundingVolume(p) {
-    halfrad = r;
-    rotation = q;
+void BoundingAABB::expand(float f) {
+    halfrad.x = std::max(0.0f, halfrad.x + f);
+    halfrad.y = std::max(0.0f, halfrad.y + f);
+    halfrad.z = std::max(0.0f, halfrad.z + f);
 }
 
-std::string BoundingOBB::to_string() {
-    return "BoundingOBB[" + position.to_string() + ", " + halfrad.to_string() + ", " + rotation.to_string() + "]";
+void BoundingAABB::merge(BoundingAABB* a, BoundingAABB* b) {
+    Vector3 inferior = min(a->position - a->halfrad, b->position - b->halfrad);
+    Vector3 superior = min(a->position + a->halfrad, b->position + b->halfrad);
+
+    position = (inferior + superior) * 0.5;
+    halfrad = superior - position + Vector3(BV_MERGE_MARGIN, BV_MERGE_MARGIN, BV_MERGE_MARGIN);
 }
 
-bool BoundingOBB::overlaps(const BoundingOBB* other) {
-    BoundingOBB a(*this);
-    BoundingOBB b(*other);
-    float ra, rb;
-    Matrix3 R, absR;
-    const float epsilon = 0.000001;
+float BoundingAABB::getSize() {
+    return 8.0 * halfrad.x * halfrad.y * halfrad.z;
+}
 
-    // first we need to convert b into a's space
+float BoundingAABB::getGrowth(const BoundingAABB& bb) {
+    /*
+    
+    o.x * o.y + o.y * o.z + o.z * o.x - x * y - y * z - z * x
+    
+    */
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) R.set(i, j, a.rotation.getCol(i).dot(b.rotation.getCol(j)));
-    }
+    BoundingAABB bbb = bb;
+    BoundingAABB other;
+    other.merge(this, &bbb);
 
-    Vector3 t = b.position - a.position;
-    t = Vector3(t.dot(a.rotation.getCol(0)), t.dot(a.rotation.getCol(1)), t.dot(a.rotation.getCol(2)));
+    float sa = halfrad.x * (halfrad.y + halfrad.z) + halfrad.y * halfrad.z;
+    float osa = other.halfrad.x * (other.halfrad.y + other.halfrad.z) + other.halfrad.y * other.halfrad.z;
 
+    return osa - sa;
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) absR.set(i, j, fabs(R.get(i, j)) + epsilon);
-    }
-
-    // Axis testing
-
-    for (int i = 0; i < 3; i++) {
-        ra = a.halfrad.get(i);
-        rb = b.halfrad * absR.getRow(i);
-        if (fabs(t.get(i)) > ra + rb) return 0;
-    }
-
-    for (int i = 0; i < 3; i++) {
-        ra = a.halfrad * absR.getCol(i);
-        rb = b.halfrad.get(i);
-
-        if (fabs(t * R.getCol(i)) > ra + rb) return 0;
-    }
-
-    // (A, B): (0, 0)
-    ra = a.halfrad.get(1) * absR.get(2, 0) + a.halfrad.get(2) * absR.get(1, 0);
-    rb = b.halfrad.get(1) * absR.get(0, 2) + b.halfrad.get(2) * absR.get(0, 1);
-    if (fabs(t.get(2) * R.get(1, 0) - t.get(1) * R.get(2, 0)) > ra + rb) return 0;
-
-    // (A, B): (0, 1)
-    ra = a.halfrad.get(1) * absR.get(2, 1) + a.halfrad.get(2) * absR.get(1, 1);
-    rb = b.halfrad.get(0) * absR.get(0, 2) + b.halfrad.get(2) * absR.get(0, 0);
-    if (fabs(t.get(2) * R.get(1, 1) - t.get(1) * R.get(2, 1)) > ra + rb) return 0;
-
-    // (A, B): (0, 2)
-    ra = a.halfrad.get(1) * absR.get(2, 2) + a.halfrad.get(2) * absR.get(1, 2);
-    rb = b.halfrad.get(0) * absR.get(0, 1) + b.halfrad.get(1) * absR.get(0, 0);
-    if (fabs(t.get(2) * R.get(1, 2) - t.get(1) * R.get(2, 2)) > ra + rb) return 0;
-
-
-    // (A, B): (1, 0)
-    ra = a.halfrad.get(0) * absR.get(2, 0) + a.halfrad.get(2) * absR.get(0, 0);
-    rb = b.halfrad.get(1) * absR.get(1, 2) + b.halfrad.get(2) * absR.get(1, 1);
-    if (fabs(t.get(0) * R.get(2, 0) - t.get(2) * R.get(0, 0)) > ra + rb) return 0;
-
-    // (A, B): (1, 1)
-    ra = a.halfrad.get(0) * absR.get(2, 1) + a.halfrad.get(2) * absR.get(0, 1);
-    rb = b.halfrad.get(0) * absR.get(1, 2) + b.halfrad.get(2) * absR.get(1, 0);
-    if (fabs(t.get(0) * R.get(2, 1) - t.get(2) * R.get(0, 1)) > ra + rb) return 0;
-
-    // (A, B): (1, 2)
-    ra = a.halfrad.get(0) * absR.get(2, 2) + a.halfrad.get(2) * absR.get(0, 2);
-    rb = b.halfrad.get(0) * absR.get(1, 1) + b.halfrad.get(1) * absR.get(1, 0);
-    if (fabs(t.get(0) * R.get(2, 2) - t.get(2) * R.get(0, 2)) > ra + rb) return 0;
-
-
-    // (A, B): (2, 0)
-    ra = a.halfrad.get(0) * absR.get(1, 0) + a.halfrad.get(1) * absR.get(0, 0);
-    rb = b.halfrad.get(1) * absR.get(2, 2) + b.halfrad.get(2) * absR.get(2, 1);
-    if (fabs(t.get(1) * R.get(0, 0) - t.get(0) * R.get(1, 0)) > ra + rb) return 0;
-
-    // (A, B): (2, 1)
-    ra = a.halfrad.get(0) * absR.get(1, 1) + a.halfrad.get(1) * absR.get(0, 1);
-    rb = b.halfrad.get(0) * absR.get(2, 2) + b.halfrad.get(2) * absR.get(2, 0);
-    if (fabs(t.get(1) * R.get(0, 1) - t.get(0) * R.get(1, 1)) > ra + rb) return 0;
-
-    // (A, B): (2, 2)
-    ra = a.halfrad.get(0) * absR.get(1, 2) + a.halfrad.get(1) * absR.get(0, 2);
-    rb = b.halfrad.get(0) * absR.get(2, 1) + b.halfrad.get(1) * absR.get(2, 0);
-    if (fabs(t.get(1) * R.get(0, 2) - t.get(0) * R.get(1, 2)) > ra + rb) return 0;
-
-    return 1;
 }

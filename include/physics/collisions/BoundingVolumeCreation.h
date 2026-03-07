@@ -57,4 +57,26 @@ static BoundingSphere createBoundingSphere(std::vector<Vector3> points) {
 }
 
 
+static BoundingSphere mergeBoundingSphere(BoundingSphere a, BoundingSphere b) {
+    Vector3 disp = (b.position - a.position);
+    Vector3 disp_n = disp.normalized();
+
+    Vector3 pa = a.position - disp_n * a.radius;
+    Vector3 pb = b.position + disp_n * b.radius;
+
+    Vector3 center = (pa + pb) * 0.5;
+    float rrrrr = (pb - center).length();
+
+    return BoundingSphere(center, rrrrr);
+}
+
+static BoundingAABB mergeBoundingAABB(BoundingAABB a, BoundingAABB b) {
+    Vector3 inferior = min(a.position - a.halfrad, b.position - b.halfrad);
+    Vector3 superior = min(a.position + a.halfrad, b.position + b.halfrad);
+
+    Vector3 center = (inferior + superior) * 0.5;
+    Vector3 hr = superior - center;
+    return BoundingAABB(center, hr);
+}
+
 #endif

@@ -9,7 +9,7 @@
 
 Bounding volumes can be used for both fine and coarse collision phases
 
-WARNING - BoundingOBB is not used for now.
+WARNING - BoundingOBB is not used for now. It is not implemented and should not be used.
 
 */
 
@@ -22,6 +22,14 @@ struct BoundingVolume {
     virtual std::string to_string();
 
     virtual bool overlaps(const BoundingVolume* other);
+
+    virtual void expand(float f);
+
+    virtual void merge(BoundingVolume* a, BoundingVolume* b);
+
+    virtual float getSize();
+    
+    virtual float getGrowth(const BoundingVolume& other);
 };
 
 struct BoundingSphere : public BoundingVolume {
@@ -33,6 +41,14 @@ struct BoundingSphere : public BoundingVolume {
     virtual std::string to_string();
 
     virtual bool overlaps(const BoundingSphere* other);
+
+    virtual void expand(float f);
+
+    virtual void merge(BoundingSphere* a, BoundingSphere* b);
+
+    virtual float getSize();
+
+    virtual float getGrowth(const BoundingSphere& other);
 };
 
 struct BoundingAABB : BoundingVolume {
@@ -44,24 +60,16 @@ struct BoundingAABB : BoundingVolume {
     virtual std::string to_string();
 
     virtual bool overlaps(const BoundingAABB* other);
+
+    virtual void expand(float f);
+
+    virtual void merge(BoundingAABB* a, BoundingAABB* b);
+
+    virtual float getSize();
+
+    virtual float getGrowth(const BoundingAABB& other);
 };
 
-struct BoundingOBB : BoundingVolume {
-    Matrix3 rotation = Matrix3::eye();
-    Vector3 halfrad = Vector3(1, 1, 1); // half-distance along each dimension
 
-    BoundingOBB(Vector3 p, Matrix3 q, Vector3 r);
-
-    virtual std::string to_string();
-
-    virtual bool overlaps(const BoundingOBB* other);
-};
-
-// Static methods
-
-static BoundingOBB fromAABB(BoundingAABB aabb) {
-    BoundingOBB res = {aabb.position, Matrix3::eye(), aabb.halfrad};
-    return res;
-}
 
 #endif

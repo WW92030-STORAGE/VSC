@@ -49,6 +49,8 @@ Triangle mesh class. Stores vertices and triangles as indices of vertices, uvs, 
 - `void flipNormals()` = Flip the normal vectors by swapping two vertices in each triangle.
 - `static Mesh fromOBJ(std::string filename)` = Returns a mesh created from an `.obj` file.
 
+Some functions such as `getVertexNormal` also have a `*_bary` version which allows passing in pre-computed barycentric coordinates.
+
 ## Deprecated/Unused Functions
 
 - `static int comp (const void * a, const void * b)` = compare 2 Triangle3 pointers by the z coordinates of their centroids

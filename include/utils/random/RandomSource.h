@@ -6,6 +6,7 @@
 
 class RandomSource {
     public:
+    uint64_t state = 0;
     RandomSource();
 
     RandomSource(uint64_t seed);

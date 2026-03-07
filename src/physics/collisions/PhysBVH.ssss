@@ -1,0 +1,21 @@
+#include <cstdint>
+#include <cmath>
+
+#include "../../../include/physics/collisions/PhysBVH.h"
+
+#include "../../../include/physics/collisions/BoundingVolume.h"
+#include "../../../include/physics/collisions/BoundingVolumeTests.h"
+#include "../../../include/physics/RigidBody.h"
+
+template <class BV>
+PhysBVHNode<BV>::PhysBVHNode(PhysBVHNode *pp, const BV &vv, RigidBody* bb) {
+    parent = pp;
+    children[0] = children[1] = 0;
+    volume = BV(vv);
+    body = bb;
+}
+
+template <class BV>
+bool PhysBVHNode<BV>::overlaps(const PhysBVHNode<BV>* other) const {
+    return volume.overlaps(other->volume);
+}

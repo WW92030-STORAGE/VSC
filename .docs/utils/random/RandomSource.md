@@ -4,7 +4,7 @@
 
 ## Description
 
-Base class for random number generators.
+Base class for random number generators. Uses a XORshift cipher.
 
 ## Notes
 

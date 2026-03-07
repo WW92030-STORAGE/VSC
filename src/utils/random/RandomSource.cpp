@@ -14,11 +14,15 @@
     }
 
     void RandomSource::init(uint64_t seed) {
-        
+        state = seed;
     }
 
     uint64_t RandomSource::rand64() {
-        return 0;
+	    state ^= state << 13;
+	    state ^= state >> 7;
+	    state ^= state << 17;
+
+        return state;
     }
 
     uint32_t RandomSource::rand32() {

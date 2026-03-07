@@ -1,0 +1,156 @@
+struct BoundingOBB : BoundingVolume {
+    Matrix3 rotation = Matrix3::eye();
+    Vector3 halfrad = Vector3(1, 1, 1); // half-distance along each dimension
+
+    BoundingOBB(Vector3 p, Matrix3 q, Vector3 r);
+
+    virtual std::string to_string();
+
+    virtual bool overlaps(const BoundingOBB* other);
+
+    virtual float getGrowth(const BoundingOBB& other) const;
+};
+
+
+// BoundingOBB
+
+BoundingOBB::BoundingOBB(Vector3 p, Matrix3 q, Vector3 r) : BoundingVolume(p) {
+    halfrad = r;
+    rotation = q;
+}
+
+std::string BoundingOBB::to_string() {
+    return "BoundingOBB[" + position.to_string() + ", " + halfrad.to_string() + ", " + rotation.to_string() + "]";
+}
+
+bool BoundingOBB::overlaps(const BoundingOBB* other) {
+    BoundingOBB a(*this);
+    BoundingOBB b(*other);
+    float ra, rb;
+    Matrix3 R, absR;
+    const float epsilon = 0.000001;
+
+    // first we need to convert b into a's space
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) R.set(i, j, a.rotation.getCol(i).dot(b.rotation.getCol(j)));
+    }
+
+    Vector3 t = b.position - a.position;
+    t = Vector3(t.dot(a.rotation.getCol(0)), t.dot(a.rotation.getCol(1)), t.dot(a.rotation.getCol(2)));
+
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) absR.set(i, j, fabs(R.get(i, j)) + epsilon);
+    }
+
+    // Axis testing
+
+    for (int i = 0; i < 3; i++) {
+        ra = a.halfrad.get(i);
+        rb = b.halfrad * absR.getRow(i);
+        if (fabs(t.get(i)) > ra + rb) return 0;
+    }
+
+    for (int i = 0; i < 3; i++) {
+        ra = a.halfrad * absR.getCol(i);
+        rb = b.halfrad.get(i);
+
+        if (fabs(t * R.getCol(i)) > ra + rb) return 0;
+    }
+
+    // (A, B): (0, 0)
+    ra = a.halfrad.get(1) * absR.get(2, 0) + a.halfrad.get(2) * absR.get(1, 0);
+    rb = b.halfrad.get(1) * absR.get(0, 2) + b.halfrad.get(2) * absR.get(0, 1);
+    if (fabs(t.get(2) * R.get(1, 0) - t.get(1) * R.get(2, 0)) > ra + rb) return 0;
+
+    // (A, B): (0, 1)
+    ra = a.halfrad.get(1) * absR.get(2, 1) + a.halfrad.get(2) * absR.get(1, 1);
+    rb = b.halfrad.get(0) * absR.get(0, 2) + b.halfrad.get(2) * absR.get(0, 0);
+    if (fabs(t.get(2) * R.get(1, 1) - t.get(1) * R.get(2, 1)) > ra + rb) return 0;
+
+    // (A, B): (0, 2)
+    ra = a.halfrad.get(1) * absR.get(2, 2) + a.halfrad.get(2) * absR.get(1, 2);
+    rb = b.halfrad.get(0) * absR.get(0, 1) + b.halfrad.get(1) * absR.get(0, 0);
+    if (fabs(t.get(2) * R.get(1, 2) - t.get(1) * R.get(2, 2)) > ra + rb) return 0;
+
+
+    // (A, B): (1, 0)
+    ra = a.halfrad.get(0) * absR.get(2, 0) + a.halfrad.get(2) * absR.get(0, 0);
+    rb = b.halfrad.get(1) * absR.get(1, 2) + b.halfrad.get(2) * absR.get(1, 1);
+    if (fabs(t.get(0) * R.get(2, 0) - t.get(2) * R.get(0, 0)) > ra + rb) return 0;
+
+    // (A, B): (1, 1)
+    ra = a.halfrad.get(0) * absR.get(2, 1) + a.halfrad.get(2) * absR.get(0, 1);
+    rb = b.halfrad.get(0) * absR.get(1, 2) + b.halfrad.get(2) * absR.get(1, 0);
+    if (fabs(t.get(0) * R.get(2, 1) - t.get(2) * R.get(0, 1)) > ra + rb) return 0;
+
+    // (A, B): (1, 2)
+    ra = a.halfrad.get(0) * absR.get(2, 2) + a.halfrad.get(2) * absR.get(0, 2);
+    rb = b.halfrad.get(0) * absR.get(1, 1) + b.halfrad.get(1) * absR.get(1, 0);
+    if (fabs(t.get(0) * R.get(2, 2) - t.get(2) * R.get(0, 2)) > ra + rb) return 0;
+
+
+    // (A, B): (2, 0)
+    ra = a.halfrad.get(0) * absR.get(1, 0) + a.halfrad.get(1) * absR.get(0, 0);
+    rb = b.halfrad.get(1) * absR.get(2, 2) + b.halfrad.get(2) * absR.get(2, 1);
+    if (fabs(t.get(1) * R.get(0, 0) - t.get(0) * R.get(1, 0)) > ra + rb) return 0;
+
+    // (A, B): (2, 1)
+    ra = a.halfrad.get(0) * absR.get(1, 1) + a.halfrad.get(1) * absR.get(0, 1);
+    rb = b.halfrad.get(0) * absR.get(2, 2) + b.halfrad.get(2) * absR.get(2, 0);
+    if (fabs(t.get(1) * R.get(0, 1) - t.get(0) * R.get(1, 1)) > ra + rb) return 0;
+
+    // (A, B): (2, 2)
+    ra = a.halfrad.get(0) * absR.get(1, 2) + a.halfrad.get(1) * absR.get(0, 2);
+    rb = b.halfrad.get(0) * absR.get(2, 1) + b.halfrad.get(1) * absR.get(2, 0);
+    if (fabs(t.get(1) * R.get(0, 2) - t.get(0) * R.get(1, 2)) > ra + rb) return 0;
+
+    return 1;
+}
+
+float BoundingOBB::getGrowth(const BoundingOBB& other) const {
+    return 0;
+}
+
+// Methods
+
+// BoundingVolume.h
+
+static BoundingOBB fromAABB(BoundingAABB aabb) {
+    BoundingOBB res = {aabb.position, Matrix3::eye(), aabb.halfrad};
+    return res;
+}
+
+static BoundingAABB fromOBB(BoundingOBB obb) {
+    Vector3 inferior(obb.position);
+    Vector3 superior(obb.position);
+
+    for (int dx = -1; dx <= 1; dx += 2) {
+        for (int dy = -1; dy <= 1; dy += 2) {
+            for (int dz = -1; dz <= 1; dz += 2) {
+                Vector3 p = obb.position + obb.rotation * Vector3(dx * obb.halfrad.x, dy * obb.halfrad.y, dz * obb.halfrad.z);
+                inferior = min(inferior, p);
+                superior = max(superior, p);
+            }
+        }
+    }
+
+    Vector3 center = (inferior + superior) * 0.5;
+    Vector3 hr = superior - center;
+    return BoundingAABB(center, hr);
+}
+
+// BoundingVolumeCreation.h
+
+static BoundingOBB mergeBoundingOBB(BoundingOBB a, BoundingOBB b) {
+    BoundingAABB aa = fromOBB(a);
+    BoundingAABB bb = fromOBB(b);
+    return fromAABB(mergeBoundingAABB(aa, bb));
+}
+
+// BoundingVolumeTests.h
+
+bool testBVCollision(BoundingOBB a, BoundingOBB b) {
+    return a.overlaps(&b);
+}

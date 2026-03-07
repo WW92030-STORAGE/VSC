@@ -43,24 +43,6 @@ static Mesh cube(float X = 16) {
 	Vector2 BL_(0, 1);
 	Vector2 BR_(1, 1); 
 
-	/*
-
-	Triangle3* tris = new Triangle3[12] {Triangle3(FFF, TFF, FTF), 
-	Triangle3(TFF, TTF, FTF),
-	Triangle3(FFF, FTF, FFT),
-	Triangle3(FTF, FTT, FFT),
-	Triangle3(FFF, FFT, TFF),
-	Triangle3(FFT, TFT, TFF),
-	Triangle3(TTT, TFT, FTT),
-	Triangle3(FTT, TFT, FFT),
-	Triangle3(TTT, TTF, TFT),
-	Triangle3(TFT, TTF, TFF),
-	Triangle3(TTT, FTT, TTF),
-	Triangle3(TTF, FTT, FTF)
-	};
-
-	*/
-
 	std::vector<Vector3> verts({FFF, TFF, FTF, TTF, FFT, TFT, FTT, TTT});
 
 	std::vector<std::vector<int>> trii({
@@ -178,6 +160,79 @@ static Mesh cube6(float X = 16) {
 	Mesh res(verts, trii, uv, texco);
 
 	return res;
+}
+
+static Mesh rectprism(float X = 16, float Y = 16, float Z = 16) {
+
+	Vector3 OFFSET(-X, -Y, -Z);
+	OFFSET = OFFSET * 0.5;
+
+	Vector3 FFF(0, 0, 0);
+	Vector3 TFF(X, 0, 0);
+	Vector3 FTF(0, Y, 0);
+	Vector3 TTF(X, Y, 0);
+	Vector3 FFT(0, 0, Z);
+	Vector3 TFT(X, 0, Z);
+	Vector3 FTT(0, Y, Z);
+	Vector3 TTT(X, Y, Z);
+
+	FFF = FFF + OFFSET;
+	TFF = TFF + OFFSET;
+	FTF = FTF + OFFSET;
+	TTF = TTF + OFFSET;
+	FFT = FFT + OFFSET;
+	TFT = TFT + OFFSET;
+	FTT = FTT + OFFSET;
+	TTT = TTT + OFFSET;
+
+	Vector2 UL_(0, 0);
+	Vector2 UR_(1, 0);
+	Vector2 BL_(0, 1);
+	Vector2 BR_(1, 1); 
+
+	std::vector<Vector3> verts({FFF, TFF, FTF, TTF, FFT, TFT, FTT, TTT});
+
+	std::vector<std::vector<int>> trii({
+		std::vector<int>{0, 2, 1},
+		std::vector<int>{3, 1, 2},
+		std::vector<int>{0, 4, 2},
+		std::vector<int>{6, 2, 4},
+
+		std::vector<int>{0, 1, 4},
+		std::vector<int>{5, 4, 1},
+		std::vector<int>{7, 6, 5},
+		std::vector<int>{4, 5, 6},
+
+		std::vector<int>{7, 5, 3},
+		std::vector<int>{1, 3, 5},
+		std::vector<int>{7, 3, 6},
+		std::vector<int>{2, 6, 3}
+	});
+	std::vector<Vector2> uv({UL_, UR_, BL_, BR_});
+	std::vector<std::vector<int>> texco({
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3},
+
+		
+		std::vector<int>{1, 0, 3},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3},
+		std::vector<int>{2, 3, 0},
+		std::vector<int>{1, 0, 3}
+	});
+
+	Mesh res(verts, trii, uv, texco);
+
+	return res;
+}
+
+inline Mesh rectprism(Vector3 v) {
+	return rectprism(v.x, v.y, v.z);
 }
 
 // Generates a square grid parallel to the XZ plane composed of triangles facing in the positive Y. The diagonals run parallel to z = x.

@@ -89,7 +89,7 @@ Indices of rows and columns are zero-indexed.
 - `Matrix3 inv()` = Inverse.
 - `Vector3 vecmul(const Vector3& other)`
 - `Matrix3 matmul(const Matrix3& other)`
-- `Vector3 solve(Vector3 b)` = Solves the system `Ax = b` where `A` is this matrix. One solution is given.
+- `Vector3 solve(Vector3 b)` = Solves the system `Ax = b` where `A` is this matrix. One solution is given. Defaults to Cramer's rule otherwise calls `solve2` (standard elimination) for singular matrices.
 - `Matrix3 operator+(const Matrix3& other)`
 - `Matrix3 operator-(const Matrix3& other)`
 - `Matrix3 operator*(float other)`

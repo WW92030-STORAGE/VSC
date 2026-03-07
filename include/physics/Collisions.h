@@ -7,6 +7,6 @@
 #include "collisions/BoundingVolumeCreation.h"
 // #include "collisions/BoundingVolumeTests.h"
 #include "collisions/BoundingVolumeUtils.h"
-#include "collisions/BVH.h"
+#include "collisions/PhysBVH.h"
 
 #endif

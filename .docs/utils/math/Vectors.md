@@ -161,6 +161,8 @@ Elements are zero-indexed.
 - `Vector2 NILVEC2 = Vector2(NAN, NAN)`
 - `Vector3 NILVEC3 = Vector3(NAN, NAN, NAN)`
 - `Vector4 NILVEC4 = Vector4(NAN, NAN, NAN, NAN)`
+- `Vector3 VEC3_ZERO = Vector3(0, 0, 0)`
+- `Vector3 VEC3_ONE = Vector3(1, 1, 1)`
 - `Vector2 lerp(Vector2& a, Vector2& b, float p)` = Linear Interpolation `a * (1 - p) + b * p`.
 - `Vector3 lerp(Vector3& a, Vector3& b, float p)`
 - `Vector4 lerp(Vector4& a, Vector4& b, float p)`
