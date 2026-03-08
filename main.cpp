@@ -55,7 +55,7 @@ int main() {
 	// RigidBody4();
 
 	// BoundingVolumes1();
-	PhysBVH1();
+	PhysBVH3();
 
 	/*
 	Matrix3 A(1, 3, 2, 3, 2, 1, 2, 1, 3);

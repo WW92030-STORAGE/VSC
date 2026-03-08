@@ -46,34 +46,48 @@ struct PhysBVHNode {
     }
 
     bool overlaps(const PhysBVHNode<BV>* other) const {
-        return volume.overlaps(other->volume);
+        return volume.overlaps(&(other->volume));
     }
-    
+
     // oh brother
     uint64_t getPossibleContacts(PossibleCollision* pcs, uint64_t limit) const {
         if (!limit || isLeaf()) return 0;
 
-        return children[0]->getPossibleContactsWith(children[1], pcs, limit);
+        auto count = children[0]->getPossibleContactsWith(children[1], pcs, limit);
+        if (limit > count) count += children[0]->getPossibleContacts(pcs + count, limit);
+        if (limit > count) count += children[1]->getPossibleContacts(pcs + count, limit);
+        return count;
     }
 
     // recursive utility helper
-    uint64_t getPossibleContactsWith(PhysBVHNode* node, PossibleCollision* pcs, uint64_t limit) {
-        if (!overlaps(node) || !limit) return 0;
+    uint64_t getPossibleContactsWith(PhysBVHNode* node, PossibleCollision* pcs, uint64_t limit, bool verbose = false) {
+        std::cout << to_string() << " | " << node->to_string() << "\n";
+        if (!overlaps(node) || !limit) {
+            if (verbose) std::cout << "NO OVERLAP OR BAD LIMIT\n";
+            return 0;
+        }
         if (isLeaf() && node->isLeaf()) {
+            if (verbose) std::cout << "BOTH LEAF\n";
             pcs->bodies[0] = body;
             pcs->bodies[1] = node->body;
             return 1;
         }
 
-        bool noleaves = !isLeaf() && !node->isLeaf();
-
-        if (node->isLeaf() || (noleaves && volume.getSize() >= node->volume.getSize())) {
+        if (node->isLeaf() || (!isLeaf() && (volume.getSize() >= node->volume.getSize()))) {
+            if (verbose) std::cout << "L LEFT RECURSE\n";
             uint64_t count = children[0]->getPossibleContactsWith(node, pcs, limit);
-            if (limit > count) return count + children[1]->getPotentialContactsWith(node, pcs + count, limit - count);
+            if (limit > count) {
+                if (verbose) std::cout << "L RIGHT RECURSE\n";
+                return count + children[1]->getPossibleContactsWith(node, pcs + count, limit - count);
+            }
             return count;
         } else {
+            if (verbose) std::cout << "R LEFT RECURSE\n";
             uint64_t count = getPossibleContactsWith(node->children[0], pcs, limit);
-            if (limit > count) return count + getPossibleContactsWith(node->children[1], pcs + count, limit - count);
+            if (limit > count) {
+                if (verbose) std::cout << "R RIGHT RECURSE\n";
+                return count + getPossibleContactsWith(node->children[1], pcs + count, limit - count);
+            }
             return count;
         }
     }
@@ -103,11 +117,47 @@ struct PhysBVHNode {
 
         if (parent) parent->recomputeBV();
     }
+
+    ~PhysBVHNode() {
+        if (parent) {
+            PhysBVHNode* sibling = parent->children[0];
+            if (this == parent->children[0]) sibling = parent->children[1];
+
+            parent->volume = sibling->volume;
+            parent->body = sibling->body;
+            parent->children[0] = sibling->children[0];
+            parent->children[1] = sibling->children[1];
+
+            sibling->parent = 0;
+            sibling->body = 0;
+            sibling->children[0] = 0;
+            sibling->children[1] = 0;
+            delete sibling;
+
+            parent->recomputeBV();
+        }
+
+        if (children[0]) {
+            children[0]->parent = 0;
+            delete children[0];
+        }
+        if (children[1]) {
+            children[1]->parent = 0;
+            delete children[1];
+        }
+    }
+
+    std::string to_string() {
+        std::string res = "";
+        if (body) res = "RigidBody/";
+        res += volume.to_string();
+        return res;
+    }
 };
 
 template <class BV>
-static std::vector<std::string> PhysBVHNode_preorder(PhysBVHNode<BV>* node) {
-    std::vector<std::string> res;
+static std::vector<BV> PhysBVHNode_preorder(PhysBVHNode<BV>* node) {
+    std::vector<BV> res;
     if (!node) return res;
 
     PhysBVHNode_preorder_recur(node, res, 0);
@@ -115,15 +165,36 @@ static std::vector<std::string> PhysBVHNode_preorder(PhysBVHNode<BV>* node) {
 }
 
 template <class BV>
-static void PhysBVHNode_preorder_recur(PhysBVHNode<BV>* node, std::vector<std::string>& v, int depth = 0) {
+static void PhysBVHNode_preorder_recur(PhysBVHNode<BV>* node, std::vector<BV>& v, int depth = 0) {
+    if (!node) return;
+    if (node->isLeaf()) {
+        v.push_back(node->volume);
+    } else {
+        v.push_back(node->volume);
+        PhysBVHNode_preorder_recur(node->children[0], v, depth + 1);
+        PhysBVHNode_preorder_recur(node->children[1], v, depth + 1);
+    }
+}
+
+template <class BV>
+static std::vector<std::string> PhysBVHNode_preorder_str(PhysBVHNode<BV>* node) {
+    std::vector<std::string> res;
+    if (!node) return res;
+
+    PhysBVHNode_preorder_str_recur(node, res, 0);
+    return res;
+}
+
+template <class BV>
+static void PhysBVHNode_preorder_str_recur(PhysBVHNode<BV>* node, std::vector<std::string>& v, int depth = 0) {
     if (!node) return;
     std::string ds = std::to_string(depth) + ": ";
     if (node->isLeaf()) {
-        v.push_back(ds + "RigidBody/" + node->volume.to_string());
+        v.push_back(ds + node->to_string());
     } else {
-        v.push_back(ds + node->volume.to_string());
-        PhysBVHNode_preorder_recur(node->children[0], v, depth + 1);
-        PhysBVHNode_preorder_recur(node->children[1], v, depth + 1);
+        v.push_back(ds + node->to_string());
+        PhysBVHNode_preorder_str_recur(node->children[0], v, depth + 1);
+        PhysBVHNode_preorder_str_recur(node->children[1], v, depth + 1);
     }
 }
 

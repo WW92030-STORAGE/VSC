@@ -235,6 +235,12 @@ inline Mesh rectprism(Vector3 v) {
 	return rectprism(v.x, v.y, v.z);
 }
 
+inline Mesh rectprism(Vector3 size, Vector3 pos) {
+	Mesh m = rectprism(size);
+	m.Trans(pos);
+	return m;
+}
+
 // Generates a square grid parallel to the XZ plane composed of triangles facing in the positive Y. The diagonals run parallel to z = x.
 // Texture mappings go (u, v) --> (x, z). You can set the size of the plane and how many times the texture is repeated.
 

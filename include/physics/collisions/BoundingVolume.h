@@ -21,7 +21,7 @@ struct BoundingVolume {
 
     virtual std::string to_string();
 
-    virtual bool overlaps(const BoundingVolume* other);
+    virtual bool overlaps(const BoundingVolume* other) const;
 
     virtual void expand(float f);
 
@@ -40,7 +40,7 @@ struct BoundingSphere : public BoundingVolume {
 
     virtual std::string to_string();
 
-    virtual bool overlaps(const BoundingSphere* other);
+    virtual bool overlaps(const BoundingSphere* other) const;
 
     virtual void expand(float f);
 
@@ -59,7 +59,7 @@ struct BoundingAABB : BoundingVolume {
 
     virtual std::string to_string();
 
-    virtual bool overlaps(const BoundingAABB* other);
+    virtual bool overlaps(const BoundingAABB* other) const;
 
     virtual void expand(float f);
 

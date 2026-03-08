@@ -8,7 +8,7 @@
 #include "../../../include/physics/collisions/BoundingVolume.h"
 #include "../../../include/physics/collisions/BoundingVolumeCreation.h"
 
-#define BV_MERGE_MARGIN 0
+#define BV_MERGE_MARGIN 0.1
 
 // BoundingVolume
 
@@ -24,7 +24,7 @@ std::string BoundingVolume::to_string() {
     return "BoundingVolume[" + position.to_string() + "]";
 }
 
-bool BoundingVolume::overlaps(const BoundingVolume* other) {
+bool BoundingVolume::overlaps(const BoundingVolume* other)  const {
     return 0;
 }
 
@@ -58,8 +58,9 @@ std::string BoundingSphere::to_string() {
     return "BoundingSphere[" + position.to_string() + ", " + std::to_string(radius) + "]";
 }
 
-bool BoundingSphere::overlaps(const BoundingSphere* other) {
-    Vector3 disp = position - other->position;
+bool BoundingSphere::overlaps(const BoundingSphere* other) const {
+    auto pp = position;
+    Vector3 disp = pp - other->position;
     float rsum = radius + other->radius;
     return disp.normsquared() <= rsum * rsum;
 }
@@ -85,8 +86,10 @@ float BoundingSphere::getSize() {
 }
 
 float BoundingSphere::getGrowth(const BoundingSphere& ss) {
-    float diameter = (position - ss.position).length() + radius + ss.radius;
-    float rr = 0.5 * diameter + BV_MERGE_MARGIN;
+    BoundingSphere ns;
+    BoundingSphere sss = ss;
+    ns.merge(this, &sss);
+    float rr = ns.radius;
     return rr * rr - radius * radius;
 }
 
@@ -104,12 +107,15 @@ std::string BoundingAABB::to_string() {
     return "BoundingAABB[" + position.to_string() + ", " + halfrad.to_string() + "]";
 }
 
-bool BoundingAABB::overlaps(const BoundingAABB* other) {
+bool BoundingAABB::overlaps(const BoundingAABB* other) const {
     Vector3 op(other->position);
     Vector3 oh(other->halfrad);
 
+    auto pp = position;
+    auto hr = halfrad;
+
     for (int i = 0; i < 3; i++) {
-        if (fabs(position.get(i) - op.get(i)) > halfrad.get(i) + oh.get(i)) return false;
+        if (fabs(pp.get(i) - op.get(i)) > hr.get(i) + oh.get(i)) return false;
     }
     return true;
 }
@@ -122,7 +128,7 @@ void BoundingAABB::expand(float f) {
 
 void BoundingAABB::merge(BoundingAABB* a, BoundingAABB* b) {
     Vector3 inferior = min(a->position - a->halfrad, b->position - b->halfrad);
-    Vector3 superior = min(a->position + a->halfrad, b->position + b->halfrad);
+    Vector3 superior = max(a->position + a->halfrad, b->position + b->halfrad);
 
     position = (inferior + superior) * 0.5;
     halfrad = superior - position + Vector3(BV_MERGE_MARGIN, BV_MERGE_MARGIN, BV_MERGE_MARGIN);

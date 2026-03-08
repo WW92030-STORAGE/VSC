@@ -874,7 +874,9 @@ void RigidBody4() {
 	len.close();
 }
 
+// VSC 9.93 - Bounding Volumes and Collision Detection (ORBIT)
 
+// 9.93A - Bounding Volumes
 void BoundingVolumes1() {
 	Scene s = scene_blank(true);
 	s.camera.Trans(Transform(Vector3(0, 0, 5)));
@@ -905,34 +907,175 @@ void BoundingVolumes1() {
 	std::cout << "Stored\n";
 }
 
+// 9.93B - BVH Test 1
 void PhysBVH1() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(8, 0, 10)));
 
-	RigidBody rb0;
-	RigidBody rb1;
-	RigidBody rb2;
-	RigidBody rb3;
-	RigidBody rb4;
-	BoundingSphere bs0(Vector3(0, 0, 0), 0.5);
-	BoundingSphere bs1(Vector3(1, 0, 0), 0.5);
-	BoundingSphere bs2(Vector3(2, 0, 0), 0.5);
-	BoundingSphere bs3(Vector3(3, 0, 0), 0.5);
-	BoundingSphere bs4(Vector3(4, 0, 0), 0.5);
+	PointLight p(0);
+	p.Trans(Vector3(8, 0, 10));
+	s.lights.push_back(p);
 
-	PhysBVHNode<BoundingSphere>* node = new PhysBVHNode<BoundingSphere>(0, bs0, &rb0);
+	std::vector<RigidBody> rb(16, RigidBody());
+	std::vector<BoundingAABB> bs(16);
 
-	node->insert(&rb3, bs3);
-	
-	node->insert(&rb1, bs1);
-	
-	
-	node->insert(&rb2, bs2);
-	// node->insert(&rb4, bs4);
-	
+	for (int i = 0; i < bs.size(); i++) bs[i] = BoundingAABB(Vector3(i, 0, 0), Vector3(0.6, 0.6, 0.6));
 
-	auto v = PhysBVHNode_preorder(node);
-	for (auto i : v) cout << i << "\n";
+	PhysBVHNode<BoundingAABB>* node = new PhysBVHNode<BoundingAABB>(0, bs[0], &rb[0]);
+
+	std::vector<int> indices({1, 2, 4, 6, 7, 8, 9, 12, 13, 14, 15});
+
+	for (int ii = 0; ii < indices.size(); ii++) {
+		int i = indices[(ii * 7) % indices.size()];
+		node->insert(&rb[i], bs[i]);
+	}
+
+	auto v = PhysBVHNode_preorder_str(node);
+	auto b = PhysBVHNode_preorder(node);
+	std::vector<Mesh> meshes(b.size());
+	for (int i = 0; i < meshes.size(); i++) {
+		meshes[i] = rectprism(b[i].halfrad * 2);
+		meshes[i].Trans(b[i].position);
+	}
+	for (auto i : meshes) {
+		s.drawMesh(i);
+	}
+
+	for (auto i : v) std::cout << i << "\n";
+
+	std::cout << "Prepared\n";
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	delete node;
 }
 
+// 9.93B - BVH Test 2
+void PhysBVH2() {
+	int N = 2;
+	int k = 3;
+
+	float size = 0.6;
+
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3((N - 1) * k * 0.5, (N - 1) * k * 0.5, 10)));
+
+	PointLight p(0);
+	p.Trans(Vector3((N - 1) * k * 0.5, (N - 1) * k * 0.5, 10));
+	s.lights.push_back(p);
+
+
+
+	std::vector<RigidBody> rb(N * N * N, RigidBody());
+	std::vector<BoundingAABB> bs(N * N * N);
+
+	for (int i = 0; i < bs.size(); i++) {
+		bs[i] = BoundingAABB(Vector3((i % N) * k, ((i / N) % N) * k, (i / (N * N)) * k), Vector3(size, size, size));
+		std::cout << bs[i].position.to_string() << "\n";
+	}
+
+	PhysBVHNode<BoundingAABB>* node = new PhysBVHNode<BoundingAABB>(0, bs[0], &rb[0]);
+
+	std::vector<int> indices;
+	for (int i = 1; i < bs.size(); i++) indices.push_back(i);
+
+	for (int ii = 0; ii < indices.size(); ii++) {
+		int i = indices[(ii * 3) % indices.size()];
+		node->insert(&rb[i], bs[i]);
+	}
+
+	auto v = PhysBVHNode_preorder_str(node);
+	auto b = PhysBVHNode_preorder(node);
+	std::vector<Mesh> meshes(b.size());
+	for (int i = 0; i < meshes.size(); i++) {
+		meshes[i] = rectprism(b[i].halfrad * 2);
+		meshes[i].Trans(b[i].position);
+	}
+	for (auto i : meshes) {
+		s.drawMesh(i);
+	}
+
+	for (auto i : v) std::cout << i << "\n";
+
+	std::cout << "Prepared\n";
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	delete node;
+}
+
+
+// 9.931 - Using the BVH to check collisions
+void PhysBVH3() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(8, 0, 10)));
+
+	PointLight p(0);
+	p.Trans(Vector3(8, 0, 10));
+	s.lights.push_back(p);
+
+	// begin customization. keep x and y coordinates within [0, 16] and z coordinates within [-8, 8] for best results, and have no two object positions identical.
+
+	std::vector<RigidBody> rb(16, RigidBody());
+	for (int i = 0; i < 16; i++) rb[i].global_position = Vector3(i, 0, 0);
+	std::vector<BoundingAABB> bs(16);
+
+	for (int i = 0; i < bs.size(); i++) bs[i] = BoundingAABB(Vector3(i, 0.1 - 0.2 * (i & 1), 0), Vector3(0.6, 0.6, 0.6));
+
+	PhysBVHNode<BoundingAABB>* node = new PhysBVHNode<BoundingAABB>(0, bs[0], &rb[0]);
+
+	// end customization
+	// std::vector<int> indices({2, 4, 5, 6, 7, 9, 12, 13, 15});
+	std::vector<int> indices({2, 3, 5, 7, 9, 10, 12, 15});
+	for (int ii = 0; ii < indices.size(); ii++) {
+		int i = indices[(ii * 3) % indices.size()];
+		node->insert(&rb[i], bs[i]);
+	}
+
+	PossibleCollision pcs[1024];
+
+	int count = node->getPossibleContacts(pcs, 1024);
+
+	std::cout << "possibles " << count << "\n";
+
+	for (int i = 0; i < count; i++) {
+		std::cout << pcs[i].bodies[0]->global_position.to_string() << " | " << pcs[i].bodies[1]->global_position.to_string() << "\n";
+	}
+
+	// What is at risk?
+	std::set<Vector3> isPossiblyColliding;  
+
+	for (int i = 0; i < count; i++) {
+		for (int k = 0; k < 2; k++) isPossiblyColliding.insert(pcs[i].bodies[k]->global_position);
+	}
+
+	for (int ii = 0; ii < indices.size(); ii++) {
+		int i = indices[ii];
+		auto boxshape = rectprism(bs[i].halfrad * 2, bs[i].position);
+		BaseMaterial mat(BASEMAT_WHITE);
+		if (isPossiblyColliding.count(rb[i].global_position)) mat = BaseMaterial(BASEMAT_RED);
+		s.addMesh(&boxshape, &mat);
+	}
+
+	std::cout << "Prepared\n";
+	s.render();
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	auto v = PhysBVHNode_preorder_str(node);
+	for (auto i : v) std::cout << i << "\n";
+
+	delete node;
+}
 
 
 #endif
