@@ -1011,7 +1011,7 @@ void PhysBVH2() {
 }
 
 
-// 9.931 - Using the BVH to check collisions
+// 9.931A - Using the BVH to check collisions
 void PhysBVH3() {
 	Scene s = scene_blank(true);
 	s.camera.Trans(Transform(Vector3(8, 0, 10)));
@@ -1020,7 +1020,7 @@ void PhysBVH3() {
 	p.Trans(Vector3(8, 0, 10));
 	s.lights.push_back(p);
 
-	// begin customization. keep x and y coordinates within [0, 16] and z coordinates within [-8, 8] for best results, and have no two object positions identical.
+	// begin customization. keep x coordinates within [0, 16] and y and z coordinates within [-8, 8] for best results, and have no two object positions identical.
 
 	std::vector<RigidBody> rb(16, RigidBody());
 	for (int i = 0; i < 16; i++) rb[i].global_position = Vector3(i, 0, 0);
@@ -1077,5 +1077,98 @@ void PhysBVH3() {
 	delete node;
 }
 
+// 9.931B - Broad stress test
+void PhysBVH4() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(8, 8, 10)));
+
+	PointLight p(0);
+	p.Trans(Vector3(8, 0, 10));
+	s.lights.push_back(p);
+
+	int N = 1<<16;
+
+	// begin customization. keep x and y coordinates within [0, 16] and z coordinates within [-8, 8] for best results, and have no two object positions identical.
+
+	MersenneTwister ms(1);
+
+	RigidBody* rb = new RigidBody[N];
+	for (int i = 0; i < N; i++) {
+		rb[i] = RigidBody();
+		rb[i].global_position = Vector3(ms() * 16, ms() * 16, ms() * 16);
+	}
+	std::vector<BoundingAABB> bs(N);
+
+	for (int i = 0; i < bs.size(); i++) bs[i] = BoundingAABB(rb[i].global_position, Vector3(0.6, 0.6, 0.6));
+
+	PhysBVHNode<BoundingAABB>* node = new PhysBVHNode<BoundingAABB>(0, bs[0], &rb[0]);
+
+	// end customization
+
+	for (int i = 1; i < N; i++) {
+		node->insert(&rb[i], bs[i]);
+	}
+
+	bool NAIVE = false;
+
+	
+
+	int PCSZ = 1<<24;
+	PossibleCollision* pcs = new PossibleCollision[PCSZ];
+
+	int count = 0;
+
+	if (!NAIVE) {
+
+	count = node->getPossibleContacts(pcs, PCSZ);
+
+	} else {
+		for (int i = 0; i < N; i++) {
+			for (int j = i + 1; j < N; j++) {
+				if (bs[i].overlaps(&bs[j])) {
+					pcs[count].bodies[0] = &rb[i];
+					pcs[count].bodies[1] = &rb[j];
+					count++;
+				}
+			}
+		}
+	}
+
+	std::cout << "possibles " << count << "\n";
+
+	bool DRAW = false;
+
+	if (DRAW) {
+
+	// What is at risk?
+	std::set<Vector3> isPossiblyColliding;  
+
+	for (int i = 0; i < count; i++) {
+		for (int k = 0; k < 2; k++) isPossiblyColliding.insert(pcs[i].bodies[k]->global_position);
+	}
+
+	for (int i = 0; i < N; i++) {
+		auto boxshape = rectprism(bs[i].halfrad * 2, bs[i].position);
+		BaseMaterial mat(BASEMAT_WHITE);
+		if (isPossiblyColliding.count(rb[i].global_position)) mat = BaseMaterial(BASEMAT_RED);
+		s.addMesh(&boxshape, &mat);
+	}
+
+	std::cout << "Prepared\n";
+	s.render();
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	}
+
+	delete node;
+
+	delete[] rb;
+	delete[] pcs;
+
+}
 
 #endif

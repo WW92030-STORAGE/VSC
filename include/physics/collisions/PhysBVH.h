@@ -54,14 +54,14 @@ struct PhysBVHNode {
         if (!limit || isLeaf()) return 0;
 
         auto count = children[0]->getPossibleContactsWith(children[1], pcs, limit);
-        if (limit > count) count += children[0]->getPossibleContacts(pcs + count, limit);
-        if (limit > count) count += children[1]->getPossibleContacts(pcs + count, limit);
+        if (limit > count) count += children[0]->getPossibleContacts(pcs + count, limit - count);
+        if (limit > count) count += children[1]->getPossibleContacts(pcs + count, limit - count);
         return count;
     }
 
     // recursive utility helper
     uint64_t getPossibleContactsWith(PhysBVHNode* node, PossibleCollision* pcs, uint64_t limit, bool verbose = false) {
-        std::cout << to_string() << " | " << node->to_string() << "\n";
+        if (verbose) std::cout << to_string() << " | " << node->to_string() << "\n";
         if (!overlaps(node) || !limit) {
             if (verbose) std::cout << "NO OVERLAP OR BAD LIMIT\n";
             return 0;
