@@ -55,7 +55,14 @@ int main() {
 	// RigidBody4();
 
 	// BoundingVolumes1();
-	PhysBVH4();
+	// PhysBVH4();
+	// BoundingVolumeFromCollisionTest();
+	// CollisionSphereTest();
+	// CollisionBoxTest();
+
+	CollisionBoxTest2();
+
+
 
 	/*
 	Matrix3 A(1, 3, 2, 3, 2, 1, 2, 1, 3);

@@ -8,8 +8,6 @@
 #include "../../../include/physics/collisions/BoundingVolume.h"
 #include "../../../include/physics/collisions/BoundingVolumeCreation.h"
 
-#define BV_MERGE_MARGIN 0.1
-
 // BoundingVolume
 
 BoundingVolume::BoundingVolume() {

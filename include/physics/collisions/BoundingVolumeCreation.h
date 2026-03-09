@@ -14,7 +14,7 @@ static BoundingAABB createBoundingAABB(std::vector<Vector3> points) {
     Vector3 inferior(points[0]);
     Vector3 superior(points[1]);
 
-    Vector3 MARGIN(0.01, 0.01, 0.01);
+    Vector3 MARGIN(BV_MERGE_MARGIN, BV_MERGE_MARGIN, BV_MERGE_MARGIN);
     
     for (auto p : points) {
         inferior = min(p, inferior);

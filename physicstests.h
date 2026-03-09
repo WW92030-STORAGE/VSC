@@ -953,7 +953,7 @@ void PhysBVH1() {
 	delete node;
 }
 
-// 9.93B - BVH Test 2
+// 9.93C - BVH Test 2
 void PhysBVH2() {
 	int N = 2;
 	int k = 3;
@@ -1086,11 +1086,10 @@ void PhysBVH4() {
 	p.Trans(Vector3(8, 0, 10));
 	s.lights.push_back(p);
 
-	int N = 1<<16;
-
+	int N = 256; // (1<<16) for a real stress test
 	// begin customization. keep x and y coordinates within [0, 16] and z coordinates within [-8, 8] for best results, and have no two object positions identical.
 
-	MersenneTwister ms(1);
+	MersenneTwister ms(3); // to keep things deterministic
 
 	RigidBody* rb = new RigidBody[N];
 	for (int i = 0; i < N; i++) {
@@ -1109,7 +1108,7 @@ void PhysBVH4() {
 		node->insert(&rb[i], bs[i]);
 	}
 
-	bool NAIVE = false;
+	bool NAIVE = false; // use the naive method (quadratic) or the BVH? (BVH runs ~3x as fast for 1<<16 cubes.)
 
 	
 
@@ -1136,7 +1135,7 @@ void PhysBVH4() {
 
 	std::cout << "possibles " << count << "\n";
 
-	bool DRAW = false;
+	bool DRAW = true;
 
 	if (DRAW) {
 
@@ -1168,6 +1167,163 @@ void PhysBVH4() {
 
 	delete[] rb;
 	delete[] pcs;
+
+}
+
+void BoundingVolumeFromCollisionTest() {
+	CollisionBox box(Vector3(), Vector3(1, 1, 1), Quaternion(1, 0.2, 0.4, 0.6).normalized());
+	BoundingAABB aabb = CollisionBoxToBoundingAABB(box);
+	cout << aabb.to_string() << endl;
+}
+
+// 9.932A - Bounding Volumes and Collision Volumes
+void CollisionSphereTest() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(0, 0, 5)));
+
+	PointLight p(0);
+	p.Trans(Vector3(0, 0, 10));
+	s.lights.push_back(p);
+
+	CollisionSphere sphere1(Vector3(0, 0, 0), 1);
+	auto bounding1 = CollisionSphereToBoundingAABB(sphere1);
+	Mesh b1 = rectprism(bounding1.halfrad * 2, bounding1.position);
+
+	Vector3 dir = Vector3(-8, -4, 1).normalized() * 1.6; // change me
+	CollisionSphere sphere2(dir, 1);
+	auto bounding2 = CollisionSphereToBoundingAABB(sphere2);
+	Mesh b2 = rectprism(bounding2.halfrad * 2, bounding2.position);
+
+	bool DRAW = true;
+
+	if (DRAW) {
+
+	cout << "BV " << bounding2.overlaps(&bounding1) << endl;
+	CollisionData overlap = checkCollision(sphere1, sphere2);
+	cout << overlap.to_string() << "\n";
+
+	BaseMaterial mat(BASEMAT_RED);
+	if (overlap.exists()) mat = BaseMaterial(BASEMAT_GREEN);
+
+	Mesh m = sphere1.getMesh();
+	s.addMesh(&m, &mat);
+	Mesh m2 = sphere2.getMesh();
+	s.addMesh(&m2, &mat);
+
+	std::cout << "Prepared\n";
+	s.render();
+	s.drawMesh(b1);
+	s.drawMesh(b2);
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	}
+
+}
+
+// 9.932B
+void CollisionBoxTest() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(0, 0, 5)));
+
+	PointLight p(0);
+	p.Trans(Vector3(0, 0, 10));
+	s.lights.push_back(p);
+
+	Vector3 box1_pos(0, 0, 0);
+	// box1_pos = Vector3(0.3, -1.6, 0);
+	CollisionBox box1(box1_pos, Vector3(1, 1, 1), Quaternion(1, 0.2, 0.4, 0.6).normalized());
+	auto bounding1 = CollisionBoxToBoundingAABB(box1);
+	Mesh b1 = rectprism(bounding1.halfrad * 2, bounding1.position);
+
+	CollisionBox box2(Vector3(-2.4, 0, 0), Vector3(1, 1, 1), Quaternion(1, 1, 0.9, 0.8).normalized());
+	cout << box2.halfrad.to_string() << endl;
+	auto bounding2 = CollisionBoxToBoundingAABB(box2);
+	Mesh b2 = rectprism(bounding2.halfrad * 2, bounding2.position);
+
+	bool DRAW = true;
+
+	if (DRAW) {
+
+	cout << "BV " << bounding2.overlaps(&bounding1) << endl;
+	CollisionData overlap = checkCollision(box1, box2);
+	cout << overlap.to_string() << "\n";
+
+	BaseMaterial mat(BASEMAT_RED);
+	if (overlap.exists()) mat = BaseMaterial(BASEMAT_GREEN);
+	Mesh m = box1.getMesh();
+	s.addMesh(&m, &mat);
+	Mesh m2 = box2.getMesh();
+	s.addMesh(&m2, &mat);
+
+
+
+	std::cout << "Prepared\n";
+	s.render();
+	s.drawMesh(b1);
+	s.drawMesh(b2);
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	}
+
+}
+
+// 9.932C
+void CollisionBoxTest2() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(0, 0, 5)));
+
+	PointLight p(0);
+	p.Trans(Vector3(0, 0, 10));
+	s.lights.push_back(p);
+
+	Vector3 box1_pos(0, 0, 0);
+	// box1_pos = Vector3(0.3, -1.6, 0);
+	CollisionBox box1(box1_pos, Vector3(1, 1.2, 1.4), Quaternion(1, 0.2, 0.4, 0.6).normalized());
+	auto bounding1 = CollisionBoxToBoundingAABB(box1);
+	Mesh b1 = rectprism(bounding1.halfrad * 2, bounding1.position);
+
+	// change the y position of box2
+	CollisionBox box2(Vector3(-2.4, 1.2, 0), Vector3(0.67, 0.42, 0.69), Quaternion(1, 1, 0.9, 0.8).normalized());
+	cout << box2.halfrad.to_string() << endl;
+	auto bounding2 = CollisionBoxToBoundingAABB(box2);
+	Mesh b2 = rectprism(bounding2.halfrad * 2, bounding2.position);
+
+	bool DRAW = true;
+
+	if (DRAW) {
+
+	cout << "BV " << bounding2.overlaps(&bounding1) << endl;
+	CollisionData overlap = checkCollision(box1, box2);
+	cout << overlap.to_string() << "\n";
+
+	BaseMaterial mat(BASEMAT_RED);
+	if (overlap.exists()) mat = BaseMaterial(BASEMAT_GREEN);
+	Mesh m = box1.getMesh();
+	s.addMesh(&m, &mat);
+	Mesh m2 = box2.getMesh();
+	s.addMesh(&m2, &mat);
+
+
+
+	std::cout << "Prepared\n";
+	s.render();
+	s.drawMesh(b1);
+	s.drawMesh(b2);
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	}
 
 }
 

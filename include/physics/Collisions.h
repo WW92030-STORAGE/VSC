@@ -8,5 +8,7 @@
 // #include "collisions/BoundingVolumeTests.h"
 #include "collisions/BoundingVolumeUtils.h"
 #include "collisions/PhysBVH.h"
+#include "collisions/CollisionShape.h"
+#include "collisions/ConvexCollision.h"
 
 #endif

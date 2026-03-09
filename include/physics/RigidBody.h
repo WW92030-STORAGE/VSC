@@ -8,6 +8,8 @@
 #include "../utils/Math.h"
 #include "Constants.h"
 
+#include "collisions/CollisionShape.h"
+
 // #include <iostream>
 
 struct RigidBody {
@@ -39,6 +41,8 @@ struct RigidBody {
     Transform transform;
     float motion = 0;
     bool awake = true;
+
+    CollisionShape* shape = 0;
 
     RigidBody();
 

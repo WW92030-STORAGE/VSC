@@ -13,6 +13,8 @@ WARNING - BoundingOBB is not used for now. It is not implemented and should not 
 
 */
 
+#define BV_MERGE_MARGIN 0.1
+
 struct BoundingVolume {
     Vector3 position = Vector3(0, 0, 0);
 

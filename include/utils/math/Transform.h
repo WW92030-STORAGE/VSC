@@ -8,6 +8,7 @@
 #include "Matrices.h"
 #include "BASE.h"
 #include "UTIL.h"
+#include "Quaternion.h"
 
 // 3D Transforms
 

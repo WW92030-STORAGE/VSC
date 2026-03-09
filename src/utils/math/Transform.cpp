@@ -8,6 +8,7 @@
 
 
 #include "../../../include/utils/math/Transform.h"
+#include "../../../include/utils/math/Quaternion.h"
 
 // 3D Transforms
 
