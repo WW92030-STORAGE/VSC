@@ -115,5 +115,28 @@ inline void noisetex() {
 	delete mat;
 }
 
+// SHA256 CRAP
+
+// Rotation test
+
+void bitrotationtest() {
+	uint32_t a = 20937527;
+	std::cout << print_binary(a) << "\n";
+	a = rightrotate(a, 5);
+	std::cout << print_binary(a) << "\n";
+	a = leftrotate(a, 5);
+	std::cout << print_binary(a) << "\n";
+}
+
+void sha256test() {
+	std:string input = "agdjsdgagde3hw3g3g3w9hmg3n pmb2y8ggr08cm9iqgqgiqpgqhgi9epqgqu9ngquugeh073geymg4-";
+
+	std::vector<uint32_t> hash = sha256(input);
+	for (auto i : hash) std::cout << print_hex(i) << "";
+	std::cout << "\n";
+	// assert value
+	std::cout << "af16b0b6d54a2c75ba0c13d831ae32c61079bbab258948653c5582612e9eea63" << "\n";
+}
+
 
 #endif

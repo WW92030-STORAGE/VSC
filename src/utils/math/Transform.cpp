@@ -30,6 +30,11 @@
 		basis = (rot);
 	}
 
+	Transform::Transform(Vector3 loc, Quaternion q) {
+		origin = loc;
+		basis = q.toRotation();
+	}
+
 	Transform::Transform(Matrix4 m) {
 		for (int i = 0; i < 3; i++) {
 			origin.set(i, m.get(i, 3));

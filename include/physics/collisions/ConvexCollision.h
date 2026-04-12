@@ -17,17 +17,17 @@ Collisions between convex objects.
 
 // No pointers are owned.
 struct CollisionData {
-    CollisionShape* a = 0;
-    CollisionShape* b = 0;
+    CollisionShape* shapes[2] = {0, 0};
+    RigidBody* bodies[2] = {0, 0};
     Vector3 normal = Vector3(); // From A into B
 
     inline bool exists() {
-        return a || b;
+        return shapes[0];
     }
 
     std::string to_string() {
         if (!exists()) return "CollisionData[]";
-        return "CollisionData[" + a->to_string() + ", " + b->to_string() + " | " + normal.to_string() + "]";
+        return "CollisionData[" + shapes[0]->to_string() + ", " + shapes[1]->to_string() + " | " + normal.to_string() + "]";
     }
 };
 
@@ -38,8 +38,8 @@ CollisionData checkCollision(CollisionSphere& x1, CollisionSphere& x2) {
     BoundingSphere b2 = CollisionSphereToBoundingSphere(x2);
 
     if (b1.overlaps(&b2)) {
-        cd.a = &x1;
-        cd.b = &x2;
+        cd.shapes[0] = &x1;
+        cd.shapes[1] = &x2;
         cd.normal = (x2.position - x1.position).normalized();
     }
     return cd;
@@ -82,10 +82,24 @@ CollisionData checkCollision(CollisionBox& x1, CollisionBox& x2) {
             }
         }
     }
-    cd.a = &x1;
-    cd.b = &x2;
+    cd.shapes[0] = &x1;
+    cd.shapes[1] = &x2;
 
     return cd;
+}
+
+CollisionData checkCollision(CollisionShape* x1, CollisionShape* x2) {
+    if (!x1 || !x2) return CollisionData();
+
+    if (CollisionSphere* c1 = dynamic_cast<CollisionSphere*>(x1)) {
+        if (CollisionSphere* c2 = dynamic_cast<CollisionSphere*>(x2)) return checkCollision(*c1, *c2);
+    }
+    if (CollisionBox* c1 = dynamic_cast<CollisionBox*>(x1)) {
+        if (CollisionBox* c2 = dynamic_cast<CollisionBox*>(x2)) return checkCollision(*c1, *c2);
+    }
+
+
+    return CollisionData();
 }
 
 // Separating Axis Test (return true if no collision in that direction)

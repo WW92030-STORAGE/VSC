@@ -34,6 +34,8 @@
         global_inertia_inv = other.global_inertia_inv;
         awake = other.awake;
         motion = other.motion;
+
+        shape = other.shape;
     }
 
     // Set the tensor
@@ -118,8 +120,18 @@
         auto halfo = global_omega + AL_t * 0.5 * delta;
 
         // 2. x(t + dt) : x(t) + v(t + 0.5dt) dt
-        global_position = global_position + halfv * delta;
+        Quaternion original_rotation = global_rotation;
+        Vector3 diff = halfv * delta;
+
+        global_position = global_position + diff;
         global_rotation = global_rotation.addScaled(halfo, delta).normalized();
+
+        if (shape) {
+            // shape->Trans(diff, global_rotation * original_rotation.inv());
+            shape->position = global_position;
+            shape->basis = global_rotation;
+        }
+
         global_acceleration = A_t;
         return {halfv, halfo};
     }

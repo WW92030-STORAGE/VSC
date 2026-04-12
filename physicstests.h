@@ -1327,4 +1327,305 @@ void CollisionBoxTest2() {
 
 }
 
+// 9.932D - Collisions Stress Test
+void CollisionsTest1() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(0, 0, 12)));
+
+	PointLight p(0);
+	p.Trans(Vector3(0, 0, 10));
+	s.lights.push_back(p);
+
+	MersenneTwister mt(1000);
+
+	int N = 1<<16;
+	int L = 8;
+
+	std::vector<RigidBody> bodies(N, RigidBody());
+	std::vector<CollisionSphere> shapes(N);
+	for (int i = 0; i < N; i++) {
+		shapes[i] = CollisionSphere(Vector3(), 0.5);
+		bodies[i].shape = &shapes[i];
+
+		Vector3 random_pos(L * (1 - 2 * mt()), L * (1 - 2 * mt()), L * (1 - 2 * mt()));
+
+		bodies[i].global_position = random_pos;
+		shapes[i].position = bodies[i].global_position;
+	}
+
+	PhysBVHNode<BoundingAABB>* bvh = new PhysBVHNode<BoundingAABB>(0, CollisionSphereToBoundingAABB(shapes[0]), &bodies[0]);
+
+	for (int i = 1; i < N; i++) {
+		auto bounding = CollisionSphereToBoundingAABB(shapes[i]);
+		bvh->insert(&bodies[i], bounding);
+	}
+
+	bool NAIVE = true;
+	constexpr int MAX_COL = 1<<24;
+	CollisionData* collisions = new CollisionData[MAX_COL];
+	int count = 0;
+	if (NAIVE) {
+		
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < i; j++) {
+				if (count >= MAX_COL) break;
+				CollisionData cc = checkCollision(shapes[i], shapes[j]);
+				if (cc.exists()) collisions[count++] = cc;
+			}
+		}
+	} else {
+		PossibleCollision* pc = new PossibleCollision[MAX_COL];
+		int cx = bvh->getPossibleContacts(pc, MAX_COL);
+
+		std::cout << "POSSIBLES " << cx << "\n";
+
+		for (int i = 0; i < cx; i++) {
+			CollisionData cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
+			if (count >= MAX_COL) break;
+			if (cc.exists()) collisions[count++] = cc;
+		}
+
+		delete[] pc;
+	}
+
+	std::cout << "COLLISIONS: " << count << "\n";
+
+	bool DRAW = false;
+
+	if (DRAW) {
+
+	std::set<Vector3> colliding;
+	for (int i = 0; i < count; i++) {
+		colliding.insert(collisions[i].shapes[0]->position);
+		colliding.insert(collisions[i].shapes[1]->position);
+	}
+
+	for (int i = 0; i < N; i++) {
+		BaseMaterial mat(BASEMAT_RED);
+		if (colliding.count(shapes[i].position)) mat = BaseMaterial(BASEMAT_GREEN);
+		Mesh vis = icosphere(shapes[i].radius, 1);
+		vis.Trans(Transform(shapes[i].position));
+
+		s.addMesh(&vis, &mat);
+	}
+
+	std::cout << "Prepared\n";
+	s.render();
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	delete bvh;
+	delete[] collisions;
+	}
+
+}
+
+// 9.932E
+void CollisionsTest2() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(0, 0, 12)));
+
+	PointLight p(0);
+	p.Trans(Vector3(0, 0, 10));
+	s.lights.push_back(p);
+
+	MersenneTwister mt(1000); // keep the seed constant
+
+	// 447025 with (1<<12) bodies. 4.2s --> 1.5s with bvh
+	int N = 1<<12;
+	int L = 8;
+
+	std::vector<RigidBody> bodies(N, RigidBody());
+	std::vector<CollisionBox> shapes(N);
+	for (int i = 0; i < N; i++) {
+		shapes[i] = CollisionBox(Vector3(), Vector3(1 + mt(), 1 + mt(), 1 + mt()));
+		bodies[i].shape = &shapes[i];
+
+		Vector3 random_pos(L * (1 - 2 * mt()), L * (1 - 2 * mt()), L * (1 - 2 * mt()));
+		Quaternion random_rot = Quaternion(1, mt() * M_PI * 2, mt() * M_PI * 2, mt() * M_PI * 2).normalized();
+
+		bodies[i].global_position = random_pos;
+		bodies[i].global_rotation = random_rot;
+		shapes[i].position = bodies[i].global_position;
+		shapes[i].basis = bodies[i].global_rotation;
+	}
+	
+	bool NAIVE = true;
+	constexpr int MAX_COL = 1<<24;
+	CollisionData* collisions = new CollisionData[MAX_COL];
+	int count = 0;
+	if (NAIVE) {
+		
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < i; j++) {
+				if (count >= MAX_COL) break;
+				CollisionData cc = checkCollision(shapes[i], shapes[j]);
+				if (cc.exists()) collisions[count++] = cc;
+			}
+		}
+	} else {
+		PhysBVHNode<BoundingAABB>* bvh = new PhysBVHNode<BoundingAABB>(0, CollisionBoxToBoundingAABB(shapes[0]), &bodies[0]);
+
+		for (int i = 1; i < N; i++) {
+			auto bounding = CollisionBoxToBoundingAABB(shapes[i]);
+			bvh->insert(&bodies[i], bounding);
+		}
+		PossibleCollision* pc = new PossibleCollision[MAX_COL];
+		int cx = bvh->getPossibleContacts(pc, MAX_COL);
+
+		std::cout << "POSSIBLES " << cx << "\n";
+
+		for (int i = 0; i < cx; i++) {
+			CollisionData cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
+			if (count >= MAX_COL) break;
+			if (cc.exists()) collisions[count++] = cc;
+		}
+		delete bvh;
+		delete[] pc;
+	}
+
+	std::cout << "COLLISIONS: " << count << "\n";
+
+	bool DRAW = N <= (1<<5);
+
+	if (DRAW) {
+
+	std::set<Vector3> colliding;
+	for (int i = 0; i < count; i++) {
+		colliding.insert(collisions[i].shapes[0]->position);
+		colliding.insert(collisions[i].shapes[1]->position);
+	}
+
+	for (int i = 0; i < N; i++) {
+		BaseMaterial mat(BASEMAT_RED);
+		if (colliding.count(shapes[i].position)) mat = BaseMaterial(BASEMAT_GREEN);
+		Mesh vis = rectprism(shapes[i].halfrad);
+		vis.Trans(Transform(shapes[i].position, shapes[i].basis));
+
+		s.addMesh(&vis, &mat);
+	}
+
+	std::cout << "Prepared\n";
+	s.render();
+	std::cout << "Drawn " << s.countTriangles() << " Triangles\n";
+
+	s.outputBuffer(BUFFER_PATH);
+
+	std::cout << "Stored\n";
+
+	
+	delete[] collisions;
+	}
+
+}
+
+// 9.932F
+void CollisionsTest3() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(0, 0, 12)));
+
+	PointLight p(0);
+	p.Trans(Vector3(0, 0, 10));
+	s.lights.push_back(p);
+
+	MersenneTwister mt(1000); // keep the seed constant
+	int N = 64;
+	int L = 8;
+
+	// Set up the physics
+
+	RigidBodyGroup bodies;
+	std::vector<CollisionBox> shapes(N);
+	for (int i = 0; i < N; i++) {
+		shapes[i] = CollisionBox(Vector3(), Vector3(1 + mt(), 1 + mt(), 1 + mt()) * 0.5);
+		RigidBody rb;
+		rb.shape = &shapes[i];
+
+		Vector3 random_pos(L * (1 - 2 * mt()), L * (1 - 2 * mt()), L * (1 - 2 * mt()));
+		Quaternion random_rot = Quaternion(1, mt() * M_PI * 2, mt() * M_PI * 2, mt() * M_PI * 2).normalized();
+
+		rb.global_position = random_pos;
+		rb.global_rotation = random_rot;
+		shapes[i].position = rb.global_position;
+		shapes[i].basis = rb.global_rotation;
+
+		rb.global_omega = Vector3(1 - 2 * mt(), 1 - 2 * mt(), 1 - 2 * mt()) * 2;
+		rb.global_velocity = Vector3(1 - 2 * mt(), 1 - 2 * mt(), 1 - 2 * mt()) * 2;
+		rb.gravity = VEC3_ZERO;
+
+		bodies.addRigidBody(rb);
+	}
+
+	// Set up the scene
+	for (int i = 0; i < N; i++) {
+		Mesh m = rectprism(shapes[i].halfrad * 2);
+		m.Trans(Transform(shapes[i].position, shapes[i].basis));
+		s.addMesh(&m);
+	}
+
+	int LEN = 96;
+	int MAX_COL = 1<<16;
+
+	CollisionData* collisions = new CollisionData[MAX_COL];
+	PossibleCollision* pc = new PossibleCollision[MAX_COL];
+
+
+
+	for (int FRAME = 0; FRAME < LEN; FRAME++) {
+		int count = 0;
+
+		PhysBVHNode<BoundingAABB>* bvh = new PhysBVHNode<BoundingAABB>(0, CollisionBoxToBoundingAABB(shapes[0]), bodies.bodies[0]);
+
+		for (int i = 1; i < N; i++) {
+			auto bounding = CollisionBoxToBoundingAABB(shapes[i]);
+			bvh->insert(bodies.bodies[i], bounding);
+		}
+		
+		int cx = bvh->getPossibleContacts(pc, MAX_COL);
+
+		for (int i = 0; i < cx; i++) {
+			CollisionData cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
+			if (count >= MAX_COL) break;
+			if (cc.exists()) {
+				cc.bodies[0] = pc[i].bodies[0];
+				cc.bodies[1] = pc[i].bodies[1];
+				collisions[count++] = cc;
+			}
+		}
+		delete bvh;
+
+		std::cout << count << "\n";
+
+		std::set<RigidBody*> colliding_pos;
+		for (int i = 0; i < count; i++) {
+			colliding_pos.insert(collisions[i].bodies[0]);
+			colliding_pos.insert(collisions[i].bodies[1]);
+		}
+
+		for (int mi = 0; mi < bodies.bodies.size(); mi++) {
+			Transform original = s.meshes[mi]->transform;
+			Transform transform = bodies.bodies[mi]->transform * original.inv();
+			s.meshes[mi]->Trans(transform);
+
+			if (colliding_pos.count(bodies.bodies[mi])) s.materials[mi]->baseColor = Vector3(1, 0, 0);
+			else s.materials[mi]->baseColor = Vector3(1, 1, 1);
+		}
+		s.render();
+		bodies.integrate_forces();
+		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(FRAME));
+
+		std::cout << "FRAME " << FRAME << "DONE\n";
+	}
+
+	std::ofstream len(VIDEO_PATH + "/LEN");
+	len << LEN;
+	len.close();
+	delete[] collisions;
+	delete[] pc;
+}
+
+
 #endif

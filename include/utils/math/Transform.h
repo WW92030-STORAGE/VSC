@@ -25,6 +25,8 @@ class Transform {
 
 	Transform(Vector3 loc, Matrix3 rot);
 
+	Transform(Vector3 loc, Quaternion rot);
+
 	Transform(Matrix4 m);
 
 	Transform(const Transform& other);

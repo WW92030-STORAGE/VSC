@@ -71,4 +71,8 @@
 
 #include "physics/Physics.h"
 
+// Miscellaneous
+
+#include "utils/crypto/sha256.h"
+
 #endif

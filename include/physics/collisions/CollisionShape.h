@@ -11,6 +11,7 @@
 
 struct CollisionShape {
     Vector3 position = Vector3(0, 0, 0);
+    Quaternion basis = Quaternion::eye();
     CollisionShape() {
     }
 
@@ -24,6 +25,26 @@ struct CollisionShape {
 
     virtual std::string to_string() {
         return "CollisionShape[" + position.to_string() + "]";
+    }
+
+    virtual void Trans(Transform t) {
+        Quaternion ob = basis;
+        Vector3 op = position;
+
+        Quaternion tb(t.basis);
+
+        basis = tb * ob;
+
+        position = tb(op) + t.origin;
+    }
+
+    virtual void Trans(Vector3 v, Quaternion tb) {
+        Quaternion ob = basis;
+        Vector3 op = position;
+
+        basis = tb * ob;
+
+        position = tb(op) + v;
     }
 };
 
@@ -51,7 +72,6 @@ struct CollisionSphere : public CollisionShape {
 
 struct CollisionBox : public CollisionShape {
     Vector3 halfrad = Vector3(0.5, 0.5, 0.5); 
-    Quaternion basis = Quaternion::eye();
 
     CollisionBox() : CollisionShape() {
 

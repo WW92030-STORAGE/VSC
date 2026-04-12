@@ -13,10 +13,10 @@ using namespace std;
 
 #include "main_utils.h" // definitions of paths and some things
 
-// #include "misctests.h"
+#include "misctests.h"
 
-#include "black_box_tests.h"
-#include "physicstests.h"
+// #include "black_box_tests.h"
+// #include "physicstests.h"
 
 #include <chrono>
 
@@ -60,9 +60,11 @@ int main() {
 	// CollisionSphereTest();
 	// CollisionBoxTest();
 
-	CollisionBoxTest2();
+	// CollisionBoxTest2();
 
+	// CollisionsTest3();
 
+	sha256test();
 
 	/*
 	Matrix3 A(1, 3, 2, 3, 2, 1, 2, 1, 3);
