@@ -151,10 +151,18 @@
 	// Convert to rot matrix
 
 	Matrix3 Quaternion::toRotation() {
-		Quaternion q = normalized();
-		Vector3 x(1 - 2 * (v.y * v.y + v.z * v.z), 2 * (v.x * v.y + w * v.z), 2 * (v.x * v.z - w * v.y));
-		Vector3 y(2 * (v.x * v.y - w * v.z), 1 - 2 * (v.x * v.x + v.z * v.z), 2 * (v.y * v.z + w * v.x));
-		Vector3 z(2 * (v.x * v.z + w * v.y), 2 * (v.y * v.z - w * v.x), 1 - 2 * (v.x * v.x + v.y * v.y));
+		float xsq = v.x * v.x;
+		float ysq = v.y * v.y;
+		float zsq = v.z * v.z;
+		float xy = v.x * v.y;
+		float xz = v.x * v.z;
+		float yz = v.y * v.z;
+		float wx = w * v.x;
+		float wy = w * v.y;
+		float wz = w * v.z;
+		Vector3 x(1 - 2 * (ysq + zsq), 2 * (xy + wz), 2 * (xz - wy));
+		Vector3 y(2 * (xy - wz), 1 - 2 * (xsq + zsq), 2 * (yz + wx));
+		Vector3 z(2 * (xz + wy), 2 * (yz - wx), 1 - 2 * (xsq + ysq));
 		return Matrix3(x, y, z);
 	}
 

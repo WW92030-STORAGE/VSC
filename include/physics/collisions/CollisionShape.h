@@ -79,7 +79,7 @@ struct CollisionBox : public CollisionShape {
 
     CollisionBox(Vector3 p, Vector3 hr = Vector3(0.5, 0.5, 0.5), Quaternion b = Quaternion::eye()) : CollisionShape(p) {
         halfrad = hr;
-        basis = b;
+        basis = b.normalized();
     }
 
     virtual Mesh getMesh() {

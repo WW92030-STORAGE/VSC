@@ -5,7 +5,7 @@ This is it guys. It's the final 1% (9.9 - 10) of VSC. This will attempt to creat
 This is a part of VSC however it really should be treated like a submodule. Its scope is possibly as large as the other 99% (0 - 9.9) combined.
 Everything in this folder is standalone (with only `utils` as a dependency). Its files will use the special suffix `VSC_PHYS` in the macros.
 
-Based on a certain book on Game Physics by Ian Millington, and the accompanying source code `https://github.com/idmillington/cyclone-physics`
+HEAVILY Based on a certain book on Game Physics by Ian Millington, and the accompanying source code `https://github.com/idmillington/cyclone-physics`
 
 We will not do exactly the same thing however, and many things will be ... rearranged.
 
@@ -34,3 +34,7 @@ As a result, pointer usage and pointer arrays are increased here.
 # 10 - RIGID BODIES
 
 - RigidBody class
+
+# 12-13 - COLLISION DETECTION
+
+- most of the stuff in `/collisions/`

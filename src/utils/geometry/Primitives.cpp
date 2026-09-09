@@ -145,7 +145,7 @@
 
 	// Distance from Point
 	float Plane::distanceFrom(const Vector3& q) {
-		return distanceFromOrigin() + (n.normalized() * q);
+		return distanceFromOrigin() + (n * q);
 	}
 
 	float Plane::distanceFrom(const Vector4& q) {

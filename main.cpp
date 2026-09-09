@@ -1,14 +1,13 @@
 #include <cmath>
 #include <fstream>
-
+#include <iostream>
+#include <unordered_set>
+#include <chrono>
 
 #include "everything.h"
-#include <iostream>
-#include <chrono>
 
 #include "texture_texture.h"
 
-#include <unordered_set>
 using namespace std;
 
 #include "main_utils.h" // definitions of paths and some things
@@ -16,9 +15,7 @@ using namespace std;
 #include "misctests.h"
 
 // #include "black_box_tests.h"
-// #include "physicstests.h"
-
-#include <chrono>
+#include "physicstests.h"
 
 int main() {
 	std::cout << "BEGIN\n";
@@ -64,8 +61,11 @@ int main() {
 
 	// CollisionsTest3();
 
-	sha256test();
+	// sha256test();
 
+	// pointBoxTest();
+	// spherePlaneTest();
+	boxVertToFaceTest();
 	/*
 	Matrix3 A(1, 3, 2, 3, 2, 1, 2, 1, 3);
 	auto p = eigen3_sym(A);

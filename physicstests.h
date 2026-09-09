@@ -1199,7 +1199,7 @@ void CollisionSphereTest() {
 	if (DRAW) {
 
 	cout << "BV " << bounding2.overlaps(&bounding1) << endl;
-	CollisionData overlap = checkCollision(sphere1, sphere2);
+	Collision overlap = checkCollision(sphere1, sphere2);
 	cout << overlap.to_string() << "\n";
 
 	BaseMaterial mat(BASEMAT_RED);
@@ -1249,7 +1249,7 @@ void CollisionBoxTest() {
 	if (DRAW) {
 
 	cout << "BV " << bounding2.overlaps(&bounding1) << endl;
-	CollisionData overlap = checkCollision(box1, box2);
+	Collision overlap = checkCollision(box1, box2);
 	cout << overlap.to_string() << "\n";
 
 	BaseMaterial mat(BASEMAT_RED);
@@ -1301,7 +1301,7 @@ void CollisionBoxTest2() {
 	if (DRAW) {
 
 	cout << "BV " << bounding2.overlaps(&bounding1) << endl;
-	CollisionData overlap = checkCollision(box1, box2);
+	Collision overlap = checkCollision(box1, box2);
 	cout << overlap.to_string() << "\n";
 
 	BaseMaterial mat(BASEMAT_RED);
@@ -1362,14 +1362,14 @@ void CollisionsTest1() {
 
 	bool NAIVE = true;
 	constexpr int MAX_COL = 1<<24;
-	CollisionData* collisions = new CollisionData[MAX_COL];
+	Collision* collisions = new Collision[MAX_COL];
 	int count = 0;
 	if (NAIVE) {
 		
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < i; j++) {
 				if (count >= MAX_COL) break;
-				CollisionData cc = checkCollision(shapes[i], shapes[j]);
+				Collision cc = checkCollision(shapes[i], shapes[j]);
 				if (cc.exists()) collisions[count++] = cc;
 			}
 		}
@@ -1380,7 +1380,7 @@ void CollisionsTest1() {
 		std::cout << "POSSIBLES " << cx << "\n";
 
 		for (int i = 0; i < cx; i++) {
-			CollisionData cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
+			Collision cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
 			if (count >= MAX_COL) break;
 			if (cc.exists()) collisions[count++] = cc;
 		}
@@ -1455,14 +1455,14 @@ void CollisionsTest2() {
 	
 	bool NAIVE = true;
 	constexpr int MAX_COL = 1<<24;
-	CollisionData* collisions = new CollisionData[MAX_COL];
+	Collision* collisions = new Collision[MAX_COL];
 	int count = 0;
 	if (NAIVE) {
 		
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < i; j++) {
 				if (count >= MAX_COL) break;
-				CollisionData cc = checkCollision(shapes[i], shapes[j]);
+				Collision cc = checkCollision(shapes[i], shapes[j]);
 				if (cc.exists()) collisions[count++] = cc;
 			}
 		}
@@ -1479,7 +1479,7 @@ void CollisionsTest2() {
 		std::cout << "POSSIBLES " << cx << "\n";
 
 		for (int i = 0; i < cx; i++) {
-			CollisionData cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
+			Collision cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
 			if (count >= MAX_COL) break;
 			if (cc.exists()) collisions[count++] = cc;
 		}
@@ -1569,7 +1569,7 @@ void CollisionsTest3() {
 	int LEN = 96;
 	int MAX_COL = 1<<16;
 
-	CollisionData* collisions = new CollisionData[MAX_COL];
+	Collision* collisions = new Collision[MAX_COL];
 	PossibleCollision* pc = new PossibleCollision[MAX_COL];
 
 
@@ -1587,7 +1587,7 @@ void CollisionsTest3() {
 		int cx = bvh->getPossibleContacts(pc, MAX_COL);
 
 		for (int i = 0; i < cx; i++) {
-			CollisionData cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
+			Collision cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
 			if (count >= MAX_COL) break;
 			if (cc.exists()) {
 				cc.bodies[0] = pc[i].bodies[0];
@@ -1627,5 +1627,30 @@ void CollisionsTest3() {
 	delete[] pc;
 }
 
+// 9.940A
+void pointBoxTest() {
+	CollisionBox box(Vector3(2, 1, 0), Vector3(1, 1, 1), QuaternionAA(Vector3(0, 0, 1), M_PI / 4));
+	cout << box.to_string() << endl;
+	Vector3 v(0.8, 0.6, 0.4);
+	v = Vector3(1.4, 0.2, 0.6);
+	cout << boxPoint(box, v).to_string() << endl;
+}
+
+// 9.940B
+void spherePlaneTest() {
+	CollisionSphere sphere(Vector3(1, 2, -1), 1);
+	Plane p(1, 1, 1, -1);
+	cout << sphere.to_string() << endl;
+	cout << spherePlane(sphere, p).to_string() << endl;
+}
+
+// 9.940C
+void boxVertToFaceTest() {
+	CollisionBox b1(Vector3(0.424705, 1.37183, 0.33283), Vector3(1, 1, 1), Quaternion(0.986745, -0.132876, 0.058689, -0.072339));
+	CollisionBox b2(Vector3(0.782093, 2.3197, 2.72142), Vector3(1, 1, 1), Quaternion(0.942589, 0.274617, -0.148484, 0.118591));
+	// cout << b1.basis.to_string() << endl;
+	// cout << b1.basis.toRotation().sprintf() << endl;
+	cout << checkCollision(b1, b2).to_string() << endl;
+}
 
 #endif
