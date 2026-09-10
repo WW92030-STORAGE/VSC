@@ -70,4 +70,4 @@
 - 9.93C. BVH 3D (ORBIT 0)
 - 9.931x. BVH Broad Collision Checks (ORBIT 1)
 - 9.932x. Basic Collision Shape Checks (ORBIT 2)
-- 9.940x. Basic Collision Data (// - Everything collision data related will be under 9.94x.)
+- 9.940x. Basic Collision Data (// - Everything collision data related will be under 9.94x and will be named after characters from Zula Patrol.)

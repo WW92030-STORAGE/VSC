@@ -24,6 +24,7 @@ struct Collision {
 	RigidBody* bodies[2] = {0, 0};
     Vector3 normal = Vector3(); // From A into B
 	Vector3 point = Vector3();
+	float penetration;
 
     inline bool exists() {
         return shapes[0];
@@ -33,7 +34,7 @@ struct Collision {
         if (!exists()) return "CollisionData[]";
 		std::string x0 = shapes[0] ? shapes[0]->to_string() : "NULL";
 		std::string x1 = shapes[1] ? shapes[1]->to_string() : "NULL";
-        return "CollisionData[shapes=(" + x0 + ", " + x1 + "), N=" + normal.to_string() + ", P=" + point.to_string() + "]";
+        return "CollisionData[shapes=(" + x0 + ", " + x1 + "), N=" + normal.to_string() + ", P=" + point.to_string() + ", X=" + std::to_string(penetration) + "]";
     }
 };
 
@@ -75,6 +76,7 @@ Collision boxPoint(CollisionBox& box, Vector3& p) {
 	cd.normal = normal;
 	cd.point = p;
 	cd.shapes[0] = &box;
+	cd.penetration = normal.length();
 	return cd;
 }
 
@@ -85,7 +87,8 @@ Collision spherePlane(CollisionSphere& sphere, Plane& p) {
 	Collision cd;
 	cd.shapes[0] = &sphere;
 	cd.point = sphere.position - p.n * sphere.radius;
-	cd.normal = p.n * ((p.p - cd.point) * p.n);
+	cd.penetration = (p.p - cd.point) * p.n;
+	cd.normal = p.n * cd.penetration;
 	return cd;
 }
 
@@ -106,8 +109,9 @@ float boxPenetrationAxis(CollisionBox& b1, CollisionBox& b2, Vector3& axis, Vect
 // Generates standardized collision data between two boxes, along some axis. The second box is perspective here, first box contains the axis we compare against.
 // Disp is the distance between b2 - b1 and pen is the precomputed penetration distance from b1 to b2 (positive if intersecting).
 Collision boxVertexToFace(CollisionBox& b1, CollisionBox& b2, Vector3 axis, Vector3 disp, float pen) {
+	axis = axis.normalized();
 	Matrix3 mat = b2.basis.toRotation();
-	Vector3 normal = axis.normalized();
+	Vector3 normal = axis;
 	if (axis * disp > 0) normal = normal * -1;
 
 	Vector3 v = b2.halfrad;
@@ -117,9 +121,70 @@ Collision boxVertexToFace(CollisionBox& b1, CollisionBox& b2, Vector3 axis, Vect
 
 	Collision cd;
 	cd.normal = normal * pen;
-	cd.point = Transform(b2.position, mat) * v;
+	cd.point = applyTransform(v, b2.position, mat);
 	cd.shapes[0] = &b2;
 	cd.shapes[1] = &b1;
+	cd.penetration = pen;
+	return cd;
+}
+
+// Resolves the closest point between two lines (p1, v1) + (p2, v2). The midpoints of the lines are (d1, d2) along each of them.
+Vector3 proximal(Vector3 p1, Vector3 v1, Vector3 p2, Vector3 v2, float d1, float d2, bool usefirst) {
+	Vector3 disp = p1 - p2;
+	// The columns of any unitary matrix are unit vectors, and so are the rows.
+
+	float cosine = v1 * v2;
+	float dp1 = v1 * disp;
+	float dp2 = v2 * disp;
+
+	float sinesquared = 1 - cosine * cosine;
+
+	if (BASE::fzero(sinesquared)) return usefirst ? p1 : p2; // parallel edges - use some point arbitrarily (decided by the the positioning of the boxes in later methods)
+	float inv_denom = 1.0 / sinesquared;
+
+	float mu1 = (cosine * dp2 - dp1) * inv_denom;
+	float mu2 = (cosine * dp1 - dp2) * inv_denom;
+
+	if (mu1 > d1 || mu1 < -d1 || mu2 > d2 || mu2 < -d2) return usefirst ? p1 : p2; 
+	return (p1 + v1 * mu1 + p2 + v2 * mu2) * 0.5;
+}
+
+// Collision between two box edges
+
+Collision boxEdgeToEdge(CollisionBox& x1, CollisionBox& x2, Matrix3& b1, Matrix3& b2, int index, Vector3 axis, Vector3 disp, float minPenetration, bool useb1) {
+	axis = axis.normalized();
+	Collision cd;
+	int b1index = index / 3;
+	int b2index = index % 3;
+	Vector3 b1axis = b1.getCol(b1index);
+	Vector3 b2axis = b2.getCol(b2index);
+
+	if (axis * disp > 0) axis = axis * -1;
+
+    cd.shapes[0] = &x1;
+    cd.shapes[1] = &x2;
+
+	// Compute the relevant midpoints of the relevant edges by isolating out the plane the axes are normal to (under the effects of the box's inverse transform) and then figuring out the relevant positions.
+
+	Vector3 p1 = x1.halfrad;
+	Vector3 p2 = x2.halfrad;
+	for (int i = 0; i < 3; i++) {
+		if (i == b1index) p1.set(i, 0);
+		else if (b1.getCol(i) * axis > 0) p1.set(i, -p1.get(i));
+		if (i == b2index) p2.set(i, 0);
+		else if (b2.getCol(i) * axis > 0) p2.set(i, -p2.get(i));
+	}
+
+	p1 = applyTransform(p1, x1.position, b1);
+	p2 = applyTransform(p2, x2.position, b2);
+
+	Vector3 v = proximal(p1, b1axis, p2, b2axis, x1.halfrad.get(b1index), x2.halfrad.get(b2index), useb1);
+
+	cd.point = v;
+	cd.normal = axis * minPenetration;
+	cd.shapes[0] = &x1;
+	cd.shapes[1] = &x2;
+	cd.penetration = minPenetration;
 	return cd;
 }
 
@@ -135,15 +200,48 @@ Collision checkCollision(CollisionSphere& x1, CollisionSphere& x2) {
     if (b1.overlaps(&b2)) {
         cd.shapes[0] = &x1;
         cd.shapes[1] = &x2;
-        cd.normal = (x2.position - x1.position).normalized();
+        cd.normal = (x1.position - x2.position).normalized();
 		cd.point = x1.position + cd.normal * x1.radius;
     }
     return cd;
 }
 
+// SPHERE ON BOX COLLISIONS
+Collision checkCollision(CollisionSphere& sp, CollisionBox& box) {
+	// Transform the sphere to the box's relative space so that the check is on an AABB centered at the origin and with halfradius box.halfrad
+	Vector3 relp = Transform(box.position, box.basis).inv() * sp.position;
+	Vector3 dims = box.halfrad;
+	float r = sp.radius;
+	// early out
+	Collision cd;
+	if (fabs(relp.x) > dims.x + r || fabs(relp.y) > dims.y + r || fabs(relp.z) > dims.z + r) return cd;
+
+	// The closest point to the sphere on the box is the sphere's position except each coordinate is clamped to the box
+	Vector3 closest(BASE::clamp(relp.x, -dims.x, dims.x), BASE::clamp(relp.y, -dims.y, dims.y), BASE::clamp(relp.z, -dims.z, dims.z));
+	Vector3 disp = relp - closest;
+	float rsq = disp.normsquared();
+	if (rsq > r * r) return cd;
+
+	Transform toWorld = Transform(box.position, box.basis);
+
+	Vector3 absoluteClosest = toWorld * closest;
+	cd.point = absoluteClosest;
+	Vector3 trueDisp = sp.position - absoluteClosest;
+	float dist = trueDisp.length();
+	cd.penetration = r - dist;
+	if (!BASE::fzero(dist)) cd.normal = trueDisp * (cd.penetration / dist);
+	else cd.normal = (sp.position - box.position).normalized() * r;
+	cd.shapes[0] = &sp;
+	cd.shapes[1] = &box;
+	return cd;
+}
+
+Collision checkCollision(CollisionBox& b, CollisionSphere& s) {
+	return checkCollision(s, b);
+}
+
 // BOX ON BOX COLLISIONS
 Collision checkCollision(CollisionBox& x1, CollisionBox& x2) {
-    Collision cd;
     Matrix3 b1 = x1.basis.toRotation();
     Matrix3 b2 = x2.basis.toRotation();
 
@@ -152,16 +250,18 @@ Collision checkCollision(CollisionBox& x1, CollisionBox& x2) {
 	float minPenetration = FLT_MAX;
 	int index = 0;
 	int counter = 0;
+	Vector3 theAxis;
 
     // Face normals...
     for (int i = 0; i < 3; i++) {
         Vector3 axis = b1.getCol(i);
 		float pen = boxPenetrationAxis(x1, x2, axis, disp);
 		std::cout << i << " " << pen << "\n";
-        if (pen < 0) return cd;
+        if (pen < 0) return Collision();
 		if (pen < minPenetration) {
 			minPenetration = pen;
 			index = counter; 
+			theAxis = axis;
 		}
 		counter++;
 	}
@@ -169,13 +269,16 @@ Collision checkCollision(CollisionBox& x1, CollisionBox& x2) {
         Vector3 axis = b2.getCol(i);
 		float pen = boxPenetrationAxis(x1, x2, axis, disp);
 		std::cout << i << " " << axis.to_string() << " " << pen << "\n";
-        if (pen < 0) return cd;
+        if (pen < 0) return Collision();
 		if (pen < minPenetration) {
 			minPenetration = pen;
 			index = counter; 
+			theAxis = axis;
 		}
 		counter++;
     }
+
+	bool useb1 = (index > 2);
 
     // Cross products...
 	
@@ -188,10 +291,11 @@ Collision checkCollision(CollisionBox& x1, CollisionBox& x2) {
 			axis = axis.normalized();
 			float pen = boxPenetrationAxis(x1, x2, axis, disp);
 			std::cout << i << " " << j << " " << a1.to_string() << " " << a2.to_string() << " " << axis.to_string() << " " << pen << "\n";
-            if (pen < 0) return cd;
+            if (pen < 0) return Collision();
 			if (pen < minPenetration) {
 				minPenetration = pen;
 				index = counter;
+				theAxis = axis;
 			}
 			counter++;
         }
@@ -201,16 +305,13 @@ Collision checkCollision(CollisionBox& x1, CollisionBox& x2) {
 
 	// 1. index < 6: smallest penetrating axis is along the basis of a box. This means one of the vertices of the other box intersects with the first one. Let's find out which one.
 	if (index < 3) {
-		return boxVertexToFace(x1, x2, b1.getCol(index), disp, minPenetration);
+		return boxVertexToFace(x1, x2, theAxis, disp, minPenetration);
 	}
 	if (index < 6) {
-		return boxVertexToFace(x2, x1, b2.getCol(index - 3), disp * -1, minPenetration);
+		return boxVertexToFace(x2, x1, theAxis, disp * -1, minPenetration);
 	}
 
-    cd.shapes[0] = &x1;
-    cd.shapes[1] = &x2;
-
-    return cd;
+	return boxEdgeToEdge(x1, x2, b1, b2, index - 6, theAxis, disp, minPenetration, useb1);
 }
 
 Collision checkCollision(CollisionShape* x1, CollisionShape* x2) {
@@ -219,11 +320,13 @@ Collision checkCollision(CollisionShape* x1, CollisionShape* x2) {
 
     if (CollisionSphere* c1 = dynamic_cast<CollisionSphere*>(x1)) {
         if (CollisionSphere* c2 = dynamic_cast<CollisionSphere*>(x2)) return checkCollision(*c1, *c2);
+		if (CollisionBox* c2 = dynamic_cast<CollisionBox*>(x2)) return checkCollision(*c1, *c2);
     }
     if (CollisionBox* c1 = dynamic_cast<CollisionBox*>(x1)) {
         if (CollisionBox* c2 = dynamic_cast<CollisionBox*>(x2)) return checkCollision(*c1, *c2);
+		if (CollisionSphere* c2 = dynamic_cast<CollisionSphere*>(x2)) return checkCollision(*c1, *c2);
     }
-
+	
 
     return cd;
 }

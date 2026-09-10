@@ -289,4 +289,8 @@ static Matrix3 Rotation3(Vector3 a, float angle) {
 	return Matrix3(xx, yy, zz);
 }
 
+static Vector3 applyTransform(Vector3 p, Vector3 origin, Matrix3 basis) {
+	return basis * p + origin;
+}
+
 #endif

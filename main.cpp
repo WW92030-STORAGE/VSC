@@ -65,7 +65,11 @@ int main() {
 
 	// pointBoxTest();
 	// spherePlaneTest();
-	boxVertToFaceTest();
+	// boxVertToFaceTest();
+	// boxEdgeToEdgeTest();
+
+	sphereBoxTest1();
+
 	/*
 	Matrix3 A(1, 3, 2, 3, 2, 1, 2, 1, 3);
 	auto p = eigen3_sym(A);

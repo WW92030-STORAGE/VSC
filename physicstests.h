@@ -1644,13 +1644,33 @@ void spherePlaneTest() {
 	cout << spherePlane(sphere, p).to_string() << endl;
 }
 
-// 9.940C
+// A note about 9.94x: Most of these tests you are to go into Blender, geogebra, etc. and model the scene yourself and verify that the collision detection works
+// Specifically, add the shapes as described, move the first shape along the normal, and check that it goes from intersecting the other shape to merely touching it.
+// The halfrad of a box should neatly correspond with the scale in Blender, assuming the initial box has halfrad (1, 1, 1) and you did not apply transformations.
+
+// 9.940C (BULA I)
 void boxVertToFaceTest() {
 	CollisionBox b1(Vector3(0.424705, 1.37183, 0.33283), Vector3(1, 1, 1), Quaternion(0.986745, -0.132876, 0.058689, -0.072339));
 	CollisionBox b2(Vector3(0.782093, 2.3197, 2.72142), Vector3(1, 1, 1), Quaternion(0.942589, 0.274617, -0.148484, 0.118591));
 	// cout << b1.basis.to_string() << endl;
 	// cout << b1.basis.toRotation().sprintf() << endl;
 	cout << checkCollision(b1, b2).to_string() << endl;
+}
+
+// 9.940D (GORGA)
+void boxEdgeToEdgeTest() {
+	CollisionBox b1(Vector3(-0.581018, 1.31404, 2.13332), Vector3(1, 1, 1.74077), Quaternion(0.963508, -0.219185, 0.096811, -0.119326));
+	CollisionBox b2(Vector3(0.17811, 0.517425, -0.339721), Vector3(1, 1, 1), Quaternion(0.960194, 0.228726, -0.101025, 0.124521));
+	// cout << b1.basis.to_string() << endl;
+	// cout << b1.basis.toRotation().sprintf() << endl;
+	cout << checkCollision(b1, b2).to_string() << endl;
+}
+
+// 9.941A (MOLTO I)
+void sphereBoxTest1() {
+	CollisionSphere sp(Vector3(-1.59065, -1.18006, 1.26233), 1);
+	CollisionBox box(Vector3(-0.08065, 0.294187, 0.555943), Vector3(2.08301, 1.29743, 1.60535), Quaternion(0.939463, -0.280571, 0.123924, -0.152746));
+	cout << checkCollision(sp, box).to_string() << endl;
 }
 
 #endif
