@@ -157,4 +157,11 @@ static uint32_t addScaled(uint32_t target, uint32_t added, float sc, bool aa = t
 	return setRGBA(BASE::clamp(r, 0, 255), BASE::clamp(g, 0, 255), BASE::clamp(b, 0, 255), BASE::clamp(alpha, 0, 255));
 }
 
+// simple way to visualize a unit vector in the form of a color
+static Vector3 unitvec2color(Vector3 v) {
+	float maxf = std::max(fabs(v.x), std::max(fabs(v.y), fabs(v.z)));
+	if (!BASE::fzero(maxf)) v = v / maxf;
+	return Vector3((v.x + 1) * 0.5, (v.y + 1) * 0.5, (v.z + 1) * 0.5);
+}
+
 #endif

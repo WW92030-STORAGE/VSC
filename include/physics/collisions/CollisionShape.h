@@ -128,4 +128,10 @@ static BoundingAABB CollisionBoxToBoundingAABB(CollisionBox& box) {
     return BoundingAABB(box.position, inferior);
 }
 
+static BoundingAABB CollisionShapeToBoundingAABB(CollisionShape* shape) {
+	if (CollisionBox* box = dynamic_cast<CollisionBox*>(shape)) return CollisionBoxToBoundingAABB(*box);
+	if (CollisionSphere* sphere = dynamic_cast<CollisionSphere*>(shape)) return CollisionSphereToBoundingAABB(*sphere);
+	return BoundingAABB(shape->position, Vector3(1, 1, 1));
+}
+
 #endif

@@ -8,7 +8,7 @@
 #include "../../objects/Mesh.h"
 #include "CollisionShape.h"
 
-#include <iostream>
+// #include <iostream>
 
 bool checkSeparatingAxis(Vector3 v, std::vector<Vector3>& a, std::vector<Vector3>& b);
 
@@ -256,7 +256,7 @@ Collision checkCollision(CollisionBox& x1, CollisionBox& x2) {
     for (int i = 0; i < 3; i++) {
         Vector3 axis = b1.getCol(i);
 		float pen = boxPenetrationAxis(x1, x2, axis, disp);
-		std::cout << i << " " << pen << "\n";
+		// std::cout << i << " " << pen << "\n";
         if (pen < 0) return Collision();
 		if (pen < minPenetration) {
 			minPenetration = pen;
@@ -268,7 +268,7 @@ Collision checkCollision(CollisionBox& x1, CollisionBox& x2) {
 	for (int i = 0; i < 3; i++) {
         Vector3 axis = b2.getCol(i);
 		float pen = boxPenetrationAxis(x1, x2, axis, disp);
-		std::cout << i << " " << axis.to_string() << " " << pen << "\n";
+		// std::cout << i << " " << axis.to_string() << " " << pen << "\n";
         if (pen < 0) return Collision();
 		if (pen < minPenetration) {
 			minPenetration = pen;
@@ -290,7 +290,7 @@ Collision checkCollision(CollisionBox& x1, CollisionBox& x2) {
             if (axis == VEC3_ZERO) continue;
 			axis = axis.normalized();
 			float pen = boxPenetrationAxis(x1, x2, axis, disp);
-			std::cout << i << " " << j << " " << a1.to_string() << " " << a2.to_string() << " " << axis.to_string() << " " << pen << "\n";
+			// std::cout << i << " " << j << " " << a1.to_string() << " " << a2.to_string() << " " << axis.to_string() << " " << pen << "\n";
             if (pen < 0) return Collision();
 			if (pen < minPenetration) {
 				minPenetration = pen;

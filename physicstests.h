@@ -1657,7 +1657,7 @@ void boxVertToFaceTest() {
 	cout << checkCollision(b1, b2).to_string() << endl;
 }
 
-// 9.940D (GORGA)
+// 9.940D (BULA II)
 void boxEdgeToEdgeTest() {
 	CollisionBox b1(Vector3(-0.581018, 1.31404, 2.13332), Vector3(1, 1, 1.74077), Quaternion(0.963508, -0.219185, 0.096811, -0.119326));
 	CollisionBox b2(Vector3(0.17811, 0.517425, -0.339721), Vector3(1, 1, 1), Quaternion(0.960194, 0.228726, -0.101025, 0.124521));
@@ -1666,11 +1666,161 @@ void boxEdgeToEdgeTest() {
 	cout << checkCollision(b1, b2).to_string() << endl;
 }
 
-// 9.941A (MOLTO I)
+// 9.941A (MULTO I)
 void sphereBoxTest1() {
 	CollisionSphere sp(Vector3(-1.59065, -1.18006, 1.26233), 1);
 	CollisionBox box(Vector3(-0.08065, 0.294187, 0.555943), Vector3(2.08301, 1.29743, 1.60535), Quaternion(0.939463, -0.280571, 0.123924, -0.152746));
 	cout << checkCollision(sp, box).to_string() << endl;
+}
+
+// 9.941B (MULTO II)
+void sphereBoxTest2() {
+	CollisionSphere sp(Vector3(-1.94638, 1.84107, 3.11823), 1);
+	CollisionBox box(Vector3(-0.08065, 0.294187, 0.555943), Vector3(2.08301, 1.29743, 1.60535), Quaternion(0.939463, -0.280571, 0.123924, -0.152746));
+	cout << checkCollision(sp, box).to_string() << endl;
+}
+
+// 9.942 (MULTO III or simply MULTO) - Revamp of a previous collision demo except this time with more shapes
+void CollisionsTestComprehensive() {
+	Scene s = scene_blank(true);
+	s.camera.Trans(Transform(Vector3(0, 0, 12)));
+
+	PointLight p(0);
+	p.Trans(Vector3(0, 0, 10));
+	s.lights.push_back(p);
+
+	MersenneTwister mt(1000); // keep the seed constant
+	int N = 64;
+	int L = 8;
+
+	// Set up the physics
+
+	RigidBodyGroup bodies;
+	std::vector<CollisionShape*> shapes(N * 2);
+	int i = 0;
+	for (int ss = 0; ss < N; ss++) {
+		shapes[i] = new CollisionBox(Vector3(), Vector3(1 + mt(), 1 + mt(), 1 + mt()) * 0.5);
+		RigidBody rb;
+		rb.shape = shapes[i];
+
+		Vector3 random_pos(L * (1 - 2 * mt()), L * (1 - 2 * mt()), L * (1 - 2 * mt()));
+		Quaternion random_rot = Quaternion(1, mt() * M_PI * 2, mt() * M_PI * 2, mt() * M_PI * 2).normalized();
+
+		rb.global_position = random_pos;
+		rb.global_rotation = random_rot;
+		shapes[i]->position = rb.global_position;
+		shapes[i]->basis = rb.global_rotation;
+
+		rb.global_omega = Vector3(1 - 2 * mt(), 1 - 2 * mt(), 1 - 2 * mt()) * 2;
+		rb.global_velocity = Vector3(1 - 2 * mt(), 1 - 2 * mt(), 1 - 2 * mt()) * 2;
+		rb.gravity = VEC3_ZERO;
+
+		bodies.addRigidBody(rb);
+		i++;
+
+		// sphere time
+
+		shapes[i] = new CollisionSphere(Vector3(), 0.5 + mt());
+		rb = RigidBody();
+		rb.shape = shapes[i];
+
+		random_pos = Vector3(L * (1 - 2 * mt()), L * (1 - 2 * mt()), L * (1 - 2 * mt()));
+		random_rot = Quaternion(1, mt() * M_PI * 2, mt() * M_PI * 2, mt() * M_PI * 2).normalized();
+
+		rb.global_position = random_pos;
+		rb.global_rotation = random_rot;
+		shapes[i]->position = rb.global_position;
+		shapes[i]->basis = rb.global_rotation;
+
+		rb.global_omega = Vector3(1 - 2 * mt(), 1 - 2 * mt(), 1 - 2 * mt()) * 2;
+		rb.global_velocity = Vector3(1 - 2 * mt(), 1 - 2 * mt(), 1 - 2 * mt()) * 2;
+		rb.gravity = VEC3_ZERO;
+
+		bodies.addRigidBody(rb);
+		i++;
+	}
+
+	// Set up the scene
+	for (int i = 0; i < bodies.bodies.size(); i++) {
+		Mesh m;
+		if (CollisionBox* cb = dynamic_cast<CollisionBox*>(shapes[i])) {
+			m = rectprism(cb->halfrad * 2);
+			m.Trans(Transform(cb->position, cb->basis));
+			s.addMesh(&m);
+		}
+		else if (CollisionSphere* cb = dynamic_cast<CollisionSphere*>(shapes[i])) {
+			m = icosphere(cb->radius);
+			m.Trans(Transform(cb->position, cb->basis));
+			s.addMesh(&m);
+		}
+	}
+
+	int LEN = 128;
+	int MAX_COL = 1<<16;
+
+	Collision* collisions = new Collision[MAX_COL];
+	PossibleCollision* pc = new PossibleCollision[MAX_COL];
+
+
+
+	for (int FRAME = 0; FRAME < LEN; FRAME++) {
+		int count = 0;
+
+		PhysBVHNode<BoundingAABB>* bvh = new PhysBVHNode<BoundingAABB>(0, CollisionShapeToBoundingAABB(shapes[0]), bodies.bodies[0]);
+
+		for (int i = 1; i < N; i++) {
+			auto bounding = CollisionShapeToBoundingAABB(shapes[i]);
+			bvh->insert(bodies.bodies[i], bounding);
+		}
+		
+		int cx = bvh->getPossibleContacts(pc, MAX_COL);
+
+		std::map<RigidBody*, Vector3> normals;
+		for (int i = 0; i < cx; i++) {
+			Collision cc = checkCollision(pc[i].bodies[0]->shape, pc[i].bodies[1]->shape);
+			if (count >= MAX_COL) break;
+			if (cc.exists()) {
+				cc.bodies[0] = pc[i].bodies[0];
+				cc.bodies[1] = pc[i].bodies[1];
+				collisions[count++] = cc;
+
+				normals[cc.bodies[0]] = cc.normal.normalized();
+				normals[cc.bodies[1]] = normals[cc.bodies[0]] * -1;
+			}
+		}
+		delete bvh;
+
+		std::cout << count << "\n";
+
+		std::set<RigidBody*> colliding_pos;
+		for (int i = 0; i < count; i++) {
+			colliding_pos.insert(collisions[i].bodies[0]);
+			colliding_pos.insert(collisions[i].bodies[1]);
+		}
+
+		for (int mi = 0; mi < bodies.bodies.size(); mi++) {
+			Transform original = s.meshes[mi]->transform;
+			Transform transform = bodies.bodies[mi]->transform * original.inv();
+			s.meshes[mi]->Trans(transform);
+
+			if (colliding_pos.count(bodies.bodies[mi])) {
+				if (normals.find(bodies.bodies[mi]) != normals.end()) s.materials[mi]->baseColor = unitvec2color(normals[bodies.bodies[mi]]);
+				else s.materials[mi]->baseColor = Vector3(1, 0, 0);
+			}
+			else s.materials[mi]->baseColor = Vector3(1, 1, 1);
+		}
+		s.render();
+		bodies.integrate_forces();
+		s.outputBuffer(VIDEO_PATH + "/frame" + std::to_string(FRAME));
+
+		std::cout << "FRAME " << FRAME << "DONE\n";
+	}
+
+	std::ofstream len(VIDEO_PATH + "/LEN");
+	len << LEN;
+	len.close();
+	delete[] collisions;
+	delete[] pc;
 }
 
 #endif
